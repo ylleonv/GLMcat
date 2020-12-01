@@ -1,0 +1,36 @@
+Package: GLMcat
+Title: Generalized Linear Models for categorical responses
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Lorena",
+           family = "Leon",
+           role = c("aut", "cre"),
+           email = "ylorenaleonv@gmail.com")
+Description: Generalized Linear Models for categorical responses: In statistical modeling, there is a wide variety of regression models for categorical dependent variables (nominal or ordinal data); yet, there is no software embracing all these models together in a uniform and generalized format. We propose an R package to estimate generalized linear models implemented under the unified specification (r, F, Z) , where r represents the ratio of probabilities (reference, cumulative, adjacent, or sequential), F the cumulative distribution function for the linkage, and Z, the design matrix.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 2.10)
+LazyData: true
+RoxygenNote: 7.0.2
+LinkingTo: 
+    Rcpp,
+    BH,
+    RcppEigen
+Imports: 
+    Rcpp,
+    BH,
+    forcats,
+    methods,
+    RcppEigen,
+    stats,
+    base
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat,
+    dplyr,
+    ggplot2,
+    gridExtra,
+    gtools,
+    tidyr
+VignetteBuilder: knitr

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Dataset</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<pre><code class="r">library(GLMcat)
+</code></pre>
+
+<h3>Dataset</h3>
+
+<p>The choice of travel mode of n = 210 passengers in Australia was investigated by Louviere et al. (2000), Greene (2003) and Tutz. The alternatives of travel mode are: air, train, bus, and car. As \(category-specific\) variables they considered the travel time in vehicle (invt) and the general cost (gc), and, as the \(global-variables\) they considered the household income (hinc), and the number of people traveling (psize).
+As example data, GLMcat includes the database: TravelChoice; which we can load as follows:</p>
+
+<pre><code class="r">data(&quot;TravelChoice&quot;)
+head(TravelChoice)
+</code></pre>
+
+<pre><code>##   indv  mode choice ttme invc invt gc hinc psize
+## 1    1   air  FALSE   69   59  100 70   35     1
+## 2    1 train  FALSE   34   31  372 71   35     1
+## 3    1   bus  FALSE   35   25  417 70   35     1
+## 4    1   car   TRUE    0   10  180 30   35     1
+## 5    2   air  FALSE   64   58   68 68   30     2
+## 6    2 train  FALSE   44   31  354 84   30     2
+</code></pre>
+
+<pre><code class="r">str(TravelChoice)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    840 obs. of  9 variables:
+##  $ indv  : Factor w/ 210 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 2 2 2 2 3 3 ...
+##  $ mode  : Factor w/ 4 levels &quot;air&quot;,&quot;bus&quot;,&quot;car&quot;,..: 1 4 2 3 1 4 2 3 1 4 ...
+##  $ choice: logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
+##  $ ttme  : int  69 34 35 0 64 44 53 0 69 34 ...
+##  $ invc  : int  59 31 25 10 58 31 25 11 115 98 ...
+##  $ invt  : int  100 372 417 180 68 354 399 255 125 892 ...
+##  $ gc    : int  70 71 70 30 68 84 85 50 129 195 ...
+##  $ hinc  : int  35 35 35 35 30 30 30 30 40 40 ...
+##  $ psize : num  1 1 1 1 2 2 2 2 1 1 ...
+</code></pre>
+
+<p>To execute the model proposed by Tutz (Example 8.4), we execute the Discrete_CM function with the specific parameters as follows:</p>
+
+<pre><code class="r">exp_8.4 &lt;- Discrete_CM(
+  formula = choice ~ hinc + gc + invt,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;air&quot;,
+  data = TravelChoice,
+  alternative_specific = c(&quot;gc&quot;, &quot;invt&quot;),
+  distribution = &quot;logistic&quot;)
+</code></pre>
+
+<p>The reported estimates given in Table 8.4 correspond to the output:</p>
+
+<pre><code class="r">summary(exp_8.4)
+</code></pre>
+
+<pre><code>##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## X.Intercept. bus    2.2782935  0.7176686  3.1746 0.001501 ** 
+## X.Intercept. car    1.5334984  0.7065856  2.1703 0.029985 *  
+## X.Intercept. train  3.5250538  0.6549825  5.3819 7.37e-08 ***
+## hinc bus           -0.0355781  0.0131492 -2.7057 0.006816 ** 
+## hinc car           -0.0023652  0.0104475 -0.2264 0.820898    
+## hinc train         -0.0569415  0.0124103 -4.5882 4.47e-06 ***
+## gc                 -0.0016225  0.0055279 -0.2935 0.769128    
+## invt               -0.0031266  0.0009548 -3.2746 0.001058 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+</code></pre>
+
+<p>According with Tutz, the income seems to be influential for the preference of train and bus over airplane. And, time in vehicle seems to have an impact for the choice of travel mode. Also, cost turns out to be non-influential if income is in the predict_glmcator.\</p>
+
+<h3>Louviere (2000), Table 6.2.</h3>
+
+<p>Constants only model</p>
+
+<pre><code class="r">(constant_model &lt;- Discrete_CM(
+  formula = choice ~ 1 ,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = c(&quot;air&quot;, &quot;train&quot;, &quot;bus&quot;, &quot;car&quot;),
+  data = TravelChoice,
+  distribution = &quot;logistic&quot;
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 4
+## 
+## $coefficients
+##                          [,1]
+## (Intercept) air   -0.01709443
+## (Intercept) train  0.06559728
+## (Intercept) bus   -0.67634006
+## 
+## $`Log-likelihood`
+## [1] -283.7588
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -283.9549 -283.7591 -283.7588 -283.7588
+## 
+## $X_M_i
+##      [,1] [,2] [,3]
+## [1,]    1    0    0
+## [2,]    0    1    0
+## [3,]    0    0    1
+## 
+## $stderr
+## [1] 0.1849068 0.1811689 0.2242376
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<pre><code class="r">(car_0 &lt;- Discrete_CM(
+  formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = c(&quot;air&quot;, &quot;train&quot;, &quot;bus&quot;, &quot;car&quot;),
+  alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;logistic&quot;
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. air    7.33480684
+## X.Intercept. train  4.37191345
+## X.Intercept. bus    3.59170206
+## hinc air            0.02381549
+## psize air          -1.17381658
+## gc                 -0.02350742
+## ttme               -0.10021278
+## 
+## $`Log-likelihood`
+## [1] -185.9149
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -189.4114 -186.0075 -185.9150 -185.9149 -185.9149
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -27   64
+## [2,]    0    1    0    0    0   67   44
+## [3,]    0    0    1    0    0   45   40
+## 
+## $stderr
+## [1] 0.946436165 0.478124444 0.475770576 0.011189102 0.258133127 0.005083637
+## [7] 0.010542861
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<h3>The results reported in (REF Jean)</h3>
+
+<p>Student (3), air, LogLik = -185.65</p>
+
+<pre><code class="r">(air_30 &lt;- Discrete_CM(
+  formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;air&quot;,
+  alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;student&quot;,
+  freedom_degrees = 3
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 6
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. bus   -3.14794657
+## X.Intercept. car   -5.98721648
+## X.Intercept. train -2.53929917
+## hinc air            0.01356359
+## psize air          -0.86606051
+## gc                 -0.01879070
+## ttme               -0.08023089
+## 
+## $`Log-likelihood`
+## [1] -185.6528
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -191.7504 -186.0188 -185.6602 -185.6530 -185.6528
+## [8] -185.6528
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0  -50   -3   72  -24
+## [2,]    0    1    0  -50   -3   27  -64
+## [3,]    0    0    1  -50   -3   94  -20
+## 
+## $stderr
+## [1] 0.541680325 0.825236643 0.524902745 0.008360104 0.196908830 0.004115741
+## [7] 0.010131414
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<p>Student (30), bus, LogLik = -183.79</p>
+
+<pre><code class="r">(bus_30 &lt;- Discrete_CM(
+  formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;bus&quot;,
+  alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;student&quot;,
+  freedom_degrees = 30
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. air    2.23667918
+## X.Intercept. car   -1.98777174
+## X.Intercept. train  0.53586974
+## hinc air            0.01272165
+## psize air          -0.66527574
+## gc                 -0.01362363
+## ttme               -0.05732856
+## 
+## $`Log-likelihood`
+## [1] -183.7852
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -186.8549 -183.8567 -183.7857 -183.7852 -183.7852
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -72   24
+## [2,]    0    1    0    0    0  -45  -40
+## [3,]    0    0    1    0    0   22    4
+## 
+## $stderr
+## [1] 0.372507523 0.269456327 0.163388982 0.006257164 0.147442353 0.002811993
+## [7] 0.005390257
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<p>Student (0.2), car, LogLik = -142</p>
+
+<pre><code class="r">(car_.2 &lt;- Discrete_CM(
+  formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;car&quot;,
+  alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;student&quot;,
+  freedom_degrees = 0.2
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 7
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. air   4121.426044
+## X.Intercept. bus   2029.029705
+## X.Intercept. train 2172.051140
+## hinc air             10.153902
+## psize air          -387.293178
+## gc                   -4.604736
+## ttme                -63.240416
+## 
+## $`Log-likelihood`
+## [1] -141.9978
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -228.6686 -191.3264 -171.0076 -160.4430 -152.1302
+## [8] -145.9422 -141.9978
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -27   64
+## [2,]    0    1    0    0    0   45   40
+## [3,]    0    0    1    0    0   67   44
+## 
+## $stderr
+## [1] 1702.613106  907.278096  942.463083    9.106184  202.525993    2.145910
+## [7]   27.333017
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<p>Student (1.35), train, LogLik = -183.49</p>
+
+<pre><code class="r">(train_1.35 &lt;- Discrete_CM(
+  formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;train&quot;,
+  alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;student&quot;,
+  freedom_degrees = 1.35
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 10
+## 
+## $coefficients
+##                         [,1]
+## X.Intercept. air  3.39605221
+## X.Intercept. bus -0.99962408
+## X.Intercept. car -5.17855474
+## hinc air          0.02223088
+## psize air        -1.12168726
+## gc               -0.01656827
+## ttme             -0.12492104
+## 
+## $`Log-likelihood`
+## [1] -183.4886
+## 
+## $LogLikIter
+##  [1]    0.0000 -291.1218 -195.9485 -185.3197 -183.7398 -183.5352 -183.4970
+##  [8] -183.4900 -183.4889 -183.4887 -183.4887 -183.4886
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -94   20
+## [2,]    0    1    0    0    0  -22   -4
+## [3,]    0    0    1    0    0  -67  -44
+## 
+## $stderr
+## [1] 0.938958542 0.334018041 0.785394392 0.013329580 0.319745442 0.005325807
+## [7] 0.019077456
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<p>The results are clearly in favour of the reference alternative j0 =car since the gain in loglikelihood is 43.92 compared to MNL results, i.e., 24% of the log-likelihood. It is a very huge difference compared to the results given in the literature (Louviere et al., 2000; Greene, 2003), obtained with MNL and with NL. \
+Additional results presented in (REF JEAN)</p>
+
+<h2>Logistic, car</h2>
+
+<pre><code class="r">(table_4 &lt;- Discrete_CM(
+  formula = choice ~ ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;car&quot;,
+  alternative_specific = &quot;ttme&quot;,
+  data = TravelChoice,
+  distribution = &quot;logistic&quot;
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                          [,1]
+## X.Intercept. air    5.9486455
+## X.Intercept. bus    3.1236843
+## X.Intercept. train  3.5354121
+## ttme               -0.1010831
+## 
+## $`Log-likelihood`
+## [1] -206.8168
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -210.1391 -206.8840 -206.8169 -206.8168 -206.8168
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 0.66726145 0.45014847 0.41731216 0.01049064
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<pre><code class="r"># AIC(table_4)
+</code></pre>
+
+<h4>Table 2 (without normalized space)</h4>
+
+<pre><code class="r">(car_.2 &lt;- Discrete_CM(
+  formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;car&quot;,
+  alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;student&quot;,
+  freedom_degrees = 0.45
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 11
+## 
+## $coefficients
+##                            [,1]
+## X.Intercept. air   139.66639011
+## X.Intercept. bus    70.69219275
+## X.Intercept. train  72.07586535
+## hinc air             0.07085152
+## psize air           -4.54026647
+## gc                  -0.02205432
+## ttme                -2.17224271
+## 
+## $`Log-likelihood`
+## [1] -145.8937
+## 
+## $LogLikIter
+##  [1]    0.0000 -291.1218 -209.8659 -177.5301 -163.3647 -154.6158 -150.4474
+##  [8] -148.8244 -148.0677 -147.8506 -147.6127 -145.9046 -145.8937
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -27   64
+## [2,]    0    1    0    0    0   45   40
+## [3,]    0    0    1    0    0   67   44
+## 
+## $stderr
+## [1] 48.30625497 22.04202562 22.54596368  0.17697613  5.79272475  0.05387014
+## [7]  0.71886837
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<pre><code class="r"># logLik(car_.2)
+</code></pre>
+
+<h4>Table 4 (without normalized space)</h4>
+
+<pre><code class="r">(car_8 &lt;- Discrete_CM(
+  formula = choice ~  ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;car&quot;,
+  alternative_specific = c(&quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;logistic&quot;
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                          [,1]
+## X.Intercept. air    5.9486455
+## X.Intercept. bus    3.1236843
+## X.Intercept. train  3.5354121
+## ttme               -0.1010831
+## 
+## $`Log-likelihood`
+## [1] -206.8168
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -210.1391 -206.8840 -206.8169 -206.8168 -206.8168
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 0.66726145 0.45014847 0.41731216 0.01049064
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<pre><code class="r"># logLik(car_8)
+</code></pre>
+
+<h4>Table 5 (without normalized space)</h4>
+
+<pre><code class="r">(car_.45 &lt;- Discrete_CM(
+  formula = choice ~  ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;car&quot;,
+  alternative_specific = c(&quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;student&quot;,
+  freedom_degrees = .45
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 6
+## 
+## $coefficients
+##                          [,1]
+## X.Intercept. air   149.133641
+## X.Intercept. bus    77.176610
+## X.Intercept. train  77.619066
+## ttme                -2.455215
+## 
+## $`Log-likelihood`
+## [1] -146.6839
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -219.3927 -183.2072 -162.8154 -150.7734 -147.1970
+## [8] -146.6839
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 50.2301500 26.9972393 26.9144928  0.8153757
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<pre><code class="r"># logLik(car_.45)
+</code></pre>
+
+<h4>Table 6 (without normalized space)</h4>
+
+<pre><code class="r">(car_.05 &lt;- Discrete_CM(
+  formula = choice ~  ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = &quot;car&quot;,
+  alternative_specific = c(&quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;student&quot;,
+  freedom_degrees = .05
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 15
+## 
+## $coefficients
+##                             [,1]
+## X.Intercept. air    1.722068e+14
+## X.Intercept. bus    9.673849e+13
+## X.Intercept. train  1.010417e+14
+## ttme               -2.720199e+12
+## 
+## $`Log-likelihood`
+## [1] -129.7607
+## 
+## $LogLikIter
+##  [1]    0.0000 -291.1218 -260.7820 -223.1702 -197.7633 -178.8835 -164.7447
+##  [8] -154.1584 -146.2936 -140.5425 -136.4374 -133.6116 -131.7686 -130.6603
+## [15] -130.0731 -129.8212 -129.7607
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 3.196290e+14 1.674936e+14 1.740068e+14 5.285761e+12
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<pre><code class="r"># logLik(car_.05)
+</code></pre>
+
+<p>Adjacent examples
+Design matrix for cases</p>
+
+<pre><code class="r">dat_p &lt;- TravelChoice[1:8,]
+</code></pre>
+
+<p>The order is alphabetical</p>
+
+<pre><code class="r"># (adj_1 &lt;- Discrete_CM(
+#   formula = choice ~ hinc + psize + gc + ttme,
+#   case_id = &quot;indv&quot;,
+#   alternatives = &quot;mode&quot;,
+#   reference = c(&quot;train&quot;),
+#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+#   data = dat_p,
+#   distribution = &quot;logistic&quot;,
+#   ratio = &quot;adjacent&quot;
+# ))
+# 
+# (adj_2 &lt;- Discrete_CM(
+#   formula = choice ~ hinc[car] + psize[air] + gc + ttme,
+#   case_id = &quot;indv&quot;,
+#   alternatives = &quot;mode&quot;,
+#   reference = c(&quot;train&quot;),
+#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+#   data = dat_p,
+#   distribution = &quot;logistic&quot;,
+#   ratio = &quot;adjacent&quot;
+# ))
+# 
+# (adj_3 &lt;- Discrete_CM(
+#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
+#   case_id = &quot;indv&quot;,
+#   alternatives = &quot;mode&quot;,
+#   reference = c(&quot;air&quot;),
+#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+#   data = dat_p,
+#   distribution = &quot;logistic&quot;,
+#   ratio = &quot;adjacent&quot;
+# ))
+</code></pre>
+
+<p>Extended example</p>
+
+<pre><code class="r">(adj_4 &lt;- Discrete_CM(
+  formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
+  case_id = &quot;indv&quot;,
+  alternatives = &quot;mode&quot;,
+  reference = c(&quot;air&quot;),
+  alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+  data = TravelChoice,
+  distribution = &quot;logistic&quot;,
+  ratio = &quot;adjacent&quot;
+))
+</code></pre>
+
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                            [,1]
+## X.Intercept. bus    3.098541556
+## X.Intercept. car   -4.002311626
+## X.Intercept. train -1.938583598
+## hinc air           -0.001642368
+## psize bus           0.062616559
+## gc                 -0.015823818
+## ttme               -0.097760212
+## 
+## $`Log-likelihood`
+## [1] -199.8778
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -203.3142 -200.0107 -199.8792 -199.8778 -199.8778
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0  -50    3   45   40
+## [2,]    0    1    0  -50    0  -67  -44
+## [3,]    0    0    1  -50    0   94  -20
+## 
+## $stderr
+## [1] 0.580273635 0.480558998 0.425192972 0.004364757 0.306697614 0.004464293
+## [7] 0.010599556
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;
+</code></pre>
+
+<pre><code class="r"># 
+# (adj_5 &lt;- Discrete_CM(
+#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
+#   case_id = &quot;indv&quot;,
+#   alternatives = &quot;mode&quot;,
+#   reference = c(&quot;air&quot;),
+#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+#   data = TravelChoice,
+#   distribution = &quot;cauchit&quot;,
+#   ratio = &quot;adjacent&quot;
+# ))
+# 
+# (ref_4 &lt;- Discrete_CM(
+#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
+#   case_id = &quot;indv&quot;,
+#   alternatives = &quot;mode&quot;,
+#   reference = c(&quot;air&quot;),
+#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+#   data = TravelChoice,
+#   distribution = &quot;logistic&quot;,
+#   ratio = &quot;reference&quot;
+# ))
+# 
+# (ref_5 &lt;- Discrete_CM(
+#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
+#   case_id = &quot;indv&quot;,
+#   alternatives = &quot;mode&quot;,
+#   reference = c(&quot;air&quot;),
+#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),
+#   data = TravelChoice,
+#   distribution = &quot;cauchit&quot;,
+#   ratio = &quot;reference&quot;
+# ))
+</code></pre>
+
+</body>
+
+</html>

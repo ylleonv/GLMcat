@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Lorena Leon, Jean Peyhardi et Catherine Trottier" />
+
+<meta name="date" content="2020-12-01" />
+
+<title>Discrete Choice Models</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Discrete Choice Models</h1>
+<h4 class="author">Lorena Leon, Jean Peyhardi et Catherine Trottier</h4>
+<h4 class="date">2020-12-01</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#dataset"><span class="toc-section-number">0.0.1</span> Dataset</a></li>
+<li><a href="#louviere-2000-table-6.2."><span class="toc-section-number">0.0.2</span> Louviere (2000), Table 6.2.</a></li>
+<li><a href="#the-results-reported-in-ref-jean"><span class="toc-section-number">0.0.3</span> The results reported in (REF Jean)</a><ul>
+<li><a href="#table-2-without-normalized-space"><span class="toc-section-number">0.0.3.1</span> Table 2 (without normalized space)</a></li>
+<li><a href="#table-4-without-normalized-space"><span class="toc-section-number">0.0.3.2</span> Table 4 (without normalized space)</a></li>
+<li><a href="#table-5-without-normalized-space"><span class="toc-section-number">0.0.3.3</span> Table 5 (without normalized space)</a></li>
+<li><a href="#table-6-without-normalized-space"><span class="toc-section-number">0.0.3.4</span> Table 6 (without normalized space)</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># devtools::load_all()</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(GLMcat)</span></code></pre></div>
+<div id="dataset" class="section level3">
+<h3><span class="header-section-number">0.0.1</span> Dataset</h3>
+<p>The choice of travel mode of n = 210 passengers in Australia was investigated by Louviere et al. (2000), Greene (2003) and Tutz. The alternatives of travel mode are: air, train, bus, and car. As <span class="math inline">\(category-specific\)</span> variables they considered the travel time in vehicle (invt) and the general cost (gc), and, as the <span class="math inline">\(global-variables\)</span> they considered the household income (hinc), and the number of people traveling (psize). As example data, GLMcat includes the database: TravelChoice; which we can load as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">data</span>(<span class="st">&quot;TravelChoice&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">head</span>(TravelChoice)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left">indv</th>
+<th align="left">mode</th>
+<th align="left">choice</th>
+<th align="right">ttme</th>
+<th align="right">invc</th>
+<th align="right">invt</th>
+<th align="right">gc</th>
+<th align="right">hinc</th>
+<th align="right">psize</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">air</td>
+<td align="left">FALSE</td>
+<td align="right">69</td>
+<td align="right">59</td>
+<td align="right">100</td>
+<td align="right">70</td>
+<td align="right">35</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">train</td>
+<td align="left">FALSE</td>
+<td align="right">34</td>
+<td align="right">31</td>
+<td align="right">372</td>
+<td align="right">71</td>
+<td align="right">35</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">bus</td>
+<td align="left">FALSE</td>
+<td align="right">35</td>
+<td align="right">25</td>
+<td align="right">417</td>
+<td align="right">70</td>
+<td align="right">35</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">car</td>
+<td align="left">TRUE</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">180</td>
+<td align="right">30</td>
+<td align="right">35</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">air</td>
+<td align="left">FALSE</td>
+<td align="right">64</td>
+<td align="right">58</td>
+<td align="right">68</td>
+<td align="right">68</td>
+<td align="right">30</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">train</td>
+<td align="left">FALSE</td>
+<td align="right">44</td>
+<td align="right">31</td>
+<td align="right">354</td>
+<td align="right">84</td>
+<td align="right">30</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">str</span>(TravelChoice)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    840 obs. of  9 variables:
+##  $ indv  : Factor w/ 210 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 2 2 2 2 3 3 ...
+##  $ mode  : Factor w/ 4 levels &quot;air&quot;,&quot;bus&quot;,&quot;car&quot;,..: 1 4 2 3 1 4 2 3 1 4 ...
+##  $ choice: logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
+##  $ ttme  : int  69 34 35 0 64 44 53 0 69 34 ...
+##  $ invc  : int  59 31 25 10 58 31 25 11 115 98 ...
+##  $ invt  : int  100 372 417 180 68 354 399 255 125 892 ...
+##  $ gc    : int  70 71 70 30 68 84 85 50 129 195 ...
+##  $ hinc  : int  35 35 35 35 30 30 30 30 40 40 ...
+##  $ psize : num  1 1 1 1 2 2 2 2 1 1 ...</code></pre>
+<p>To execute the model proposed by Tutz (Example 8.4), we execute the Discrete_CM function with the specific parameters as follows:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>exp_<span class="fl">8.4</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>hinc <span class="op">+</span><span class="st"> </span>gc <span class="op">+</span><span class="st"> </span>invt,</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;air&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb5-7"><a href="#cb5-7"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;gc&quot;</span>, <span class="st">&quot;invt&quot;</span>),</span>
+<span id="cb5-8"><a href="#cb5-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span>)</span></code></pre></div>
+<p>The reported estimates given in Table 8.4 correspond to the output:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">summary</span>(exp_<span class="fl">8.4</span>)</span></code></pre></div>
+<pre><code>##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## X.Intercept. bus    2.2782935  0.7176686  3.1746 0.001501 ** 
+## X.Intercept. car    1.5334984  0.7065856  2.1703 0.029985 *  
+## X.Intercept. train  3.5250538  0.6549825  5.3819 7.37e-08 ***
+## hinc bus           -0.0355781  0.0131492 -2.7057 0.006816 ** 
+## hinc car           -0.0023652  0.0104475 -0.2264 0.820898    
+## hinc train         -0.0569415  0.0124103 -4.5882 4.47e-06 ***
+## gc                 -0.0016225  0.0055279 -0.2935 0.769128    
+## invt               -0.0031266  0.0009548 -3.2746 0.001058 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>According with Tutz, the income seems to be influential for the preference of train and bus over airplane. And, time in vehicle seems to have an impact for the choice of travel mode. Also, cost turns out to be non-influential if income is in the predict_glmcator.\</p>
+</div>
+<div id="louviere-2000-table-6.2." class="section level3">
+<h3><span class="header-section-number">0.0.2</span> Louviere (2000), Table 6.2.</h3>
+<p>Constants only model</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>(constant_model &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span><span class="dv">1</span> ,</span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="dt">reference =</span> <span class="kw">c</span>(<span class="st">&quot;air&quot;</span>, <span class="st">&quot;train&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>),</span>
+<span id="cb8-6"><a href="#cb8-6"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 4
+## 
+## $coefficients
+##                          [,1]
+## (Intercept) air   -0.01709443
+## (Intercept) train  0.06559728
+## (Intercept) bus   -0.67634006
+## 
+## $`Log-likelihood`
+## [1] -283.7588
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -283.9549 -283.7591 -283.7588 -283.7588
+## 
+## $X_M_i
+##      [,1] [,2] [,3]
+## [1,]    1    0    0
+## [2,]    0    1    0
+## [3,]    0    0    1
+## 
+## $stderr
+## [1] 0.1849068 0.1811689 0.2242376
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>(car_<span class="dv">0</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb10-2"><a href="#cb10-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>hinc[air] <span class="op">+</span><span class="st"> </span>psize[air] <span class="op">+</span><span class="st"> </span>gc <span class="op">+</span><span class="st"> </span>ttme,</span>
+<span id="cb10-3"><a href="#cb10-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5"></a>  <span class="dt">reference =</span> <span class="kw">c</span>(<span class="st">&quot;air&quot;</span>, <span class="st">&quot;train&quot;</span>, <span class="st">&quot;bus&quot;</span>, <span class="st">&quot;car&quot;</span>),</span>
+<span id="cb10-6"><a href="#cb10-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;gc&quot;</span>, <span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb10-7"><a href="#cb10-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb10-8"><a href="#cb10-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. air    7.33480684
+## X.Intercept. train  4.37191345
+## X.Intercept. bus    3.59170206
+## hinc air            0.02381549
+## psize air          -1.17381658
+## gc                 -0.02350742
+## ttme               -0.10021278
+## 
+## $`Log-likelihood`
+## [1] -185.9149
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -189.4114 -186.0075 -185.9150 -185.9149 -185.9149
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -27   64
+## [2,]    0    1    0    0    0   67   44
+## [3,]    0    0    1    0    0   45   40
+## 
+## $stderr
+## [1] 0.946436165 0.478124444 0.475770576 0.011189102 0.258133127 0.005083637
+## [7] 0.010542861
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+</div>
+<div id="the-results-reported-in-ref-jean" class="section level3">
+<h3><span class="header-section-number">0.0.3</span> The results reported in (REF Jean)</h3>
+<p>Student (3), air, LogLik = -185.65</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>(air_<span class="dv">30</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb12-2"><a href="#cb12-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>hinc[air] <span class="op">+</span><span class="st"> </span>psize[air] <span class="op">+</span><span class="st"> </span>gc <span class="op">+</span><span class="st"> </span>ttme,</span>
+<span id="cb12-3"><a href="#cb12-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb12-4"><a href="#cb12-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;air&quot;</span>,</span>
+<span id="cb12-6"><a href="#cb12-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;gc&quot;</span>, <span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb12-7"><a href="#cb12-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb12-8"><a href="#cb12-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb12-9"><a href="#cb12-9"></a>  <span class="dt">freedom_degrees =</span> <span class="dv">3</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 6
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. bus   -3.14794657
+## X.Intercept. car   -5.98721648
+## X.Intercept. train -2.53929917
+## hinc air            0.01356359
+## psize air          -0.86606051
+## gc                 -0.01879070
+## ttme               -0.08023089
+## 
+## $`Log-likelihood`
+## [1] -185.6528
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -191.7504 -186.0188 -185.6602 -185.6530 -185.6528
+## [8] -185.6528
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0  -50   -3   72  -24
+## [2,]    0    1    0  -50   -3   27  -64
+## [3,]    0    0    1  -50   -3   94  -20
+## 
+## $stderr
+## [1] 0.541680325 0.825236643 0.524902745 0.008360104 0.196908830 0.004115741
+## [7] 0.010131414
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<p>Student (30), bus, LogLik = -183.79</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>(bus_<span class="dv">30</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb14-2"><a href="#cb14-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>hinc[air] <span class="op">+</span><span class="st"> </span>psize[air] <span class="op">+</span><span class="st"> </span>gc <span class="op">+</span><span class="st"> </span>ttme,</span>
+<span id="cb14-3"><a href="#cb14-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb14-4"><a href="#cb14-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;bus&quot;</span>,</span>
+<span id="cb14-6"><a href="#cb14-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;gc&quot;</span>, <span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb14-7"><a href="#cb14-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb14-8"><a href="#cb14-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb14-9"><a href="#cb14-9"></a>  <span class="dt">freedom_degrees =</span> <span class="dv">30</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. air    2.23667918
+## X.Intercept. car   -1.98777174
+## X.Intercept. train  0.53586974
+## hinc air            0.01272165
+## psize air          -0.66527574
+## gc                 -0.01362363
+## ttme               -0.05732856
+## 
+## $`Log-likelihood`
+## [1] -183.7852
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -186.8549 -183.8567 -183.7857 -183.7852 -183.7852
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -72   24
+## [2,]    0    1    0    0    0  -45  -40
+## [3,]    0    0    1    0    0   22    4
+## 
+## $stderr
+## [1] 0.372507523 0.269456327 0.163388982 0.006257164 0.147442353 0.002811993
+## [7] 0.005390257
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<p>Student (0.2), car, LogLik = -142</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>(car_.<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb16-2"><a href="#cb16-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>hinc[air] <span class="op">+</span><span class="st"> </span>psize[air] <span class="op">+</span><span class="st"> </span>gc <span class="op">+</span><span class="st"> </span>ttme,</span>
+<span id="cb16-3"><a href="#cb16-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb16-4"><a href="#cb16-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb16-5"><a href="#cb16-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;car&quot;</span>,</span>
+<span id="cb16-6"><a href="#cb16-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;gc&quot;</span>, <span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb16-7"><a href="#cb16-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb16-8"><a href="#cb16-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb16-9"><a href="#cb16-9"></a>  <span class="dt">freedom_degrees =</span> <span class="fl">0.2</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 7
+## 
+## $coefficients
+##                           [,1]
+## X.Intercept. air   4121.426044
+## X.Intercept. bus   2029.029705
+## X.Intercept. train 2172.051140
+## hinc air             10.153902
+## psize air          -387.293178
+## gc                   -4.604736
+## ttme                -63.240416
+## 
+## $`Log-likelihood`
+## [1] -141.9978
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -228.6686 -191.3264 -171.0076 -160.4430 -152.1302
+## [8] -145.9422 -141.9978
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -27   64
+## [2,]    0    1    0    0    0   45   40
+## [3,]    0    0    1    0    0   67   44
+## 
+## $stderr
+## [1] 1702.613106  907.278096  942.463083    9.106184  202.525993    2.145910
+## [7]   27.333017
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<p>Student (1.35), train, LogLik = -183.49</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>(train_<span class="fl">1.35</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb18-2"><a href="#cb18-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>hinc[air] <span class="op">+</span><span class="st"> </span>psize[air] <span class="op">+</span><span class="st"> </span>gc <span class="op">+</span><span class="st"> </span>ttme,</span>
+<span id="cb18-3"><a href="#cb18-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb18-4"><a href="#cb18-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb18-5"><a href="#cb18-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;train&quot;</span>,</span>
+<span id="cb18-6"><a href="#cb18-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;gc&quot;</span>, <span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb18-7"><a href="#cb18-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb18-8"><a href="#cb18-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb18-9"><a href="#cb18-9"></a>  <span class="dt">freedom_degrees =</span> <span class="fl">1.35</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 10
+## 
+## $coefficients
+##                         [,1]
+## X.Intercept. air  3.39605221
+## X.Intercept. bus -0.99962408
+## X.Intercept. car -5.17855474
+## hinc air          0.02223088
+## psize air        -1.12168726
+## gc               -0.01656827
+## ttme             -0.12492104
+## 
+## $`Log-likelihood`
+## [1] -183.4886
+## 
+## $LogLikIter
+##  [1]    0.0000 -291.1218 -195.9485 -185.3197 -183.7398 -183.5352 -183.4970
+##  [8] -183.4900 -183.4889 -183.4887 -183.4887 -183.4886
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -94   20
+## [2,]    0    1    0    0    0  -22   -4
+## [3,]    0    0    1    0    0  -67  -44
+## 
+## $stderr
+## [1] 0.938958542 0.334018041 0.785394392 0.013329580 0.319745442 0.005325807
+## [7] 0.019077456
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<p>The results are clearly in favour of the reference alternative j0 =car since the gain in loglikelihood is 43.92 compared to MNL results, i.e., 24% of the log-likelihood. It is a very huge difference compared to the results given in the literature (Louviere et al., 2000; Greene, 2003), obtained with MNL and with NL. \ Additional results presented in (REF JEAN) ## Logistic, car</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>(table_<span class="dv">4</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb20-2"><a href="#cb20-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>ttme,</span>
+<span id="cb20-3"><a href="#cb20-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb20-4"><a href="#cb20-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb20-5"><a href="#cb20-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;car&quot;</span>,</span>
+<span id="cb20-6"><a href="#cb20-6"></a>  <span class="dt">alternative_specific =</span> <span class="st">&quot;ttme&quot;</span>,</span>
+<span id="cb20-7"><a href="#cb20-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb20-8"><a href="#cb20-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span></span>
+<span id="cb20-9"><a href="#cb20-9"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                          [,1]
+## X.Intercept. air    5.9486455
+## X.Intercept. bus    3.1236843
+## X.Intercept. train  3.5354121
+## ttme               -0.1010831
+## 
+## $`Log-likelihood`
+## [1] -206.8168
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -210.1391 -206.8840 -206.8169 -206.8168 -206.8168
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 0.66726145 0.45014847 0.41731216 0.01049064
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># AIC(table_4)</span></span></code></pre></div>
+<div id="table-2-without-normalized-space" class="section level4">
+<h4><span class="header-section-number">0.0.3.1</span> Table 2 (without normalized space)</h4>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>(car_.<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb23-2"><a href="#cb23-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>hinc[air] <span class="op">+</span><span class="st"> </span>psize[air] <span class="op">+</span><span class="st"> </span>gc <span class="op">+</span><span class="st"> </span>ttme,</span>
+<span id="cb23-3"><a href="#cb23-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb23-4"><a href="#cb23-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb23-5"><a href="#cb23-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;car&quot;</span>,</span>
+<span id="cb23-6"><a href="#cb23-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;gc&quot;</span>, <span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb23-7"><a href="#cb23-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb23-8"><a href="#cb23-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb23-9"><a href="#cb23-9"></a>  <span class="dt">freedom_degrees =</span> <span class="fl">0.45</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 11
+## 
+## $coefficients
+##                            [,1]
+## X.Intercept. air   139.66639011
+## X.Intercept. bus    70.69219275
+## X.Intercept. train  72.07586535
+## hinc air             0.07085152
+## psize air           -4.54026647
+## gc                  -0.02205432
+## ttme                -2.17224271
+## 
+## $`Log-likelihood`
+## [1] -145.8937
+## 
+## $LogLikIter
+##  [1]    0.0000 -291.1218 -209.8659 -177.5301 -163.3647 -154.6158 -150.4474
+##  [8] -148.8244 -148.0677 -147.8506 -147.6127 -145.9046 -145.8937
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    0    0   50    3  -27   64
+## [2,]    0    1    0    0    0   45   40
+## [3,]    0    0    1    0    0   67   44
+## 
+## $stderr
+## [1] 48.30625497 22.04202562 22.54596368  0.17697613  5.79272475  0.05387014
+## [7]  0.71886837
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># logLik(car_.2)</span></span></code></pre></div>
+</div>
+<div id="table-4-without-normalized-space" class="section level4">
+<h4><span class="header-section-number">0.0.3.2</span> Table 4 (without normalized space)</h4>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>(car_<span class="dv">8</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb26-2"><a href="#cb26-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st">  </span>ttme,</span>
+<span id="cb26-3"><a href="#cb26-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb26-4"><a href="#cb26-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb26-5"><a href="#cb26-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;car&quot;</span>,</span>
+<span id="cb26-6"><a href="#cb26-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb26-7"><a href="#cb26-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb26-8"><a href="#cb26-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span></span>
+<span id="cb26-9"><a href="#cb26-9"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 5
+## 
+## $coefficients
+##                          [,1]
+## X.Intercept. air    5.9486455
+## X.Intercept. bus    3.1236843
+## X.Intercept. train  3.5354121
+## ttme               -0.1010831
+## 
+## $`Log-likelihood`
+## [1] -206.8168
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -210.1391 -206.8840 -206.8169 -206.8168 -206.8168
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 0.66726145 0.45014847 0.41731216 0.01049064
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># logLik(car_8)</span></span></code></pre></div>
+</div>
+<div id="table-5-without-normalized-space" class="section level4">
+<h4><span class="header-section-number">0.0.3.3</span> Table 5 (without normalized space)</h4>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>(car_.<span class="dv">45</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb29-2"><a href="#cb29-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st">  </span>ttme,</span>
+<span id="cb29-3"><a href="#cb29-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb29-4"><a href="#cb29-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb29-5"><a href="#cb29-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;car&quot;</span>,</span>
+<span id="cb29-6"><a href="#cb29-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb29-7"><a href="#cb29-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb29-8"><a href="#cb29-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb29-9"><a href="#cb29-9"></a>  <span class="dt">freedom_degrees =</span> <span class="fl">.45</span></span>
+<span id="cb29-10"><a href="#cb29-10"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 6
+## 
+## $coefficients
+##                          [,1]
+## X.Intercept. air   149.133641
+## X.Intercept. bus    77.176610
+## X.Intercept. train  77.619066
+## ttme                -2.455215
+## 
+## $`Log-likelihood`
+## [1] -146.6839
+## 
+## $LogLikIter
+## [1]    0.0000 -291.1218 -219.3927 -183.2072 -162.8154 -150.7734 -147.1970
+## [8] -146.6839
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 50.2301500 26.9972393 26.9144928  0.8153757
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="co"># logLik(car_.45)</span></span></code></pre></div>
+</div>
+<div id="table-6-without-normalized-space" class="section level4">
+<h4><span class="header-section-number">0.0.3.4</span> Table 6 (without normalized space)</h4>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>(car_.<span class="dv">05</span> &lt;-<span class="st"> </span><span class="kw">Discrete_CM</span>(</span>
+<span id="cb32-2"><a href="#cb32-2"></a>  <span class="dt">formula =</span> choice <span class="op">~</span><span class="st">  </span>ttme,</span>
+<span id="cb32-3"><a href="#cb32-3"></a>  <span class="dt">case_id =</span> <span class="st">&quot;indv&quot;</span>,</span>
+<span id="cb32-4"><a href="#cb32-4"></a>  <span class="dt">alternatives =</span> <span class="st">&quot;mode&quot;</span>,</span>
+<span id="cb32-5"><a href="#cb32-5"></a>  <span class="dt">reference =</span> <span class="st">&quot;car&quot;</span>,</span>
+<span id="cb32-6"><a href="#cb32-6"></a>  <span class="dt">alternative_specific =</span> <span class="kw">c</span>(<span class="st">&quot;ttme&quot;</span>),</span>
+<span id="cb32-7"><a href="#cb32-7"></a>  <span class="dt">data =</span> TravelChoice,</span>
+<span id="cb32-8"><a href="#cb32-8"></a>  <span class="dt">distribution =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb32-9"><a href="#cb32-9"></a>  <span class="dt">freedom_degrees =</span> <span class="fl">.05</span></span>
+<span id="cb32-10"><a href="#cb32-10"></a>))</span></code></pre></div>
+<pre><code>## $`Nb. iterations`
+## [1] 15
+## 
+## $coefficients
+##                             [,1]
+## X.Intercept. air    1.722068e+14
+## X.Intercept. bus    9.673849e+13
+## X.Intercept. train  1.010417e+14
+## ttme               -2.720199e+12
+## 
+## $`Log-likelihood`
+## [1] -129.7607
+## 
+## $LogLikIter
+##  [1]    0.0000 -291.1218 -260.7820 -223.1702 -197.7633 -178.8835 -164.7447
+##  [8] -154.1584 -146.2936 -140.5425 -136.4374 -133.6116 -131.7686 -130.6603
+## [15] -130.0731 -129.8212 -129.7607
+## 
+## $X_M_i
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    0    0   64
+## [2,]    0    1    0   40
+## [3,]    0    0    1   44
+## 
+## $stderr
+## [1] 3.196290e+14 1.674936e+14 1.740068e+14 5.285761e+12
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;glmcat&quot;</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="co"># logLik(car_.05)</span></span></code></pre></div>
+<p>Adjacent examples Design matrix for cases</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>dat_p &lt;-<span class="st"> </span>TravelChoice[<span class="dv">1</span><span class="op">:</span><span class="dv">8</span>,]</span></code></pre></div>
+<p>The order is alphabetical</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># (adj_1 &lt;- Discrete_CM(</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a><span class="co">#   formula = choice ~ hinc + psize + gc + ttme,</span></span>
+<span id="cb36-3"><a href="#cb36-3"></a><span class="co">#   case_id = &quot;indv&quot;,</span></span>
+<span id="cb36-4"><a href="#cb36-4"></a><span class="co">#   alternatives = &quot;mode&quot;,</span></span>
+<span id="cb36-5"><a href="#cb36-5"></a><span class="co">#   reference = c(&quot;train&quot;),</span></span>
+<span id="cb36-6"><a href="#cb36-6"></a><span class="co">#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),</span></span>
+<span id="cb36-7"><a href="#cb36-7"></a><span class="co">#   data = dat_p,</span></span>
+<span id="cb36-8"><a href="#cb36-8"></a><span class="co">#   distribution = &quot;logistic&quot;,</span></span>
+<span id="cb36-9"><a href="#cb36-9"></a><span class="co">#   ratio = &quot;adjacent&quot;</span></span>
+<span id="cb36-10"><a href="#cb36-10"></a><span class="co"># ))</span></span>
+<span id="cb36-11"><a href="#cb36-11"></a><span class="co"># </span></span>
+<span id="cb36-12"><a href="#cb36-12"></a><span class="co"># (adj_2 &lt;- Discrete_CM(</span></span>
+<span id="cb36-13"><a href="#cb36-13"></a><span class="co">#   formula = choice ~ hinc[car] + psize[air] + gc + ttme,</span></span>
+<span id="cb36-14"><a href="#cb36-14"></a><span class="co">#   case_id = &quot;indv&quot;,</span></span>
+<span id="cb36-15"><a href="#cb36-15"></a><span class="co">#   alternatives = &quot;mode&quot;,</span></span>
+<span id="cb36-16"><a href="#cb36-16"></a><span class="co">#   reference = c(&quot;train&quot;),</span></span>
+<span id="cb36-17"><a href="#cb36-17"></a><span class="co">#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),</span></span>
+<span id="cb36-18"><a href="#cb36-18"></a><span class="co">#   data = dat_p,</span></span>
+<span id="cb36-19"><a href="#cb36-19"></a><span class="co">#   distribution = &quot;logistic&quot;,</span></span>
+<span id="cb36-20"><a href="#cb36-20"></a><span class="co">#   ratio = &quot;adjacent&quot;</span></span>
+<span id="cb36-21"><a href="#cb36-21"></a><span class="co"># ))</span></span>
+<span id="cb36-22"><a href="#cb36-22"></a><span class="co"># </span></span>
+<span id="cb36-23"><a href="#cb36-23"></a><span class="co"># (adj_3 &lt;- Discrete_CM(</span></span>
+<span id="cb36-24"><a href="#cb36-24"></a><span class="co">#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,</span></span>
+<span id="cb36-25"><a href="#cb36-25"></a><span class="co">#   case_id = &quot;indv&quot;,</span></span>
+<span id="cb36-26"><a href="#cb36-26"></a><span class="co">#   alternatives = &quot;mode&quot;,</span></span>
+<span id="cb36-27"><a href="#cb36-27"></a><span class="co">#   reference = c(&quot;air&quot;),</span></span>
+<span id="cb36-28"><a href="#cb36-28"></a><span class="co">#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),</span></span>
+<span id="cb36-29"><a href="#cb36-29"></a><span class="co">#   data = dat_p,</span></span>
+<span id="cb36-30"><a href="#cb36-30"></a><span class="co">#   distribution = &quot;logistic&quot;,</span></span>
+<span id="cb36-31"><a href="#cb36-31"></a><span class="co">#   ratio = &quot;adjacent&quot;</span></span>
+<span id="cb36-32"><a href="#cb36-32"></a><span class="co"># ))</span></span></code></pre></div>
+<p>Extended example</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="co"># (adj_4 &lt;- Discrete_CM(</span></span>
+<span id="cb37-2"><a href="#cb37-2"></a><span class="co">#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,</span></span>
+<span id="cb37-3"><a href="#cb37-3"></a><span class="co">#   case_id = &quot;indv&quot;,</span></span>
+<span id="cb37-4"><a href="#cb37-4"></a><span class="co">#   alternatives = &quot;mode&quot;,</span></span>
+<span id="cb37-5"><a href="#cb37-5"></a><span class="co">#   reference = c(&quot;air&quot;),</span></span>
+<span id="cb37-6"><a href="#cb37-6"></a><span class="co">#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),</span></span>
+<span id="cb37-7"><a href="#cb37-7"></a><span class="co">#   data = TravelChoice,</span></span>
+<span id="cb37-8"><a href="#cb37-8"></a><span class="co">#   distribution = &quot;logistic&quot;,</span></span>
+<span id="cb37-9"><a href="#cb37-9"></a><span class="co">#   ratio = &quot;adjacent&quot;</span></span>
+<span id="cb37-10"><a href="#cb37-10"></a><span class="co"># ))</span></span>
+<span id="cb37-11"><a href="#cb37-11"></a><span class="co"># </span></span>
+<span id="cb37-12"><a href="#cb37-12"></a><span class="co"># (adj_5 &lt;- Discrete_CM(</span></span>
+<span id="cb37-13"><a href="#cb37-13"></a><span class="co">#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,</span></span>
+<span id="cb37-14"><a href="#cb37-14"></a><span class="co">#   case_id = &quot;indv&quot;,</span></span>
+<span id="cb37-15"><a href="#cb37-15"></a><span class="co">#   alternatives = &quot;mode&quot;,</span></span>
+<span id="cb37-16"><a href="#cb37-16"></a><span class="co">#   reference = c(&quot;air&quot;),</span></span>
+<span id="cb37-17"><a href="#cb37-17"></a><span class="co">#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),</span></span>
+<span id="cb37-18"><a href="#cb37-18"></a><span class="co">#   data = TravelChoice,</span></span>
+<span id="cb37-19"><a href="#cb37-19"></a><span class="co">#   distribution = &quot;cauchit&quot;,</span></span>
+<span id="cb37-20"><a href="#cb37-20"></a><span class="co">#   ratio = &quot;adjacent&quot;</span></span>
+<span id="cb37-21"><a href="#cb37-21"></a><span class="co"># ))</span></span>
+<span id="cb37-22"><a href="#cb37-22"></a><span class="co"># </span></span>
+<span id="cb37-23"><a href="#cb37-23"></a><span class="co"># (ref_4 &lt;- Discrete_CM(</span></span>
+<span id="cb37-24"><a href="#cb37-24"></a><span class="co">#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,</span></span>
+<span id="cb37-25"><a href="#cb37-25"></a><span class="co">#   case_id = &quot;indv&quot;,</span></span>
+<span id="cb37-26"><a href="#cb37-26"></a><span class="co">#   alternatives = &quot;mode&quot;,</span></span>
+<span id="cb37-27"><a href="#cb37-27"></a><span class="co">#   reference = c(&quot;air&quot;),</span></span>
+<span id="cb37-28"><a href="#cb37-28"></a><span class="co">#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),</span></span>
+<span id="cb37-29"><a href="#cb37-29"></a><span class="co">#   data = TravelChoice,</span></span>
+<span id="cb37-30"><a href="#cb37-30"></a><span class="co">#   distribution = &quot;logistic&quot;,</span></span>
+<span id="cb37-31"><a href="#cb37-31"></a><span class="co">#   ratio = &quot;reference&quot;</span></span>
+<span id="cb37-32"><a href="#cb37-32"></a><span class="co"># ))</span></span>
+<span id="cb37-33"><a href="#cb37-33"></a><span class="co"># </span></span>
+<span id="cb37-34"><a href="#cb37-34"></a><span class="co"># (ref_5 &lt;- Discrete_CM(</span></span>
+<span id="cb37-35"><a href="#cb37-35"></a><span class="co">#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,</span></span>
+<span id="cb37-36"><a href="#cb37-36"></a><span class="co">#   case_id = &quot;indv&quot;,</span></span>
+<span id="cb37-37"><a href="#cb37-37"></a><span class="co">#   alternatives = &quot;mode&quot;,</span></span>
+<span id="cb37-38"><a href="#cb37-38"></a><span class="co">#   reference = c(&quot;air&quot;),</span></span>
+<span id="cb37-39"><a href="#cb37-39"></a><span class="co">#   alternative_specific = c(&quot;gc&quot;, &quot;ttme&quot;),</span></span>
+<span id="cb37-40"><a href="#cb37-40"></a><span class="co">#   data = TravelChoice,</span></span>
+<span id="cb37-41"><a href="#cb37-41"></a><span class="co">#   distribution = &quot;cauchit&quot;,</span></span>
+<span id="cb37-42"><a href="#cb37-42"></a><span class="co">#   ratio = &quot;reference&quot;</span></span>
+<span id="cb37-43"><a href="#cb37-43"></a><span class="co"># ))</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
