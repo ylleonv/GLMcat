@@ -10,7 +10,6 @@ output:
      df_print: kable
      fontsize: 12pt
 vignette: >
-  %\VignetteEngine{knitr::knitr}
   %\VignetteIndexEntry{GLMcat examples of use}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}

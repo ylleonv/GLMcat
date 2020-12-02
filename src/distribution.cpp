@@ -837,7 +837,7 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
 
     Eigen::MatrixXd Block_cat = Matrix_trans.block(0,ind_b_var*(N_cats-1),Matrix_trans.rows(), N_cats-1);
 
-    // Rcout << Block_cat << std::endl;
+    // Rcout << "paso1" << std::endl;
 
     if( effect_specific_for2[ind_b_var] != "" ){
       String cat_loop = effect_specific_for2[ind_b_var];
@@ -853,13 +853,12 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
         count_re_var = count_re_var+1;
 
       }else if(ad_or_ref == "adjacent"){
+        // Rcout << "es adjc" << std::endl;
         if (is_ref_alt_spe(ind_b_var) == 0){
           Var_to_keep = cat_index[cat_loop];
         }else{
-          int var1 = cat_index[cat_loop];
-          Var_to_keep = var1-1;}
-        Rcout << Var_to_keep << std::endl;
-
+          // int var1 = cat_index[cat_loop];
+          Var_to_keep = N_cats;}
         // NumericVector Ind_adj(N_cats+2);
         // Ind_adj[Var_to_keep+1] = 1;
         // Ind_adj[Var_to_keep] = -1;
@@ -867,8 +866,8 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
         // Ind_adj.erase(N_cats+1);
         // Ind_adj.erase(N_cats);
         // NumericVector Ind_rep = rep(Ind_adj,N_ind);
-        NumericVector to_mul;
-        NumericVector Adj_vec;
+        NumericVector to_mul(Block_cat.rows());
+        NumericVector Adj_vec(Block_cat.rows());
         // NumericVector to_mul = wrap(Block_cat.rowwise().sum());
         if (is_ref_alt_spe(ind_b_var) == 0){
           NumericVector Ind_adj(N_cats+2);
@@ -880,7 +879,8 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
           NumericVector Ind_rep = rep(Ind_adj,N_ind);
           to_mul = wrap(Block_cat.rowwise().sum());
           Adj_vec = Ind_rep * to_mul;
-          print(to_mul);
+          // Rcout << "vec resultante 1" << std::endl;
+          // print(Adj_vec);
         }else{
           NumericVector Ind_adj(N_cats+2);
           Ind_adj[N_cats-1] = -1;
@@ -888,11 +888,12 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
           Ind_adj.erase(0);
           Ind_adj.erase(N_cats+1);
           Ind_adj.erase(N_cats);
-          print(Ind_adj);
+          // print(Ind_adj);
           NumericVector Ind_rep = rep(Ind_adj,N_ind);
           to_mul = wrap(-Block_cat.block(0, 0, Matrix_trans.rows(),1));
           Adj_vec = Ind_rep * to_mul;
-          print(to_mul);
+          // Rcout << "vec resultante 2" << std::endl;
+          // print(Adj_vec);
         }
         // NumericVector Adj_vec = Ind_rep * to_mul;
         Eigen::Map<Eigen::VectorXd> Adj_vec1(Rcpp::as<Eigen::Map<Eigen::VectorXd>>(Adj_vec));
