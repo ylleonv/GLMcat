@@ -8,14 +8,14 @@ head(TravelChoice)
 str(TravelChoice)
 
 ## -----------------------------------------------------------------------------
-(exp_8.4 <- Discrete_CM(
-  formula = choice ~ hinc[air] + gc + invt,
+exp_8.4 <- Discrete_CM(
+  formula = choice ~ hinc + gc + invt,
   case_id = "indv",
   alternatives = "mode",
   reference = "air",
   data = TravelChoice,
   alternative_specific = c("gc", "invt"),
-  distribution = "logistic", ratio = "adjadsdcent"))
+  distribution = "logistic")
 
 ## -----------------------------------------------------------------------------
 summary(exp_8.4)
@@ -155,28 +155,28 @@ summary(exp_8.4)
 dat_p <- TravelChoice[1:8,]
 
 ## -----------------------------------------------------------------------------
-(adj_1 <- Discrete_CM(
-  formula = choice ~ hinc + psize + gc + ttme,
-  case_id = "indv",
-  alternatives = "mode",
-  reference = c("train"),
-  alternative_specific = c("gc", "ttme"),
-  data = dat_p,
-  distribution = "logistic",
-  ratio = "adjacent"
-))
-#
-(adj_2 <- Discrete_CM(
-  formula = choice ~ hinc[car] + psize[air] + gc + ttme,
-  case_id = "indv",
-  alternatives = "mode",
-  reference = c("train"),
-  alternative_specific = c("gc", "ttme"),
-  data = dat_p,
-  distribution = "logistic",
-  ratio = "adjacent"
-))
-#
+# (adj_1 <- Discrete_CM(
+#   formula = choice ~ hinc + psize + gc + ttme,
+#   case_id = "indv",
+#   alternatives = "mode",
+#   reference = c("train"),
+#   alternative_specific = c("gc", "ttme"),
+#   data = dat_p,
+#   distribution = "logistic",
+#   ratio = "adjacent"
+# ))
+# 
+# (adj_2 <- Discrete_CM(
+#   formula = choice ~ hinc[car] + psize[air] + gc + ttme,
+#   case_id = "indv",
+#   alternatives = "mode",
+#   reference = c("train"),
+#   alternative_specific = c("gc", "ttme"),
+#   data = dat_p,
+#   distribution = "logistic",
+#   ratio = "adjacent"
+# ))
+# 
 # (adj_3 <- Discrete_CM(
 #   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
 #   case_id = "indv",
@@ -199,7 +199,7 @@ dat_p <- TravelChoice[1:8,]
 #   distribution = "logistic",
 #   ratio = "adjacent"
 # ))
-#
+# 
 # (adj_5 <- Discrete_CM(
 #   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
 #   case_id = "indv",
@@ -210,7 +210,7 @@ dat_p <- TravelChoice[1:8,]
 #   distribution = "cauchit",
 #   ratio = "adjacent"
 # ))
-#
+# 
 # (ref_4 <- Discrete_CM(
 #   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
 #   case_id = "indv",
@@ -221,7 +221,7 @@ dat_p <- TravelChoice[1:8,]
 #   distribution = "logistic",
 #   ratio = "reference"
 # ))
-#
+# 
 # (ref_5 <- Discrete_CM(
 #   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
 #   case_id = "indv",
