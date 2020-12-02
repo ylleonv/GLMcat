@@ -265,16 +265,16 @@ The order is alphabetical
 Extended example
 
 ```{r }
-(adj_4 <- Discrete_CM(
-  formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
-  case_id = "indv",
-  alternatives = "mode",
-  reference = c("air"),
-  alternative_specific = c("gc", "ttme"),
-  data = TravelChoice,
-  distribution = "logistic",
-  ratio = "adjacent"
-))
+# (adj_4 <- Discrete_CM(
+#   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
+#   case_id = "indv",
+#   alternatives = "mode",
+#   reference = c("air"),
+#   alternative_specific = c("gc", "ttme"),
+#   data = TravelChoice,
+#   distribution = "logistic",
+#   ratio = "adjacent"
+# ))
 
 # (adj_5 <- Discrete_CM(
 #   formula = choice ~ hinc[air] + psize[bus] + gc + ttme,
