@@ -87,7 +87,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& 
 
 distribution dist_cum;
 
-//' Family of models for categorical responses
+//' Family of cumulative models for ordinal responses
 //'
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
 //' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.

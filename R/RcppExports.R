@@ -16,7 +16,6 @@
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-#' @param ratio ratio to use, options are reference or adjacent.
 #' @return Discrete_CM returns a list which can be examined with the function summary.
 #' @examples
 #' library(GLMcat)
@@ -27,8 +26,8 @@
 #' distribution = "logistic")
 #' @note For this models it is not allowed to exclude the intercept.
 #' @export
-Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees, ratio) {
-    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees, ratio)
+Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees) {
+    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees)
 }
 
 #' Family of models for categorical responses
@@ -47,7 +46,7 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' data(DisturbedDreams)
 #' GLMcat(formula = Level ~ Age,
 #' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#' data = DisturbedDreams, distribution = "logistic")
+#' data = DisturbedDreams, distribution = "logistic", ratio = "reference")
 GLMcat <- function(formula, ratio, distribution, categories_order, proportional_effects, data, freedom_degrees) {
     .Call(`_GLMcat_GLMcat`, formula, ratio, distribution, categories_order, proportional_effects, data, freedom_degrees)
 }
@@ -72,7 +71,7 @@ predict_glmcat <- function(model_object, data, type) {
     .Call(`_GLMcat_predict_glmcat`, model_object, data, type)
 }
 
-#' Family of models for categorical responses
+#' Family of cumulative models for ordinal responses
 #'
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
 #' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.

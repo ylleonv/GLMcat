@@ -23,7 +23,7 @@ using namespace Eigen;
 //' data(DisturbedDreams)
 //' GLMcat(formula = Level ~ Age,
 //' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-//' data = DisturbedDreams, distribution = "logistic")
+//' data = DisturbedDreams, distribution = "logistic", ratio = "reference")
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
             std::string ratio, std::string distribution,

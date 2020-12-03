@@ -752,18 +752,20 @@ List All_pre_data(Formula formula, DataFrame input_data, CharacterVector var_inf
 // }
 
 Eigen::MatrixXd Extend_alt_specific(DataFrame alt_specific, int N_cats, int N_ind,
-                                    CharacterVector var_alt_specific, String ad_or_ref){
+                                    CharacterVector var_alt_specific
+                                      // , String ad_or_ref
+){
   Eigen::VectorXd Ones1 = Eigen::VectorXd::Ones(N_cats-1);
   Eigen::MatrixXd Iden_Q = Eigen::MatrixXd::Identity(N_cats,N_cats);
 
   Eigen::MatrixXd Iden_Q1 = Eigen::MatrixXd::Identity(N_cats+1,N_cats+1);
   Eigen::MatrixXd Iden_Q11 =  Iden_Q1.block(1, 0, N_cats, N_cats);
-  if(ad_or_ref != "reference"){Iden_Q = Iden_Q - Iden_Q11;
-    Iden_Q.conservativeResize(Iden_Q.rows() - 1, Iden_Q.cols());
-  }else{
-    Iden_Q.conservativeResize(Iden_Q.rows() - 1, Iden_Q.cols());
-    Iden_Q.col(N_cats-1) = -Ones1;
-  }
+  // if(ad_or_ref != "reference"){Iden_Q = Iden_Q - Iden_Q11;
+  //   Iden_Q.conservativeResize(Iden_Q.rows() - 1, Iden_Q.cols());
+  // }else{
+  Iden_Q.conservativeResize(Iden_Q.rows() - 1, Iden_Q.cols());
+  Iden_Q.col(N_cats-1) = -Ones1;
+  // }
   NumericMatrix alt_specific_num = internal::convert_using_rfunction(alt_specific[var_alt_specific], "as.matrix");
   Eigen::Map<Eigen::MatrixXd> M_alt_specific = as<Eigen::Map<Eigen::MatrixXd> >(alt_specific_num);
   Eigen::MatrixXd Matrix_trans((N_cats-1)*N_ind,var_alt_specific.length());
@@ -780,7 +782,9 @@ Eigen::MatrixXd Extend_alt_specific(DataFrame alt_specific, int N_cats, int N_in
 // Para cada individuo, como sus ingresos, seran los mismos para todas las categorias
 Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_ind,
                                      CharacterVector var_alt_specific,  DataFrame Var_alt,
-                                     String ref_cat, String ad_or_ref){
+                                     String ref_cat
+                                       // , String ad_or_ref
+){
 
   CharacterVector var_case_specific = Var_Not_In(case_specific, var_alt_specific);
   DataFrame effect_specific_for1 = Var_alt[var_case_specific];
@@ -842,65 +846,65 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
     if( effect_specific_for2[ind_b_var] != "" ){
       String cat_loop = effect_specific_for2[ind_b_var];
       int Var_to_keep ;
-      if(ad_or_ref == "reference"){
-        if (is_ref_alt_spe(ind_b_var) == 0){
-          // EL INDICE DE LAS COLUMNAS CON LAS QUE ME VOY A QUEDAR PARA LA MATRIX EXTENDIDA
-          Var_to_keep = cat_index[cat_loop];
-        }else{
-          int var1 = cat_index[cat_loop];
-          Var_to_keep = var1-1;}
-        Matrix_trans.block(0,count_re_var,Matrix_trans.rows(), 1) = Block_cat.block(0, Var_to_keep, Matrix_trans.rows(),1);
-        count_re_var = count_re_var+1;
+      // if(ad_or_ref == "reference"){
+      if (is_ref_alt_spe(ind_b_var) == 0){
+        // EL INDICE DE LAS COLUMNAS CON LAS QUE ME VOY A QUEDAR PARA LA MATRIX EXTENDIDA
+        Var_to_keep = cat_index[cat_loop];
+      }else{
+        int var1 = cat_index[cat_loop];
+        Var_to_keep = var1-1;}
+      Matrix_trans.block(0,count_re_var,Matrix_trans.rows(), 1) = Block_cat.block(0, Var_to_keep, Matrix_trans.rows(),1);
+      count_re_var = count_re_var+1;
 
-      }else if(ad_or_ref == "adjacent"){
-        // Rcout << "es adjc" << std::endl;
-        if (is_ref_alt_spe(ind_b_var) == 0){
-          Var_to_keep = cat_index[cat_loop];
-        }else{
-          // int var1 = cat_index[cat_loop];
-          Var_to_keep = N_cats;}
-        // NumericVector Ind_adj(N_cats+2);
-        // Ind_adj[Var_to_keep+1] = 1;
-        // Ind_adj[Var_to_keep] = -1;
-        // Ind_adj.erase(0);
-        // Ind_adj.erase(N_cats+1);
-        // Ind_adj.erase(N_cats);
-        // NumericVector Ind_rep = rep(Ind_adj,N_ind);
-        NumericVector to_mul(Block_cat.rows());
-        NumericVector Adj_vec(Block_cat.rows());
-        // NumericVector to_mul = wrap(Block_cat.rowwise().sum());
-        if (is_ref_alt_spe(ind_b_var) == 0){
-          NumericVector Ind_adj(N_cats+2);
-          Ind_adj[Var_to_keep+1] = 1;
-          Ind_adj[Var_to_keep] = -1;
-          Ind_adj.erase(0);
-          Ind_adj.erase(N_cats+1);
-          Ind_adj.erase(N_cats);
-          NumericVector Ind_rep = rep(Ind_adj,N_ind);
-          to_mul = wrap(Block_cat.rowwise().sum());
-          Adj_vec = Ind_rep * to_mul;
-          // Rcout << "vec resultante 1" << std::endl;
-          // print(Adj_vec);
-        }else{
-          NumericVector Ind_adj(N_cats+2);
-          Ind_adj[N_cats-1] = -1;
-          // Ind_adj[Var_to_keep] = -1;
-          Ind_adj.erase(0);
-          Ind_adj.erase(N_cats+1);
-          Ind_adj.erase(N_cats);
-          // print(Ind_adj);
-          NumericVector Ind_rep = rep(Ind_adj,N_ind);
-          to_mul = wrap(-Block_cat.block(0, 0, Matrix_trans.rows(),1));
-          Adj_vec = Ind_rep * to_mul;
-          // Rcout << "vec resultante 2" << std::endl;
-          // print(Adj_vec);
-        }
-        // NumericVector Adj_vec = Ind_rep * to_mul;
-        Eigen::Map<Eigen::VectorXd> Adj_vec1(Rcpp::as<Eigen::Map<Eigen::VectorXd>>(Adj_vec));
-        Matrix_trans.block(0,count_re_var,Matrix_trans.rows(), 1) = Adj_vec1;
-        count_re_var = count_re_var+1;
-        // print(Adj_vec);
-      }else{stop("Error: Unknown link. Valid options are reference or adjacent");}
+      // }else if(ad_or_ref == "adjacent"){
+      //   // Rcout << "es adjc" << std::endl;
+      //   if (is_ref_alt_spe(ind_b_var) == 0){
+      //     Var_to_keep = cat_index[cat_loop];
+      //   }else{
+      //     // int var1 = cat_index[cat_loop];
+      //     Var_to_keep = N_cats;}
+      //   // NumericVector Ind_adj(N_cats+2);
+      //   // Ind_adj[Var_to_keep+1] = 1;
+      //   // Ind_adj[Var_to_keep] = -1;
+      //   // Ind_adj.erase(0);
+      //   // Ind_adj.erase(N_cats+1);
+      //   // Ind_adj.erase(N_cats);
+      //   // NumericVector Ind_rep = rep(Ind_adj,N_ind);
+      //   NumericVector to_mul(Block_cat.rows());
+      //   NumericVector Adj_vec(Block_cat.rows());
+      //   // NumericVector to_mul = wrap(Block_cat.rowwise().sum());
+      //   if (is_ref_alt_spe(ind_b_var) == 0){
+      //     NumericVector Ind_adj(N_cats+2);
+      //     Ind_adj[Var_to_keep+1] = 1;
+      //     Ind_adj[Var_to_keep] = -1;
+      //     Ind_adj.erase(0);
+      //     Ind_adj.erase(N_cats+1);
+      //     Ind_adj.erase(N_cats);
+      //     NumericVector Ind_rep = rep(Ind_adj,N_ind);
+      //     to_mul = wrap(Block_cat.rowwise().sum());
+      //     Adj_vec = Ind_rep * to_mul;
+      //     // Rcout << "vec resultante 1" << std::endl;
+      //     // print(Adj_vec);
+      //   }else{
+      //     NumericVector Ind_adj(N_cats+2);
+      //     Ind_adj[N_cats-1] = -1;
+      //     // Ind_adj[Var_to_keep] = -1;
+      //     Ind_adj.erase(0);
+      //     Ind_adj.erase(N_cats+1);
+      //     Ind_adj.erase(N_cats);
+      //     // print(Ind_adj);
+      //     NumericVector Ind_rep = rep(Ind_adj,N_ind);
+      //     to_mul = wrap(-Block_cat.block(0, 0, Matrix_trans.rows(),1));
+      //     Adj_vec = Ind_rep * to_mul;
+      //     // Rcout << "vec resultante 2" << std::endl;
+      //     // print(Adj_vec);
+      //   }
+      // NumericVector Adj_vec = Ind_rep * to_mul;
+      // Eigen::Map<Eigen::VectorXd> Adj_vec1(Rcpp::as<Eigen::Map<Eigen::VectorXd>>(Adj_vec));
+      // Matrix_trans.block(0,count_re_var,Matrix_trans.rows(), 1) = Adj_vec1;
+      // count_re_var = count_re_var+1;
+      // print(Adj_vec);
+      // }else{stop("Error: Unknown link. Valid options are reference or adjacent");}
 
     }else{
       Matrix_trans.block(0,count_re_var,Matrix_trans.rows(), N_cats-1) = Block_cat;
@@ -916,18 +920,21 @@ Eigen::MatrixXd Extend_All_design(DataFrame Final_mat,
                                   DataFrame Var_alt,
                                   CharacterVector var_alt_specific,
                                   int N_ind, int N_cats,
-                                  String ref_cat, String ad_or_ref){
+                                  String ref_cat
+                                    // , String ad_or_ref
+){
 
   LogicalVector any_alternative_specific = !is_na(var_alt_specific); // TRUE IF ANY
 
   CharacterVector var_case_specific = Var_Not_In(Final_mat, var_alt_specific);
 
-  Eigen::MatrixXd Ex_case_M = Extend_case_specific(Final_mat, N_cats, N_ind, var_alt_specific, Var_alt , ref_cat, ad_or_ref);
-
+  Eigen::MatrixXd Ex_case_M = Extend_case_specific(Final_mat, N_cats, N_ind, var_alt_specific, Var_alt , ref_cat);
+  // Eigen::MatrixXd Ex_case_M = Extend_case_specific(Final_mat, N_cats, N_ind, var_alt_specific, Var_alt , ref_cat, ad_or_ref);
   Eigen::MatrixXd Design_Matrix;
 
   if (any_alternative_specific[0]) {
-    Eigen::MatrixXd Ex_alt_M = Extend_alt_specific(Final_mat, N_cats, N_ind, var_alt_specific, ad_or_ref);
+    Eigen::MatrixXd Ex_alt_M = Extend_alt_specific(Final_mat, N_cats, N_ind, var_alt_specific);
+    // Eigen::MatrixXd Ex_alt_M = Extend_alt_specific(Final_mat, N_cats, N_ind, var_alt_specific, ad_or_ref);
     int rows_t = Ex_case_M.rows();
     Design_Matrix.conservativeResize(rows_t,Ex_case_M.cols()+Ex_alt_M.cols());
     Design_Matrix.block(0,0,rows_t,Ex_case_M.cols()) = Ex_case_M;
@@ -961,8 +968,9 @@ List distribution::select_data_nested(Formula formula,
                                       String Alternatives,
                                       CharacterVector ref_cat,
                                       CharacterVector var_alt_specific,
-                                      DataFrame input_data,
-                                      String ad_or_ref
+                                      DataFrame input_data
+                                        //   ,
+                                        // String ad_or_ref
 ) {
 
   List Formula_l = formula_entry(formula);
@@ -1037,7 +1045,9 @@ List distribution::select_data_nested(Formula formula,
                                                     var_alt_specific,
                                                     Response_M.rows(),
                                                     Response_L["N_cat"],
-                                                              ref_cat1, ad_or_ref);
+                                                              ref_cat1
+                                                      // , ad_or_ref
+  );
 
 
   return List::create(

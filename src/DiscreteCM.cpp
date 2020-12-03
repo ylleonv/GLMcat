@@ -21,7 +21,6 @@ using namespace Eigen;
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-//' @param ratio ratio to use, options are reference or adjacent.
 //' @return Discrete_CM returns a list which can be examined with the function summary.
 //' @examples
 //' library(GLMcat)
@@ -40,8 +39,7 @@ List Discrete_CM(Formula formula,
                  CharacterVector alternative_specific,
                  DataFrame data,
                  std::string distribution,
-                 double freedom_degrees,
-                 String ratio
+                 double freedom_degrees
 ){
 
   class distribution dist1;
@@ -51,7 +49,9 @@ List Discrete_CM(Formula formula,
                                          alternatives,
                                          reference,
                                          alternative_specific,
-                                         data, ratio
+                                         data
+                                           //   ,
+                                           // ratio
   );
 
   Eigen::MatrixXd Y_init = Full_M["Response_M"];
@@ -97,37 +97,37 @@ List Discrete_CM(Formula formula,
       Y_M_i = Y_init.row(i);
       eta = X_M_i * BETA;
 
-      if(ratio == "reference"){
-        ReferenceF ref;
-        if(distribution == "logistic"){
-          pi = ref.inverse_logistic(eta);
-          D = ref.inverse_derivative_logistic(eta);
-        }else if(distribution == "normal"){
-          pi = ref.inverse_normal(eta);
-          D = ref.inverse_derivative_normal(eta);
-        }else if(distribution == "cauchit"){
-          pi = ref.inverse_cauchit(eta);
-          D = ref.inverse_derivative_cauchit(eta);
-        }else if(distribution == "student"){
-          pi = ref.inverse_student(eta, freedom_degrees);
-          D = ref.inverse_derivative_student(eta, freedom_degrees);
-        }
-      }else{
-        AdjacentR adj;
-        if(distribution == "logistic"){
-          pi = adj.inverse_logistic(eta);
-          D = adj.inverse_derivative_logistic(eta);
-        }else if(distribution == "normal"){
-          pi = adj.inverse_normal(eta);
-          D = adj.inverse_derivative_normal(eta);
-        }else if(distribution == "cauchit"){
-          pi = adj.inverse_cauchit(eta);
-          D = adj.inverse_derivative_cauchit(eta);
-        }else if(distribution == "student"){
-          pi = adj.inverse_student(eta, freedom_degrees);
-          D = adj.inverse_derivative_student(eta, freedom_degrees);
-        }
+      // if(ratio == "reference"){
+      ReferenceF ref;
+      if(distribution == "logistic"){
+        pi = ref.inverse_logistic(eta);
+        D = ref.inverse_derivative_logistic(eta);
+      }else if(distribution == "normal"){
+        pi = ref.inverse_normal(eta);
+        D = ref.inverse_derivative_normal(eta);
+      }else if(distribution == "cauchit"){
+        pi = ref.inverse_cauchit(eta);
+        D = ref.inverse_derivative_cauchit(eta);
+      }else if(distribution == "student"){
+        pi = ref.inverse_student(eta, freedom_degrees);
+        D = ref.inverse_derivative_student(eta, freedom_degrees);
       }
+      // }else{
+      //   AdjacentR adj;
+      //   if(distribution == "logistic"){
+      //     pi = adj.inverse_logistic(eta);
+      //     D = adj.inverse_derivative_logistic(eta);
+      //   }else if(distribution == "normal"){
+      //     pi = adj.inverse_normal(eta);
+      //     D = adj.inverse_derivative_normal(eta);
+      //   }else if(distribution == "cauchit"){
+      //     pi = adj.inverse_cauchit(eta);
+      //     D = adj.inverse_derivative_cauchit(eta);
+      //   }else if(distribution == "student"){
+      //     pi = adj.inverse_student(eta, freedom_degrees);
+      //     D = adj.inverse_derivative_student(eta, freedom_degrees);
+      //   }
+      // }
 
       Cov_i = Eigen::MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
       W_in = D * Cov_i.inverse();
@@ -196,8 +196,7 @@ RCPP_MODULE(discretemodule){
                               _["alternative_specific"] = CharacterVector::create( NA_STRING),
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
                               _["distribution"] = "a",
-                              _["freedom_degrees"] = 1.0,
-                              _["ratio"] = "reference"),
+                              _["freedom_degrees"] = 1.0),
                               "Discrete Choice Model");
 
 }
