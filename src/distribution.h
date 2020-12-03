@@ -30,8 +30,9 @@ public:
                           String Alternatives,
                           CharacterVector ref_cat,
                           CharacterVector var_alt_specific,
-                          DataFrame input_data,
-                          String ratio
+                          DataFrame input_data
+                          //   ,
+                          // String ratio
   );
 
   distribution();

@@ -12,8 +12,7 @@ Discrete_CM(
   alternative_specific = NA_character_,
   data = c(1, NA, NaN, Inf, -Inf),
   distribution = "a",
-  freedom_degrees = 1,
-  ratio = "reference"
+  freedom_degrees = 1
 )
 }
 \arguments{
@@ -32,8 +31,6 @@ Discrete_CM(
 \item{distribution}{an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
-
-\item{ratio}{ratio to use, options are reference or adjacent.}
 }
 \value{
 Discrete_CM returns a list which can be examined with the function summary.

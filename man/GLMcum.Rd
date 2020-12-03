@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{GLMcum}
 \alias{GLMcum}
-\title{Family of models for categorical responses}
+\title{Family of cumulative models for ordinal responses}
 \usage{
 GLMcum(
   formula = NaN,
@@ -36,7 +36,7 @@ GLMcum(
 GLMcum returns a list which can be examined with the function summary.
 }
 \description{
-Family of models for categorical responses
+Family of cumulative models for ordinal responses
 }
 \examples{
 library(GLMcat)
