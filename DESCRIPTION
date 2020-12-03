@@ -3,7 +3,8 @@ Title: Generalized Linear Models for categorical responses
 Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Lorena", family = "León",role = c("aut", "cre"), email = "ylorenaleonv@gmail.com"),
-        person("Winston", "Chang", email = "winston@rstudio.com", role = "aut"))
+    person(given = "Jean", family = "Peyhardi", email = "jean.peyhardi@umontpellier.fr", role = "aut"),
+        person(given = "Catherine", family = "Trottier", email = "catherine.trottier@umontpellier.fr", role = "aut"))
 Description: Generalized Linear Models for categorical responses: In statistical modeling, there is a wide variety of regression models for categorical dependent variables (nominal or ordinal data); yet, there is no software embracing all these models together in a uniform and generalized format. We propose an R package to estimate generalized linear models implemented under the unified specification (r, F, Z) , where r represents the ratio of probabilities (reference, cumulative, adjacent, or sequential), F the cumulative distribution function for the linkage, and Z, the design matrix.
 License: MIT + file LICENSE
 Encoding: UTF-8
