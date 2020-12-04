@@ -173,7 +173,7 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_student(const Eigen::VectorXd& et
   // Rcpp::function("GLMref", &GLMref,
   //                List::create(_["formula"],
   //                             _["categories_order"],
-  //                             _["proportional_effects"] = CharacterVector::create(NA_STRING),
+  //                             _["proportional"] = CharacterVector::create(NA_STRING),
   //                             _["data"],
   //                             _["distribution"] = "logistic",
   //                             _["freedom_degrees"] = 1),

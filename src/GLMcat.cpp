@@ -13,7 +13,7 @@ using namespace Eigen;
 //' @param ratio an string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
 //' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c
-//' @param proportional_effects a character vector indicating the name of the variables with a proportional effect.
+//' @param proportional a character vector indicating the name of the variables with a proportional effect.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
 //' @return GLMcat returns a list which can be examined with the function summary.
@@ -28,7 +28,7 @@ using namespace Eigen;
 List GLMcat(Formula formula,
             std::string ratio, std::string distribution,
             CharacterVector categories_order,
-            CharacterVector proportional_effects,
+            CharacterVector proportional,
             DataFrame data,
             double freedom_degrees){
 
@@ -37,17 +37,18 @@ List GLMcat(Formula formula,
   class distribution dist1;
   const int N = data.nrows() ; // Number of observations
   List Full_M = dist1.All_pre_data_or(formula, data,
-                                      categories_order, proportional_effects);
+                                      categories_order, proportional);
 
   MatrixXd Y_init = Full_M["Response_EXT"];
   MatrixXd X_EXT = Full_M["Design_Matrix"];
   CharacterVector levs1 = Full_M["Levels"];
+  categories_order = Full_M["categories_order"];
   CharacterVector explanatory_complete = Full_M["Complete_effects"];
   int N_cats = Full_M["N_cats"];
 
   int P_c = explanatory_complete.length();
   int P_p = 0;
-  if(proportional_effects[0] != "NA"){P_p = proportional_effects.length();}
+  if(proportional[0] != "NA"){P_p = proportional.length();}
 
   int Q = Y_init.cols();
   int K = Q + 1;
@@ -244,8 +245,8 @@ List GLMcat(Formula formula,
     }
   }
   if(P_p > 0){
-    for(int var_p = 0 ; var_p < proportional_effects.size() ; var_p++){
-      names[(Q*P_c) + var_p] = proportional_effects[var_p];
+    for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
+      names[(Q*P_c) + var_p] = proportional[var_p];
     }
   }
 
@@ -283,31 +284,31 @@ List GLMcat(Formula formula,
 
   List output_list = List::create(
     Named("coefficients") = coef,
+    Named("stderr") = Std_Error,
     Named("iteration") = iteration,
     Named("ratio") = ratio,
     // Named("AIC") = AIC,
     // Named("BIC") = BIC,
-    Named("freedom_degrees") = freedom_degrees,
-    Named("levs1") = levs1,
-    Named("stderr") = Std_Error,
-    Rcpp::Named("df") = df,
+    // Named("levs1") = levs1,
+    Rcpp::Named("df of the model") = df,
     // Rcpp::Named("predict_glmcated") = predict_glmcated,
-    Rcpp::Named("fitted") = pi_ma,
+    // Rcpp::Named("fitted") = pi_ma,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
-    Rcpp::Named("Y_init_vec") = Y_init_vec,
-    Rcpp::Named("dev_log") = dev_log,
+    // Rcpp::Named("Y_init_vec") = Y_init_vec,
+    // Rcpp::Named("dev_log") = dev_log,
     Rcpp::Named("deviance") = deviance,
-    Rcpp::Named("residuals") = residuals,
+    // Rcpp::Named("residuals") = residuals,
     Named("Log-likelihood") = LogLik,
     // Named("freedom_degrees") = freedom_degrees,
     // Named("Y_init") = Y_init,
     // Named("LogLikIter") = LogLikIter,
     Named("formula") = formula,
     Named("categories_order") = categories_order,
-    Named("proportional_effects") = proportional_effects,
+    Named("proportional") = proportional,
     Named("N_cats") = N_cats,
     Named("nobs_glmcat") = N,
-    Named("distribution") = distribution
+    Named("distribution") = distribution,
+    Named("freedom_degrees") = freedom_degrees
   );
 
   output_list.attr("class") = "glmcat";
@@ -348,7 +349,7 @@ NumericVector predict_glmcat(List model_object,
   List newdataList = dist1.All_pre_data_NEWDATA(model_object["formula"],
                                                 data,
                                                 model_object["categories_order"],
-                                                            model_object["proportional_effects"],
+                                                            model_object["proportional"],
                                                                         N_cats);
 
   Eigen::MatrixXd Design_Matrix = newdataList["Design_Matrix"];
@@ -455,8 +456,8 @@ RCPP_MODULE(GLMcatmodule){
                  List::create(_["formula"],
                               _["ratio"] = "reference",
                               _["distribution"] = "logistic",
-                              _["categories_order"],
-                               _["proportional_effects"] = CharacterVector::create(NA_STRING),
+                              _["categories_order"] = CharacterVector::create(NA_STRING),
+                               _["proportional"] = CharacterVector::create(NA_STRING),
                                _["data"],
                                 _["freedom_degrees"] = 1),
                                 "(r,F,Z)-triplet");

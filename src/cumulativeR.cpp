@@ -92,7 +92,7 @@ distribution dist_cum;
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
 //' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c
-//' @param proportional_effects a character vector indicating the name of the variables with a proportional effect.
+//' @param proportional a character vector indicating the name of the variables with a proportional effect.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
 //' @param threshold restriction to impose on the the thresholds, options are: equidistant or symmetric.
@@ -108,7 +108,7 @@ distribution dist_cum;
 // [[Rcpp::export("GLMcum")]]
 List GLMcum(Formula formula,
             CharacterVector categories_order,
-            CharacterVector proportional_effects,
+            CharacterVector proportional,
             DataFrame data,
             std::string distribution,
             double freedom_degrees,
@@ -119,7 +119,7 @@ List GLMcum(Formula formula,
 
   List Full_M = dist_cum.All_pre_data_or(formula, data,
                                          categories_order,
-                                         proportional_effects,
+                                         proportional,
                                          threshold);
 
   Eigen::MatrixXd Y_init = Full_M["Response_EXT"];
@@ -129,7 +129,7 @@ List GLMcum(Formula formula,
 
   int P_c = explanatory_complete.length();
   int P_p = 0;
-  if(proportional_effects[0] != "NA"){P_p = proportional_effects.length();}
+  if(proportional[0] != "NA"){P_p = proportional.length();}
   if(threshold == "equidistant"){P_p = P_p + 2;}
 
   int Q = Y_init.cols();
@@ -274,8 +274,8 @@ List GLMcum(Formula formula,
   }
 
   if(P_p > 0){
-    for(int var_p = 0 ; var_p < proportional_effects.size() ; var_p++){
-      names[(Q*P_c) + var_p] = proportional_effects[var_p];
+    for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
+      names[(Q*P_c) + var_p] = proportional[var_p];
     }
   }
 
@@ -351,7 +351,7 @@ RCPP_MODULE(cumulativemodule){
   Rcpp::function("GLMcum", &GLMcum,
                  List::create(_["formula"] = R_NaN,
                               _["categories_order"] = CharacterVector::create(NA_STRING),
-                              _["proportional_effects"] = CharacterVector::create(NA_STRING),
+                              _["proportional"] = CharacterVector::create(NA_STRING),
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
                               _["distribution"] = "a",
                               _["freedom_degrees"] = 1.0,

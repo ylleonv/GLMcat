@@ -18,4 +18,3 @@ Packages in Depends/Imports which should probably only be in LinkingTo:
   'BH' 'RcppEigen'
 
 ## Downstream dependencies
-

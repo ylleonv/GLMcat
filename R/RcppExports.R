@@ -36,7 +36,7 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' @param ratio an string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
 #' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c
-#' @param proportional_effects a character vector indicating the name of the variables with a proportional effect.
+#' @param proportional a character vector indicating the name of the variables with a proportional effect.
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
 #' @return GLMcat returns a list which can be examined with the function summary.
@@ -47,8 +47,8 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' GLMcat(formula = Level ~ Age,
 #' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 #' data = DisturbedDreams, distribution = "logistic", ratio = "reference")
-GLMcat <- function(formula, ratio, distribution, categories_order, proportional_effects, data, freedom_degrees) {
-    .Call(`_GLMcat_GLMcat`, formula, ratio, distribution, categories_order, proportional_effects, data, freedom_degrees)
+GLMcat <- function(formula, ratio, distribution, categories_order, proportional, data, freedom_degrees) {
+    .Call(`_GLMcat_GLMcat`, formula, ratio, distribution, categories_order, proportional, data, freedom_degrees)
 }
 
 #' predict_glmcation for glmcat model
@@ -76,7 +76,7 @@ predict_glmcat <- function(model_object, data, type) {
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
 #' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c
-#' @param proportional_effects a character vector indicating the name of the variables with a proportional effect.
+#' @param proportional a character vector indicating the name of the variables with a proportional effect.
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
 #' @param threshold restriction to impose on the the thresholds, options are: equidistant or symmetric.
@@ -89,8 +89,8 @@ predict_glmcat <- function(model_object, data, type) {
 #' GLMcum(formula = Level ~ Age,
 #' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 #' data = DisturbedDreams, distribution = "logistic")
-GLMcum <- function(formula, categories_order, proportional_effects, data, distribution, freedom_degrees, beta_init, threshold) {
-    .Call(`_GLMcat_GLMcum`, formula, categories_order, proportional_effects, data, distribution, freedom_degrees, beta_init, threshold)
+GLMcum <- function(formula, categories_order, proportional, data, distribution, freedom_degrees, beta_init, threshold) {
+    .Call(`_GLMcat_GLMcum`, formula, categories_order, proportional, data, distribution, freedom_degrees, beta_init, threshold)
 }
 
 Cat_ref1 <- function(categories_order, response_categories) {

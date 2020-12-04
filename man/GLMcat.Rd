@@ -8,8 +8,8 @@ GLMcat(
   formula,
   ratio = "reference",
   distribution = "logistic",
-  categories_order,
-  proportional_effects = NA_character_,
+  categories_order = NA_character_,
+  proportional = NA_character_,
   data,
   freedom_degrees = 1L
 )
@@ -23,7 +23,7 @@ GLMcat(
 
 \item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c}
 
-\item{proportional_effects}{a character vector indicating the name of the variables with a proportional effect.}
+\item{proportional}{a character vector indicating the name of the variables with a proportional effect.}
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 

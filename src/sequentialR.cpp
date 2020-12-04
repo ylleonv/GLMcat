@@ -171,7 +171,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_student(const Eigen::VectorXd& e
 // // [[Rcpp::export]]
 // List GLMseq(Formula formula,
 //             CharacterVector categories_order,
-//             CharacterVector proportional_effects,
+//             CharacterVector proportional,
 //             DataFrame data,
 //             std::string distribution,
 //             double freedom_degrees){
@@ -179,7 +179,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_student(const Eigen::VectorXd& e
 //   const int N = data.nrows() ; // Number of observations
 //
 //   List Full_M = dist_seq.All_pre_data_or(formula, data,
-//                                       categories_order, proportional_effects);
+//                                       categories_order, proportional);
 //
 //   Eigen::MatrixXd Y_init = Full_M["Response_EXT"];
 //   Eigen::MatrixXd X_EXT = Full_M["Design_Matrix"];
@@ -188,7 +188,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_student(const Eigen::VectorXd& e
 //
 //   int P_c = explanatory_complete.length();
 //   int P_p = 0;
-//   if(proportional_effects[0] != "NA"){P_p = proportional_effects.length();}
+//   if(proportional[0] != "NA"){P_p = proportional.length();}
 //   int P =  P_c +  P_p ; // Number of explanatory variables without intercept
 //
 //   int Q = Y_init.cols();
@@ -291,8 +291,8 @@ Eigen::MatrixXd SequentialR::inverse_derivative_student(const Eigen::VectorXd& e
 //     }
 //   }
 //   if(P_p > 0){
-//     for(int var_p = 0 ; var_p < proportional_effects.size() ; var_p++){
-//       names[(Q*P_c) + var_p] = proportional_effects[var_p];
+//     for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
+//       names[(Q*P_c) + var_p] = proportional[var_p];
 //     }
 //   }
 //
@@ -362,7 +362,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_student(const Eigen::VectorXd& e
 //   Rcpp::function("GLMseq", &GLMseq,
 //                  List::create(_["formula"] = R_NaN,
 //                               _["categories_order"] = CharacterVector::create( "A", NA_STRING),
-//                               _["proportional_effects"] = CharacterVector::create(NA_STRING),
+//                               _["proportional"] = CharacterVector::create(NA_STRING),
 //                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
 //                               _["distribution"] = "a",
 //                               _["freedom_degrees"] = 1.0),

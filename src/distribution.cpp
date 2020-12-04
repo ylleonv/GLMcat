@@ -119,8 +119,15 @@ List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
   Function my_asnumeric = base_env["as.numeric"];
   Function my_cbind = base_env["cbind"];
   Function my_order = base_env["order"];
+  Function my_levels = base_env["levels"];
 
   List M_matrix = Model_Matrix_or(input_data, formula);
+
+  if(categories_order.length() == 1){
+    // print(my_levels(M_matrix["Response"]));
+    categories_order = my_levels(M_matrix["Response"]);
+  }
+
   List Cat_ref_or_L = Cat_ref_order(categories_order, M_matrix["Response"]);
   NumericMatrix Design = M_matrix["df_new"];
 
@@ -223,7 +230,8 @@ List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
     Named("Response_EXT") = Response_EXT,
     Named("Levels") = Levels,
     Named("Complete_effects") = colnames_final_m,
-    Named("N_cats") = N_cats
+    Named("N_cats") = N_cats,
+    Named("categories_order") = categories_order
   );
 }
 
