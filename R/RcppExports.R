@@ -45,7 +45,6 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' library(GLMcat)
 #' data(DisturbedDreams)
 #' GLMcat(formula = Level ~ Age,
-#' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 #' data = DisturbedDreams, distribution = "logistic", ratio = "reference")
 GLMcat <- function(formula, ratio, distribution, categories_order, proportional, data, freedom_degrees) {
     .Call(`_GLMcat_GLMcat`, formula, ratio, distribution, categories_order, proportional, data, freedom_degrees)

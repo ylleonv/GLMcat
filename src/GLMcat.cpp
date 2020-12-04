@@ -22,7 +22,6 @@ using namespace Eigen;
 //' library(GLMcat)
 //' data(DisturbedDreams)
 //' GLMcat(formula = Level ~ Age,
-//' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 //' data = DisturbedDreams, distribution = "logistic", ratio = "reference")
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
