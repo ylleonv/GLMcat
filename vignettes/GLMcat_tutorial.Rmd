@@ -18,7 +18,7 @@ abstract: |
 output: rmarkdown::pdf_document
 bibliography: bibliography_vignette.bib
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{A Tutorial on fitting Generalized Linear Models with the GLMcat Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
