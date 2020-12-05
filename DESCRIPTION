@@ -17,6 +17,7 @@ LinkingTo:
     RcppEigen
 Imports: 
     Rcpp,
+    BH,
     forcats,
     methods,
     stats,
