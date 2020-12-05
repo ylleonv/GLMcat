@@ -19,10 +19,8 @@ using namespace Eigen;
 //' @return GLMcat returns a list which can be examined with the function summary.
 //' @export
 //' @examples
-//' library(GLMcat)
 //' data(DisturbedDreams)
-//' GLMcat(formula = Level ~ Age,
-//' data = DisturbedDreams, distribution = "logistic", ratio = "reference")
+//' mod1 = GLMcat(formula = Level ~ Age, data = DisturbedDreams, distribution = "logistic", ratio = "reference")
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
             std::string ratio, std::string distribution,
@@ -229,6 +227,9 @@ List GLMcat(Formula formula,
   // var_beta = (((X_EXT.transpose() * F_i_final) * X_EXT).inverse());
 
 
+  CompleteOrthogonalDecomposition<MatrixXd> cqr(F_i_final);
+  MatrixXd pinv = cqr.pseudoInverse();
+
   var_beta = F_i_final.inverse();
   Std_Error = var_beta.diagonal();
   Std_Error = Std_Error.array().sqrt() ;
@@ -287,8 +288,8 @@ List GLMcat(Formula formula,
     Named("iteration") = iteration,
     Named("ratio") = ratio,
     // Named("AIC") = AIC,
-    // Named("BIC") = BIC,
-    // Named("levs1") = levs1,
+    Named("pinv") = pinv,
+    Named("var_beta") = var_beta,
     Rcpp::Named("df of the model") = df,
     // Rcpp::Named("predict_glmcated") = predict_glmcated,
     // Rcpp::Named("fitted") = pi_ma,

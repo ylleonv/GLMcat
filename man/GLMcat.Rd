@@ -36,8 +36,6 @@ GLMcat returns a list which can be examined with the function summary.
 Family of models for categorical responses
 }
 \examples{
-library(GLMcat)
 data(DisturbedDreams)
-GLMcat(formula = Level ~ Age,
-data = DisturbedDreams, distribution = "logistic", ratio = "reference")
+mod1 = GLMcat(formula = Level ~ Age, data = DisturbedDreams, distribution = "logistic", ratio = "reference")
 }
