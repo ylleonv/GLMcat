@@ -37,5 +37,6 @@ Family of models for categorical responses
 }
 \examples{
 data(DisturbedDreams)
-mod1 = GLMcat(formula = Level ~ Age, data = DisturbedDreams, distribution = "logistic", ratio = "reference")
+mod1 <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+distribution = "logistic",ratio = "reference")
 }
