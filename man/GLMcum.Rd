@@ -5,11 +5,11 @@
 \title{Family of cumulative models for ordinal responses}
 \usage{
 GLMcum(
-  formula = NaN,
+  formula,
   categories_order = NA_character_,
   proportional = NA_character_,
-  data = c(1, NA, NaN, Inf, -Inf),
-  distribution = "a",
+  data,
+  distribution = "logistic",
   freedom_degrees = 1,
   beta_init = 1,
   threshold = NA_character_
