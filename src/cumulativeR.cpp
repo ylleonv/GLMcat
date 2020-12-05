@@ -1,6 +1,9 @@
+#include "distribution.h"
 #include "cumulativeR.h"
+
 using namespace std;
 using namespace Rcpp ;
+using namespace Eigen;
 
 #include <algorithm>    // std::sort
 
@@ -85,8 +88,6 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& 
   return (F * R);
 }
 
-distribution dist_cum;
-
 //' Family of cumulative models for ordinal responses
 //'
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
@@ -115,17 +116,22 @@ List GLMcum(Formula formula,
             Eigen::VectorXd beta_init,
             std::string threshold){
 
-  const int N = data.nrows() ; // Number of observations
+  class distribution dist_cum;
 
+  std::string ratio = "cumulative";
+
+  const int N = data.nrows() ; // Number of observations
   List Full_M = dist_cum.All_pre_data_or(formula, data,
                                          categories_order,
                                          proportional,
-                                         threshold);
+                                         threshold, ratio);
 
   Eigen::MatrixXd Y_init = Full_M["Response_EXT"];
   Eigen::MatrixXd X_EXT = Full_M["Design_Matrix"];
   CharacterVector levs1 = Full_M["Levels"];
+  categories_order = Full_M["categories_order"];
   CharacterVector explanatory_complete = Full_M["Complete_effects"];
+  int N_cats = Full_M["N_cats"];
 
   int P_c = explanatory_complete.length();
   int P_p = 0;
@@ -134,6 +140,8 @@ List GLMcum(Formula formula,
 
   int Q = Y_init.cols();
   int K = Q + 1;
+
+  Rcout << "funciona glmcum" << std::endl;
 
   // // // Beta initialization with zeros
   Eigen::MatrixXd BETA2;
@@ -179,7 +187,7 @@ List GLMcum(Formula formula,
   }
 
   int iteration = 0;
-  double check_tutz = 1.0;
+  // double check_tutz = 1.0;
   double Stop_criteria = 1.0;
   Eigen::MatrixXd X_M_i ;
   Eigen::VectorXd Y_M_i ;
@@ -229,6 +237,8 @@ List GLMcum(Formula formula,
       }else if(distribution == "gompertz"){
         pi = cum.inverse_gompertz(eta);
         D = cum.inverse_derivative_gompertz(eta);
+      }else{
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
       }
 
       Cov_i = Eigen::MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
@@ -250,6 +260,16 @@ List GLMcum(Formula formula,
     LogLikIter(iteration+1) = LogLik;
     Stop_criteria = (abs(LogLikIter(iteration+1) - LogLikIter(iteration))) / (epsilon + (abs(LogLikIter(iteration+1)))) ;
     Eigen::VectorXd beta_old = BETA;
+
+    // MatrixXd inverse;
+    FullPivLU<MatrixXd> lu(F_i);
+    bool invertible = lu.isInvertible();
+
+    if(!invertible) {
+      Rcpp::stop("Fisher matrix is not invertible");
+    }
+
+
     BETA = BETA + (F_i.inverse() * Score_i);
     // check_tutz = ((BETA - beta_old).norm())/(beta_old.norm()+check_tutz);
     iteration = iteration + 1;
@@ -260,6 +280,8 @@ List GLMcum(Formula formula,
   var_beta = F_i_final.inverse();
   Std_Error = var_beta.diagonal();
   Std_Error = Std_Error.array().sqrt() ;
+
+  Rcout << "cum1" << std::endl;
 
   std::vector<std::string> text=as<std::vector<std::string>>(explanatory_complete);
   std::vector<std::string> level_text=as<std::vector<std::string>>(categories_order);
@@ -273,26 +295,33 @@ List GLMcum(Formula formula,
     }
   }
 
+  Rcout << "cum2" << std::endl;
+
   if(P_p > 0){
     for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
       names[(Q*P_c) + var_p] = proportional[var_p];
     }
   }
 
+  Rcout << "cum3" << std::endl;
+
   if (threshold == "equidistant"){
     names[Q*P_c + P_p-2] = dist_cum.concatenate("(Intercept)", level_text[0]);
     names[Q*P_c + P_p-1] = "(Intercept) distance";
   }
 
+  Rcout << "cum4" << std::endl;
+
   // // TO NAMED THE RESULT BETAS
   NumericMatrix coef = wrap(BETA);
-  rownames(coef) = names;
+  // rownames(coef) = names; // this is the problem
+
+  Rcout << "cum5" << std::endl;
+  // AIC
+  // double AIC = (-2*LogLik) + (2 *coef.length());
 
   // AIC
-  double AIC = (-2*LogLik) + (2 *coef.length());
-
-  // AIC
-  double BIC = (-2*LogLik) + (coef.length() * log(N) );
+  // double BIC = (-2*LogLik) + (coef.length() * log(N) );
 
   int df = (N*Q) - coef.length();
 
@@ -326,38 +355,52 @@ List GLMcum(Formula formula,
   double deviance = dev_log.sum();
   deviance = -2*deviance;
 
-  return List::create(
-    Named("Nb. iterations") = iteration-1 ,
+  List output_list = List::create(
     Named("coefficients") = coef,
-    Named("AIC") = AIC,
-    Named("BIC") = BIC,
-    // Named("X_EXT") = X_EXT,
-    // Named("Y_init") = Y_init,
-    Named("BETA") = BETA,
     Named("stderr") = Std_Error,
-    Rcpp::Named("df") = df,
-    Rcpp::Named("predict_glmcated") = predict_glmcated,
-    Rcpp::Named("fitted") = pi_ma,
-    Rcpp::Named("pi_ma_vec") = pi_ma_vec,
-    Rcpp::Named("Y_init_vec") = Y_init_vec,
-    Rcpp::Named("dev_log") = dev_log,
+    Named("iteration") = iteration,
+    // Named("ratio") = ratio,
+    // Named("AIC") = AIC,
+    // Named("pinv") = pinv,
+    Named("var_beta") = var_beta,
+    Rcpp::Named("df of the model") = df,
+    // Rcpp::Named("predict_glmcated") = predict_glmcated,
+    // Rcpp::Named("fitted") = pi_ma,
+    // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
+    // Rcpp::Named("Y_init_vec") = Y_init_vec,
+    // Rcpp::Named("dev_log") = dev_log,
     Rcpp::Named("deviance") = deviance,
-    Rcpp::Named("residuals") = residuals,
-    Named("Log-likelihood") = LogLik
+    // Rcpp::Named("residuals") = residuals,
+    Named("Log-likelihood") = LogLik,
+    // Named("freedom_degrees") = freedom_degrees,
+    // Named("Y_init") = Y_init,
+    // Named("LogLikIter") = LogLikIter,
+    Named("formula") = formula,
+    Named("categories_order") = categories_order,
+    Named("proportional") = proportional,
+    Named("N_cats") = N_cats,
+    Named("nobs_glmcat") = N,
+    Named("distribution") = distribution,
+    Named("freedom_degrees") = freedom_degrees
   );
+
+  output_list.attr("class") = "glmcat";
+
+  return output_list;
 }
 
 RCPP_MODULE(cumulativemodule){
   Rcpp::function("GLMcum", &GLMcum,
-                 List::create(_["formula"] = R_NaN,
+                 List::create(_["formula"],
                               _["categories_order"] = CharacterVector::create(NA_STRING),
                               _["proportional"] = CharacterVector::create(NA_STRING),
-                              _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
-                              _["distribution"] = "a",
+                              _["data"],
+                              _["distribution"] = "logistic",
                               _["freedom_degrees"] = 1.0,
                               _["beta_init"] = NumericVector::create(1),
                               _["threshold"] = CharacterVector::create(NA_STRING)
-                 ));
+                 ),
+                 "Family of cumulative models");
   Rcpp::class_<CumulativeR>("CumulativeR")
     .constructor()
   // .method( "GLMcum", &CumulativeR::GLMcum )

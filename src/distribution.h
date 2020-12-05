@@ -16,7 +16,8 @@ public:
                        DataFrame input_data,
                        CharacterVector categories_order,
                        CharacterVector proportional_effect,
-                       std::string threshold = "NA");
+                       std::string threshold = "NA",
+                       std::string ratio = "non_cum");
 
   List All_pre_data_NEWDATA(Formula formula,
                             DataFrame NEWDATA,
@@ -31,8 +32,8 @@ public:
                           CharacterVector ref_cat,
                           CharacterVector var_alt_specific,
                           DataFrame input_data
-                          //   ,
-                          // String ratio
+                            //   ,
+                            // String ratio
   );
 
   distribution();

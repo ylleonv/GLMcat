@@ -113,7 +113,8 @@ List Cat_ref_order(CharacterVector categories_order, SEXP response_categories){
 List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
                                    CharacterVector categories_order,
                                    CharacterVector proportional_effect,
-                                   std::string threshold){
+                                   std::string threshold,
+                                   std::string ratio){
 
   Environment base_env("package:base");
   Function my_asnumeric = base_env["as.numeric"];
@@ -181,21 +182,35 @@ List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
 
   Eigen::MatrixXd X_EXT_COMPLETE;
 
-  if (threshold == "equidistant"){ // eRASE THE LAST TWO COLUMNS ONE CORRESPONDING TO DR AND OTHER TO THE INTERCEPT
-    X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 2), Iden_Q1).eval();
-    colnames_final_m.erase(0);
-    colnames_final_m.erase(0);
-  } else {
+  // print(threshold);
+  Rcout << threshold  << std::endl;
+  CharacterVector thers = threshold;
+  LogicalVector tre_na = is_na(thers);
+  Rcout << tre_na  << std::endl;
+
+
+  if (ratio == "cumulative"){
+    if (threshold == "equidistant"){ // eRASE THE LAST TWO COLUMNS ONE CORRESPONDING TO DR AND OTHER TO THE INTERCEPT
+      Rcout << "funciona0" << std::endl;
+      X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 2), Iden_Q1).eval();
+      colnames_final_m.erase(0);
+      colnames_final_m.erase(0);
+      Rcout << "funciona1" << std::endl;
+    }else{ // caso symmetric
+      X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
+      colnames_final_m.erase(0);
+    }
+  }else{
     X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
     colnames_final_m.erase(0);
   }
 
   Eigen::MatrixXd Design_Matrix;
+  Rcout << "funciona3" << std::endl;
+  Rcout << any_alternative_specific << std::endl;
 
   if (any_alternative_specific[0]) {
-
-    // PONER ESA PARTE ACA
-
+    Rcout << "funciona4" << std::endl;
     DataFrame DF_proportional_effect = df_tans_2[proportional_effect];
     NumericMatrix Pre_DF_proportional1 = internal::convert_using_rfunction(DF_proportional_effect, "as.matrix");
     Eigen::Map<Eigen::MatrixXd> Pre_DF_proportional2 = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_proportional1);
@@ -207,13 +222,16 @@ List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
 
     // TENGO QUE PONER EL IF ACA
 
-    if (threshold == "equidistant"){
-      NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
-      Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
-      Eigen::VectorXd Ones1 = Eigen::VectorXd::Ones(Response_EXT.rows());
-      Eigen::MatrixXd Threshold_M = Eigen::kroneckerProduct(Ones1, tJac2).eval();
-      X_EXT_PROPORTIONAL.conservativeResize(X_EXT_PROPORTIONAL.rows(),X_EXT_PROPORTIONAL.cols()+2);
-      X_EXT_PROPORTIONAL.block(0,X_EXT_PROPORTIONAL.cols()-2, X_EXT_PROPORTIONAL.rows(),2) = Threshold_M;
+    if (ratio == "cumulative"){
+      if (threshold == "equidistant"){
+        Rcout << "funciona" << std::endl;
+        NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
+        Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
+        Eigen::VectorXd Ones1 = Eigen::VectorXd::Ones(Response_EXT.rows());
+        Eigen::MatrixXd Threshold_M = Eigen::kroneckerProduct(Ones1, tJac2).eval();
+        X_EXT_PROPORTIONAL.conservativeResize(X_EXT_PROPORTIONAL.rows(),X_EXT_PROPORTIONAL.cols()+2);
+        X_EXT_PROPORTIONAL.block(0,X_EXT_PROPORTIONAL.cols()-2, X_EXT_PROPORTIONAL.rows(),2) = Threshold_M;
+      }
     }
 
 
@@ -221,9 +239,11 @@ List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
     Design_Matrix.block(0,0,X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()) = X_EXT_COMPLETE;
     Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_PROPORTIONAL.cols()) = X_EXT_PROPORTIONAL;
 
-  }else{Design_Matrix = X_EXT_COMPLETE;}
+  }else{
+    Design_Matrix = X_EXT_COMPLETE;
+    }
 
-
+  Rcout << "funciona todo" << std::endl;
 
   return List::create(
     Named("Design_Matrix") = Design_Matrix,

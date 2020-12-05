@@ -35,7 +35,7 @@ List GLMcat(Formula formula,
   class distribution dist1;
   const int N = data.nrows() ; // Number of observations
   List Full_M = dist1.All_pre_data_or(formula, data,
-                                      categories_order, proportional);
+                                      categories_order, proportional, ratio);
 
   MatrixXd Y_init = Full_M["Response_EXT"];
   MatrixXd X_EXT = Full_M["Design_Matrix"];
