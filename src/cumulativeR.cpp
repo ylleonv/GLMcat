@@ -101,7 +101,6 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& 
 //' @return GLMcum returns a list which can be examined with the function summary.
 //' @export
 //' @examples
-//' library(GLMcat)
 //' data(DisturbedDreams)
 //' GLMcum(formula = Level ~ Age,
 //' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),

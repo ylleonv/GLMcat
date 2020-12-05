@@ -39,7 +39,6 @@ GLMcum returns a list which can be examined with the function summary.
 Family of cumulative models for ordinal responses
 }
 \examples{
-library(GLMcat)
 data(DisturbedDreams)
 GLMcum(formula = Level ~ Age,
 categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
