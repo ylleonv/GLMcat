@@ -12,7 +12,7 @@ GLMcum(
   distribution = "logistic",
   freedom_degrees = 1,
   beta_init = 1,
-  threshold = NA_character_
+  threshold = "standard"
 )
 }
 \arguments{
@@ -28,9 +28,9 @@ GLMcum(
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
 
-\item{beta_init}{Optionl beta initialization vector.}
+\item{beta_init}{optional beta initialization vector.}
 
-\item{threshold}{restriction to impose on the the thresholds, options are: equidistant or symmetric.}
+\item{threshold}{restriction to impose on the the thresholds, options are: standard or equidistant.}
 }
 \value{
 GLMcum returns a list which can be examined with the function summary.
@@ -40,7 +40,7 @@ Family of cumulative models for ordinal responses
 }
 \examples{
 data(DisturbedDreams)
-GLMcum(formula = Level ~ Age,
+GLMcum(formula = Level ~ Age, threshold = "equidistant",
 categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 data = DisturbedDreams, distribution = "logistic")
 }

@@ -32,8 +32,9 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(GLMcat)
 data(DisturbedDreams)
-Multinomial_mod <- GLMcat(formula = Level ~ Age, categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-data = DisturbedDreams, distribution = "logistic")
+Multinomial_mod <- GLMcat(formula = Level ~ Age, 
+                          categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+                          data = DisturbedDreams, distribution = "logistic")
 ```
 
 The model `summary` :

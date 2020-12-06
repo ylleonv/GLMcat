@@ -47,6 +47,24 @@ Eigen::VectorXd CumulativeR::inverse_gompertz(const Eigen::VectorXd& eta) const
   return in_open_corner(ordered_pi);
 }
 
+Eigen::VectorXd CumulativeR::inverse_student(const Eigen::VectorXd& eta, const double& freedom_degrees) const
+{
+  Eigen::VectorXd ordered_pi( eta.size() );
+  ordered_pi[0] = cdf_student( eta(0) , freedom_degrees);
+  for(int j=1; j<eta.size(); ++j)
+  { ordered_pi[j] = cdf_student( eta(j) , freedom_degrees ) - cdf_student( eta(j-1) , freedom_degrees ); }
+  return in_open_corner(ordered_pi);
+}
+
+Eigen::VectorXd CumulativeR::inverse_gumbel(const Eigen::VectorXd& eta) const
+{
+  Eigen::VectorXd ordered_pi( eta.size() );
+  ordered_pi[0] = cdf_gumbel( eta(0) );
+  for(int j=1; j<eta.size(); ++j)
+  { ordered_pi[j] = cdf_gumbel( eta(j) ) - cdf_gumbel( eta(j-1) ); }
+  return in_open_corner(ordered_pi);
+}
+
 
 Eigen::MatrixXd CumulativeR::inverse_derivative_logistic(const Eigen::VectorXd& eta) const
 {
@@ -78,6 +96,16 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_cauchit(const Eigen::VectorXd& e
   return (F * R);
 }
 
+Eigen::MatrixXd CumulativeR::inverse_derivative_student(const Eigen::VectorXd& eta,const double& freedom_degrees) const
+{
+  Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
+  R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
+  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  for(int j=0; j<eta.rows(); ++j)
+  { F(j,j) = pdf_student( eta(j) , freedom_degrees); }
+  return (F * R);
+}
+
 Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& eta) const
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
@@ -85,6 +113,16 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& 
   Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
   { F(j,j) = pdf_gompertz( eta(j) ); }
+  return (F * R);
+}
+
+Eigen::MatrixXd CumulativeR::inverse_derivative_gumbel(const Eigen::VectorXd& eta) const
+{
+  Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
+  R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
+  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  for(int j=0; j<eta.rows(); ++j)
+  { F(j,j) = pdf_gumbel( eta(j) ); }
   return (F * R);
 }
 
@@ -96,13 +134,13 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& 
 //' @param proportional a character vector indicating the name of the variables with a proportional effect.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-//' @param threshold restriction to impose on the the thresholds, options are: equidistant or symmetric.
-//' @param beta_init Optionl beta initialization vector.
+//' @param threshold restriction to impose on the the thresholds, options are: standard or equidistant.
+//' @param beta_init optional beta initialization vector.
 //' @return GLMcum returns a list which can be examined with the function summary.
 //' @export
 //' @examples
 //' data(DisturbedDreams)
-//' GLMcum(formula = Level ~ Age,
+//' GLMcum(formula = Level ~ Age, threshold = "equidistant",
 //' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 //' data = DisturbedDreams, distribution = "logistic")
 // [[Rcpp::export("GLMcum")]]
@@ -114,6 +152,10 @@ List GLMcum(Formula formula,
             double freedom_degrees,
             Eigen::VectorXd beta_init,
             std::string threshold){
+
+  if (!(threshold == "standard" || threshold == "equidistant" )){
+    Rcpp::stop("Unrecognized threshold restriction; options are: standard and equidistant");
+  }
 
   class distribution dist_cum;
 
@@ -135,17 +177,16 @@ List GLMcum(Formula formula,
   int P_c = explanatory_complete.length();
   int P_p = 0;
   if(proportional[0] != "NA"){P_p = proportional.length();}
-  if(threshold == "equidistant"){P_p = P_p + 2;}
+  // if(threshold == "equidistant"){P_p = P_p + 2;}
 
   int Q = Y_init.cols();
   int K = Q + 1;
-
-  Rcout << "funciona glmcum" << std::endl;
+  // Rcout << "X_EXT" << std::endl;
+  // Rcout << X_EXT << std::endl;
 
   // // // Beta initialization with zeros
   Eigen::MatrixXd BETA2;
   BETA2 = Eigen::MatrixXd::Zero(X_EXT.cols(),1);
-
   Eigen::VectorXd BETA3 = BETA2;
 
   // NumericVector seq_cat2;
@@ -180,11 +221,9 @@ List GLMcum(Formula formula,
   // }
 
   Eigen::MatrixXd BETA = BETA2;
-
   if(beta_init.size() >= 2 ){
     BETA = beta_init;
   }
-
   int iteration = 0;
   // double check_tutz = 1.0;
   double Stop_criteria = 1.0;
@@ -213,7 +252,6 @@ List GLMcum(Formula formula,
     Eigen::MatrixXd Score_i = Eigen::MatrixXd::Zero(BETA.rows(),1);
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
-
     // Loop by subject
     for (int i=0; i < N; i++){
       // Block of size (p,q), starting at (i,j): matrix.block(i,j,p,q);
@@ -236,6 +274,12 @@ List GLMcum(Formula formula,
       }else if(distribution == "gompertz"){
         pi = cum.inverse_gompertz(eta);
         D = cum.inverse_derivative_gompertz(eta);
+      }else if(distribution == "student"){
+        pi = cum.inverse_student(eta,freedom_degrees);
+        D = cum.inverse_derivative_student(eta,freedom_degrees);
+      }else if(distribution == "gumbel"){
+        pi = cum.inverse_gumbel(eta);
+        D = cum.inverse_derivative_gumbel(eta);
       }else{
         Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
       }
@@ -280,42 +324,57 @@ List GLMcum(Formula formula,
   Std_Error = var_beta.diagonal();
   Std_Error = Std_Error.array().sqrt() ;
 
-  Rcout << "cum1" << std::endl;
+  // Rcout << "cum1" << std::endl;
 
   std::vector<std::string> text=as<std::vector<std::string>>(explanatory_complete);
   std::vector<std::string> level_text=as<std::vector<std::string>>(categories_order);
-  StringVector names(Q*P_c + P_p);
 
-  if(P_c > 0){
+  StringVector names;
+
+  if(threshold == "equidistant"){
+    // if(P_c>1){ // hay alguna complete
+    StringVector names1(2*P_c + P_p);
+    int ind_name = 0;
     for(int var = 0 ; var < explanatory_complete.size() ; var++){
-      for(int cat = 0 ; cat < Q ; cat++){
-        names[(Q*var) + cat] = dist_cum.concatenate(text[var], level_text[cat]);
+      names1[ind_name] = dist_cum.concatenate(text[var], level_text[0]);
+      names1[ind_name+1] = dist_cum.concatenate(text[var], "distance");
+      ind_name = ind_name + 2;
+    }
+    if(P_p>0){ // hay alguna proporcional
+      for(int var = 0 ; var < P_p ; var++){
+        names1[ind_name] = proportional[var];
+        ind_name = ind_name + 1;
       }
     }
-  }
-
-  Rcout << "cum2" << std::endl;
-
-  if(P_p > 0){
-    for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-      names[(Q*P_c) + var_p] = proportional[var_p];
+    names = names1;
+  }else{
+    StringVector names1(Q*P_c + P_p);
+    if(P_c > 0){
+      for(int var = 0 ; var < explanatory_complete.size() ; var++){
+        for(int cat = 0 ; cat < Q ; cat++){
+          names1[(Q*var) + cat] = dist_cum.concatenate(text[var], level_text[cat]);
+        }
+      }
     }
+    if(P_p > 0){
+      for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
+        names1[(Q*P_c) + var_p] = proportional[var_p];
+      }
+    }
+    names = names1;
   }
+  // if (threshold == "equidistant"){
+  //   names[Q*P_c + P_p-2] = dist_cum.concatenate("(Intercept)", level_text[0]);
+  //   names[Q*P_c + P_p-1] = "(Intercept) distance";
+  // }
 
-  Rcout << "cum3" << std::endl;
-
-  if (threshold == "equidistant"){
-    names[Q*P_c + P_p-2] = dist_cum.concatenate("(Intercept)", level_text[0]);
-    names[Q*P_c + P_p-1] = "(Intercept) distance";
-  }
-
-  Rcout << "cum4" << std::endl;
+  // Rcout << names << std::endl;
 
   // // TO NAMED THE RESULT BETAS
   NumericMatrix coef = wrap(BETA);
-  // rownames(coef) = names; // this is the problem
+  rownames(coef) = names; // this is the problem
 
-  Rcout << "cum5" << std::endl;
+  // Rcout << coef << std::endl;
   // AIC
   // double AIC = (-2*LogLik) + (2 *coef.length());
 
@@ -394,10 +453,10 @@ RCPP_MODULE(cumulativemodule){
                               _["categories_order"] = CharacterVector::create(NA_STRING),
                               _["proportional"] = CharacterVector::create(NA_STRING),
                               _["data"],
-                              _["distribution"] = "logistic",
-                              _["freedom_degrees"] = 1.0,
-                              _["beta_init"] = NumericVector::create(1),
-                              _["threshold"] = CharacterVector::create(NA_STRING)
+                               _["distribution"] = "logistic",
+                               _["freedom_degrees"] = 1.0,
+                               _["beta_init"] = NumericVector::create(1),
+                               _["threshold"] = "standard"
                  ),
                  "Family of cumulative models");
   Rcpp::class_<CumulativeR>("CumulativeR")

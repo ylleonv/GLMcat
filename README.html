@@ -618,8 +618,9 @@ body {
 <p>This is a basic example which shows you how to solve a common problem:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(GLMcat)</span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="kw">data</span>(DisturbedDreams)</span>
-<span id="cb3-3"><a href="#cb3-3"></a>Multinomial_mod &lt;-<span class="st"> </span><span class="kw">GLMcat</span>(<span class="dt">formula =</span> Level <span class="op">~</span><span class="st"> </span>Age, <span class="dt">categories_order =</span> <span class="kw">c</span>(<span class="st">&quot;Not.severe&quot;</span>, <span class="st">&quot;Severe.1&quot;</span>, <span class="st">&quot;Severe.2&quot;</span>, <span class="st">&quot;Very.severe&quot;</span>),</span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="dt">data =</span> DisturbedDreams, <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span>)</span></code></pre></div>
+<span id="cb3-3"><a href="#cb3-3"></a>Multinomial_mod &lt;-<span class="st"> </span><span class="kw">GLMcat</span>(<span class="dt">formula =</span> Level <span class="op">~</span><span class="st"> </span>Age, </span>
+<span id="cb3-4"><a href="#cb3-4"></a>                          <span class="dt">categories_order =</span> <span class="kw">c</span>(<span class="st">&quot;Not.severe&quot;</span>, <span class="st">&quot;Severe.1&quot;</span>, <span class="st">&quot;Severe.2&quot;</span>, <span class="st">&quot;Very.severe&quot;</span>),</span>
+<span id="cb3-5"><a href="#cb3-5"></a>                          <span class="dt">data =</span> DisturbedDreams, <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span>)</span></code></pre></div>
 <p>The model <code>summary</code> :</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">summary</span>(Multinomial_mod)</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt;                         Estimate Std. Error z value  Pr(&gt;|z|)    </span></span>

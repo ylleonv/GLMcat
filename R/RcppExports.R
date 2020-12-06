@@ -77,13 +77,13 @@ predict_glmcat <- function(model_object, data, type) {
 #' @param proportional a character vector indicating the name of the variables with a proportional effect.
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-#' @param threshold restriction to impose on the the thresholds, options are: equidistant or symmetric.
-#' @param beta_init Optionl beta initialization vector.
+#' @param threshold restriction to impose on the the thresholds, options are: standard or equidistant.
+#' @param beta_init optional beta initialization vector.
 #' @return GLMcum returns a list which can be examined with the function summary.
 #' @export
 #' @examples
 #' data(DisturbedDreams)
-#' GLMcum(formula = Level ~ Age,
+#' GLMcum(formula = Level ~ Age, threshold = "equidistant",
 #' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 #' data = DisturbedDreams, distribution = "logistic")
 GLMcum <- function(formula, categories_order, proportional, data, distribution, freedom_degrees, beta_init, threshold) {
