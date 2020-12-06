@@ -7,12 +7,12 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
-//' Family of models for categorical responses
+//' Family of models for categorical responses (reference, adjacent and sequential ratio)
 //'
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
 //' @param ratio an string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
 //' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
-//' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c
+//' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default.
 //' @param proportional a character vector indicating the name of the variables with a proportional effect.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
@@ -20,7 +20,7 @@ using namespace Eigen;
 //' @export
 //' @examples
 //' data(DisturbedDreams)
-//' mod1 <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+//' GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 //' distribution = "logistic",ratio = "reference")
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
@@ -318,22 +318,21 @@ List GLMcat(Formula formula,
 }
 
 
-//' predict_glmcation for glmcat model
+//' GLMcat model predictions
 //'
-//' @param model_object glmcat model
+//' @param model_object a GLMcat model
 //' @param data a data frame in which to look for variables with which to predict_glmcat. Note that all predict_glmcator variables should be
 //' present having the same names as the variables used to fit the model.
 //' @param type he type of predict_glmcations. \code{"prob"} gives probabilities,
-//' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict_glmcator"} gives
+//' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
 //' the linear predict_glmcator.
 //' @rdname predict_glmcat
 //' @export
 //' @examples
-//' library(GLMcat)
 //' data(DisturbedDreams)
-//' GLMcat(formula = Level ~ Age,
-//' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+//' mod1 <- GLMcat(formula = Level ~ Age,
 //' data = DisturbedDreams, distribution = "logistic")
+//' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 // [[Rcpp::export("predict_glmcat")]]
 NumericVector predict_glmcat(List model_object,
                       DataFrame data,
@@ -343,7 +342,6 @@ NumericVector predict_glmcat(List model_object,
   class distribution dist1;
   // Environment base_env("package:base");
   // Function my_rowSums = base_env["rowSums"];
-
   int N_cats = model_object["N_cats"];
   Eigen::MatrixXd coef = model_object["coefficients"];
 
@@ -379,10 +377,14 @@ NumericVector predict_glmcat(List model_object,
         pi = ref.inverse_normal(predict_glmcated_eta);
       }else if(distribution == "cauchit"){
         pi = ref.inverse_cauchit(predict_glmcated_eta);
+      }else if(distribution == "gompertz"){
+        pi = ref.inverse_gompertz(predict_glmcated_eta);
+      }else if(distribution == "gumbel"){
+        pi = ref.inverse_gumbel(predict_glmcated_eta);
       }else if(distribution == "student"){
         pi = ref.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel");
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
       }
     }else if(ratio == "adjacent"){
       AdjacentR adj;
@@ -392,10 +394,14 @@ NumericVector predict_glmcat(List model_object,
         pi = adj.inverse_normal(predict_glmcated_eta);
       }else if(distribution == "cauchit"){
         pi = adj.inverse_cauchit(predict_glmcated_eta);
+      }else if(distribution == "gompertz"){
+        pi = adj.inverse_gompertz(predict_glmcated_eta);
+      }else if(distribution == "gumbel"){
+        pi = adj.inverse_gumbel(predict_glmcated_eta);
       }else if(distribution == "student"){
         pi = adj.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel");
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
       }
     }else if(ratio == "sequential"){
       SequentialR seq;
@@ -408,16 +414,17 @@ NumericVector predict_glmcat(List model_object,
         pi = seq.inverse_cauchit(predict_glmcated_eta);
       }else if(distribution == "gompertz"){
         pi = seq.inverse_gompertz(predict_glmcated_eta);
+      }else if(distribution == "gumbel"){
+        pi = seq.inverse_gumbel(predict_glmcated_eta);
+      }else if(distribution == "student"){
+        pi = seq.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel");
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
       }
     }else{
       Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
     }
-
-
     pi_total.row(i) = pi;
-
   }
 
   // NumericVector cum_prob = my_rowSums(pi_total);
@@ -434,10 +441,10 @@ NumericVector predict_glmcat(List model_object,
     predict_glmcat = pi_total;
   }else if(type == "cum.prob"){
     predict_glmcat = cum_prob;
-  }else if(type == "linear.predict_glmcator"){
+  }else if(type == "linear.predict"){
     predict_glmcat = Design_Matrix * coef;
   }else{
-    Rcpp::stop("Unrecognized type parameter; options are: prob, cum.prob, linear.predict_glmcator");
+    Rcpp::stop("Unrecognized type parameter; options are: prob, cum.prob, linear.predict");
   }
 
   return predict_glmcat;
@@ -461,11 +468,11 @@ RCPP_MODULE(GLMcatmodule){
                                _["proportional"] = CharacterVector::create(NA_STRING),
                                _["data"],
                                 _["freedom_degrees"] = 1),
-                                "(r,F,Z)-triplet");
+                                "GLMcat models");
   Rcpp::function("predict_glmcat", &predict_glmcat,
                  List::create(_["model_object"] = R_NaN,
                               _["data"],
                               _["type"] = "prob"
                  ),
-                 "predict_glmcat_Response Choice Model");
+                 "GLMcat model predictions");
 }

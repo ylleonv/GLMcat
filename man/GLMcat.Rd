@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{GLMcat}
 \alias{GLMcat}
-\title{Family of models for categorical responses}
+\title{Family of models for categorical responses (reference, adjacent and sequential ratio)}
 \usage{
 GLMcat(
   formula,
@@ -21,7 +21,7 @@ GLMcat(
 
 \item{distribution}{an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
-\item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c}
+\item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default.}
 
 \item{proportional}{a character vector indicating the name of the variables with a proportional effect.}
 
@@ -33,10 +33,10 @@ GLMcat(
 GLMcat returns a list which can be examined with the function summary.
 }
 \description{
-Family of models for categorical responses
+Family of models for categorical responses (reference, adjacent and sequential ratio)
 }
 \examples{
 data(DisturbedDreams)
-mod1 <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 distribution = "logistic",ratio = "reference")
 }

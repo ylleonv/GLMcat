@@ -12,9 +12,4 @@ installed size is 22.6Mb
     sub-directories of 1Mb or more:
       libs  22.2Mb
 
-checking CRAN incoming feasibility ... NOTE
-
-Packages in Depends/Imports which should probably only be in LinkingTo:
-  'BH' 'RcppEigen'
-
 ## Downstream dependencies

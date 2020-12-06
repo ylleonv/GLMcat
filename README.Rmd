@@ -15,39 +15,11 @@ knitr::opts_chunk$set(
 
 # GLMcat
 
-<!-- badges: start -->
-<!-- badges: end -->
-
-The goal of GLMcat is to ...
-
 ## Installation
 
-You can install the released version of GLMcat from [CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("GLMcat")
-```
-
-And the development version from [GitHub](https://github.com/) with:
+You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("ylleonv/GLMcat")
-```
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-library(GLMcat)
-data(DisturbedDreams)
-Multinomial_mod <- GLMcat(formula = Level ~ Age, 
-                          categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-                          data = DisturbedDreams, distribution = "logistic")
-```
-
-The model `summary` :
-
-```{r cars}
-summary(Multinomial_mod)
 ```

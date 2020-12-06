@@ -2,27 +2,26 @@
 % Please edit documentation in R/RcppExports.R
 \name{predict_glmcat}
 \alias{predict_glmcat}
-\title{predict_glmcation for glmcat model}
+\title{GLMcat model predictions}
 \usage{
 predict_glmcat(model_object = NaN, data, type = "prob")
 }
 \arguments{
-\item{model_object}{glmcat model}
+\item{model_object}{a GLMcat model}
 
 \item{data}{a data frame in which to look for variables with which to predict_glmcat. Note that all predict_glmcator variables should be
 present having the same names as the variables used to fit the model.}
 
 \item{type}{he type of predict_glmcations. \code{"prob"} gives probabilities,
-\code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict_glmcator"} gives
+\code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
 the linear predict_glmcator.}
 }
 \description{
-predict_glmcation for glmcat model
+GLMcat model predictions
 }
 \examples{
-library(GLMcat)
 data(DisturbedDreams)
-GLMcat(formula = Level ~ Age,
-categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+mod1 <- GLMcat(formula = Level ~ Age,
 data = DisturbedDreams, distribution = "logistic")
+predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 }

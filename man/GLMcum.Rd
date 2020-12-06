@@ -18,7 +18,7 @@ GLMcum(
 \arguments{
 \item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.}
 
-\item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c}
+\item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default.}
 
 \item{proportional}{a character vector indicating the name of the variables with a proportional effect.}
 

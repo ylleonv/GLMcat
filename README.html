@@ -603,35 +603,10 @@ body {
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <h1 id="glmcat">GLMcat</h1>
-<!-- badges: start -->
-
-<!-- badges: end -->
-
-<p>The goal of GLMcat is to …</p>
 <h2 id="installation">Installation</h2>
-<p>You can install the released version of GLMcat from <a href="https://CRAN.R-project.org">CRAN</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;GLMcat&quot;</span>)</span></code></pre></div>
-<p>And the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;ylleonv/GLMcat&quot;</span>)</span></code></pre></div>
-<h2 id="example">Example</h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(GLMcat)</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">data</span>(DisturbedDreams)</span>
-<span id="cb3-3"><a href="#cb3-3"></a>Multinomial_mod &lt;-<span class="st"> </span><span class="kw">GLMcat</span>(<span class="dt">formula =</span> Level <span class="op">~</span><span class="st"> </span>Age, </span>
-<span id="cb3-4"><a href="#cb3-4"></a>                          <span class="dt">categories_order =</span> <span class="kw">c</span>(<span class="st">&quot;Not.severe&quot;</span>, <span class="st">&quot;Severe.1&quot;</span>, <span class="st">&quot;Severe.2&quot;</span>, <span class="st">&quot;Very.severe&quot;</span>),</span>
-<span id="cb3-5"><a href="#cb3-5"></a>                          <span class="dt">data =</span> DisturbedDreams, <span class="dt">distribution =</span> <span class="st">&quot;logistic&quot;</span>)</span></code></pre></div>
-<p>The model <code>summary</code> :</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">summary</span>(Multinomial_mod)</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt;                         Estimate Std. Error z value  Pr(&gt;|z|)    </span></span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt; (Intercept) Not.severe -2.454438   0.845593 -2.9026    0.0037 ** </span></span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt; (Intercept) Severe.1   -0.554640   0.891015 -0.6225    0.5336    </span></span>
-<span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt; (Intercept) Severe.2   -1.124641   0.916512 -1.2271    0.2198    </span></span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt; Age Not.severe          0.309988   0.078044  3.9719 7.129e-05 ***</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; Age Severe.1            0.059972   0.085817  0.6988    0.4847    </span></span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; Age Severe.2            0.112281   0.086843  1.2929    0.1960    </span></span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; ---</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span></code></pre></div>
+<p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;ylleonv/GLMcat&quot;</span>)</span></code></pre></div>
 
 </body>
 </html>
