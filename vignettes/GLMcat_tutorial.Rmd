@@ -6,11 +6,6 @@ author:
   - Jean Peyhardi^[Université de Montpellier, jean.peyhardi@umontpellier.fr]
   - Catherine Trottier^[Université de Montpellier, catherine.trottier@umontpellier.fr]
 
-keywords:
-- key
-- dictionary
-- word
-
 abstract: |
   In statistical modeling, there is a wide variety of regression models for categorical responses. Yet, no software encapsulates all of these models in a standardized format. We introduce and illustrate the utility of GLMcat, the R package we developed to estimate generalized linear models implemented under the unified specification $(r, F, Z)$, where $r$ represents the ratio of probabilities (reference, cumulative, adjacent, or sequential), $F$ the cumulative distribution function for the linkage, and $Z$ the design matrix. We present the properties of the four families of models, which must be investigated when selecting the components $r$, $F$, and $Z$. The functions are user-friendly and fairly intuitive; offering the possibility to choose from a large range of models through a combination $(r, F, Z)$. Through different examples, we compare our package with VGAM and ordinal, two popular packages for implementing GLMs for categorical data.
   
