@@ -10,10 +10,11 @@ WARNING:
     consider running tools::compactPDF(gs_quality = "ebook") on these files
 
 NOTE:
-    installed size is 31.7Mb
-    sub-directories of 1Mb or more:
+    - installed size is 31.7Mb
+      sub-directories of 1Mb or more:
       libs  31.1Mb
-      
+    - Package in Depends/Imports which should probably only be in LinkingTo: 'BH'
+    
 There were no ERRORs
 
 There was 1 NOTE:
