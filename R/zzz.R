@@ -1,7 +1,7 @@
 ## usethis namespace: start
 #' @import Rcpp
 # #' @export GLMadj
-#' @export GLMcum
+# #' @export GLMcum
 # #' @export GLMseq
 # #' @export GLMref
 #' @export GLMcat
@@ -21,8 +21,8 @@
 
 loadModule("GLMcatmodule", TRUE)
 loadModule("discretemodule", TRUE)
-loadModule("discretemodule", TRUE)
-loadModule("cumulativemodule", TRUE)
+# loadModule("discretemodule", TRUE)
+# loadModule("cumulativemodule", TRUE)
 # loadModule("exportmod", TRUE)
 # loadModule("sequentialmodule", TRUE)
 # loadModule("adjacentmodule", TRUE)

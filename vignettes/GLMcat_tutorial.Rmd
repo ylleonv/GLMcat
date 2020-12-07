@@ -288,14 +288,15 @@ summary(seq_probit_c)
 
 ### Family of cumulative models
 
-The function *GLMcum* is created especially for the cumulative models:
+The function *GLMcat* has special features for the cumulative models:
 
 *(Cumulative, Logistic, Complete)*
 
 ```{r }
-cum_log_co <- GLMcum(
+cum_log_co <- GLMcat(
   formula = Level ~ Age,
-  distribution = "logistic",
+  distribution = "logistic", 
+  ratio = "cumulative",
   data = DisturbedDreams
 )
 logLik(cum_log_co)
@@ -307,11 +308,12 @@ The option for the thresholds to be equidistant is a characteristic of interest 
 *(Cumulative, Logistic, Complete-equidistant)*
 
 ```{r }
-cum_log_co_e <- GLMcum(
+cum_log_co_e <- GLMcat(
   formula = Level ~ Age,
   distribution = "logistic",
+  ratio = "cumulative",
   data = DisturbedDreams,
-  threshold = "equidistant"
+  threshold = "equidistant",
 )
 logLik(cum_log_co_e)
 summary(cum_log_co_e)
@@ -320,9 +322,10 @@ summary(cum_log_co_e)
 If we have a preliminary idea of the coefficients of the model, we can specify an initialization vector through the parameter `beta_init`:
 
 ```{r }
-cum_log_c <- GLMcum(
+cum_log_c <- GLMcat(
   formula = Level ~ Age,
   distribution = "student", freedom_degrees = 0.8,
+  ratio = "cumulative",
   data = DisturbedDreams,
   beta_init = coef(cum_log_co),
 )
@@ -333,18 +336,20 @@ summary(cum_log_c)
 The equivalence between the $(Cumulative, Gompertz, Proportional)$ and $(Sequential, Gompertz, Proportional)$ models has been demonstrated by @laara_matthes:
 
 ```{r }
-cum_gom_p <- GLMcum(
+cum_gom_p <- GLMcat(
   formula = Level ~ Age,
   distribution = "gompertz",
+  ratio = "cumulative",
   data = DisturbedDreams,
   proportional = "Age"
 )
 logLik(cum_gom_p)
 summary(cum_gom_p)
 
-seq_gom_p <- GLMcum(
+seq_gom_p <- GLMcat(
   formula = Level ~ Age,
   distribution = "gompertz",
+  ratio = "sequential",
   data = DisturbedDreams,
   proportional = "Age"
 )

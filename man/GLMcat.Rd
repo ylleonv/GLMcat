@@ -11,7 +11,9 @@ GLMcat(
   categories_order = NA_character_,
   proportional = NA_character_,
   data,
-  freedom_degrees = 1L
+  freedom_degrees = 1L,
+  beta_init = 1,
+  threshold = "standard"
 )
 }
 \arguments{
@@ -28,6 +30,10 @@ GLMcat(
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
+
+\item{beta_init}{optional beta initialization vector.}
+
+\item{threshold}{restriction to impose on the the thresholds, options are: standard or equidistant.}
 }
 \value{
 GLMcat returns a list which can be examined with the function summary.

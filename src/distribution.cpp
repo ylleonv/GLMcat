@@ -110,7 +110,8 @@ List Cat_ref_order(CharacterVector categories_order, SEXP response_categories){
 
 
 
-List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
+List distribution::All_pre_data_or(Formula formula,
+                                   DataFrame input_data,
                                    CharacterVector categories_order,
                                    CharacterVector proportional_effect,
                                    std::string threshold,
@@ -176,8 +177,8 @@ List distribution::All_pre_data_or(Formula formula, DataFrame input_data,
 
   if (ratio == "cumulative"){
     if (threshold == "equidistant"){
-      if (!any_alternative_specific[0]) { // ninguna es proporcional
-        // Rcout << "propor_cum_equ" << std::endl;
+      if (!any_alternative_specific[0]) { // ninguna es proportional
+        Rcout << "propor_cum_equ" << std::endl;
         NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
         Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
         // Rcout << tJac2 << std::endl;

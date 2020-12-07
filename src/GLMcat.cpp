@@ -2,6 +2,7 @@
 #include "reference.h"
 #include "adjacentR.h"
 #include "sequentialR.h"
+#include "cumulativeR.h"
 
 using namespace std;
 using namespace Rcpp ;
@@ -16,6 +17,8 @@ using namespace Eigen;
 //' @param proportional a character vector indicating the name of the variables with a proportional effect.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
+//' @param threshold restriction to impose on the the thresholds, options are: standard or equidistant.
+//' @param beta_init optional beta initialization vector.
 //' @return GLMcat returns a list which can be examined with the function summary.
 //' @export
 //' @examples
@@ -25,18 +28,31 @@ using namespace Eigen;
 //'
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
-            std::string ratio, std::string distribution,
+            std::string ratio,
+            std::string distribution,
             CharacterVector categories_order,
             CharacterVector proportional,
             DataFrame data,
-            double freedom_degrees){
+            double freedom_degrees,
+            Eigen::VectorXd beta_init,
+            std::string threshold){
 
-  // S4 x("pcglm");
+  if((ratio != "cumulative") && (threshold != "standard")){
+    Rcpp::stop("Unrecognized threshold restriction; for reference, adjacent and sequential ratio the only valid option is standard");
+  }
+
+  if (!(threshold == "standard" || threshold == "equidistant" )){
+    Rcpp::stop("Unrecognized threshold restriction; options are: standard and equidistant");
+  }
 
   class distribution dist1;
   const int N = data.nrows() ; // Number of observations
-  List Full_M = dist1.All_pre_data_or(formula, data,
-                                      categories_order, proportional, ratio);
+  List Full_M = dist1.All_pre_data_or(formula,
+                                      data,
+                                      categories_order,
+                                      proportional,
+                                      threshold,
+                                      ratio);
 
   MatrixXd Y_init = Full_M["Response_EXT"];
   MatrixXd X_EXT = Full_M["Design_Matrix"];
@@ -51,9 +67,15 @@ List GLMcat(Formula formula,
 
   int Q = Y_init.cols();
   int K = Q + 1;
-  // // // Beta initialization with zeros
-  MatrixXd BETA;
-  BETA = MatrixXd::Zero(X_EXT.cols(),1);
+  // // // Beta initialization with zeros or by user option
+  Eigen::MatrixXd BETA2;
+  BETA2 = Eigen::MatrixXd::Zero(X_EXT.cols(),1);
+  Eigen::VectorXd BETA3 = BETA2;
+
+  Eigen::MatrixXd BETA = BETA2;
+  if(beta_init.size() >= 2 ){
+    BETA = beta_init;
+  }
   //
   int iteration = 0;
   // double check_tutz = 1.0;
@@ -161,6 +183,30 @@ List GLMcat(Formula formula,
         }else{
           Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
         }
+      }else if(ratio == "cumulative"){
+        CumulativeR cum;
+        // Vector pi depends on selected distribution
+        if(distribution == "logistic"){
+          pi = cum.inverse_logistic(eta);
+          D = cum.inverse_derivative_logistic(eta);
+        }else if(distribution == "normal"){
+          pi = cum.inverse_normal(eta);
+          D = cum.inverse_derivative_normal(eta);
+        }else if(distribution == "cauchit"){
+          pi = cum.inverse_cauchit(eta);
+          D = cum.inverse_derivative_cauchit(eta);
+        }else if(distribution == "gompertz"){
+          pi = cum.inverse_gompertz(eta);
+          D = cum.inverse_derivative_gompertz(eta);
+        }else if(distribution == "student"){
+          pi = cum.inverse_student(eta,freedom_degrees);
+          D = cum.inverse_derivative_student(eta,freedom_degrees);
+        }else if(distribution == "gumbel"){
+          pi = cum.inverse_gumbel(eta);
+          D = cum.inverse_derivative_gumbel(eta);
+        }else{
+          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+        }
       }else{
         Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
       }
@@ -229,8 +275,8 @@ List GLMcat(Formula formula,
   // var_beta = (((X_EXT.transpose() * F_i_final) * X_EXT).inverse());
 
 
-  CompleteOrthogonalDecomposition<MatrixXd> cqr(F_i_final);
-  MatrixXd pinv = cqr.pseudoInverse();
+  // CompleteOrthogonalDecomposition<MatrixXd> cqr(F_i_final);
+  // MatrixXd pinv = cqr.pseudoInverse();
 
   var_beta = F_i_final.inverse();
   Std_Error = var_beta.diagonal();
@@ -238,24 +284,56 @@ List GLMcat(Formula formula,
 
   std::vector<std::string> text=as<std::vector<std::string>>(explanatory_complete);
   std::vector<std::string> level_text=as<std::vector<std::string>>(levs1);
-  StringVector names(Q*P_c + P_p);
-  if(P_c > 0){
+  // StringVector names(Q*P_c + P_p);
+  // if(P_c > 0){
+  //   for(int var = 0 ; var < explanatory_complete.size() ; var++){
+  //     for(int cat = 0 ; cat < Q ; cat++){
+  //       names[(Q*var) + cat] = dist1.concatenate(text[var], level_text[cat]);
+  //     }
+  //   }
+  // }
+  // if(P_p > 0){
+  //   for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
+  //     names[(Q*P_c) + var_p] = proportional[var_p];
+  //   }
+  // }
+
+  StringVector names;
+  if(threshold == "equidistant"){
+    // if(P_c>1){ // hay alguna complete
+    StringVector names1(2*P_c + P_p);
+    int ind_name = 0;
     for(int var = 0 ; var < explanatory_complete.size() ; var++){
-      for(int cat = 0 ; cat < Q ; cat++){
-        names[(Q*var) + cat] = dist1.concatenate(text[var], level_text[cat]);
+      names1[ind_name] = dist1.concatenate(text[var], level_text[0]);
+      names1[ind_name+1] = dist1.concatenate(text[var], "distance");
+      ind_name = ind_name + 2;
+    }
+    if(P_p>0){ // hay alguna proportional
+      for(int var = 0 ; var < P_p ; var++){
+        names1[ind_name] = proportional[var];
+        ind_name = ind_name + 1;
       }
     }
-  }
-  if(P_p > 0){
-    for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-      names[(Q*P_c) + var_p] = proportional[var_p];
+    names = names1;
+  }else{
+    StringVector names1(Q*P_c + P_p);
+    if(P_c > 0){
+      for(int var = 0 ; var < explanatory_complete.size() ; var++){
+        for(int cat = 0 ; cat < Q ; cat++){
+          names1[(Q*var) + cat] = dist1.concatenate(text[var], level_text[cat]);
+        }
+      }
     }
+    if(P_p > 0){
+      for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
+        names1[(Q*P_c) + var_p] = proportional[var_p];
+      }
+    }
+    names = names1;
   }
-
   // TO NAMED THE RESULT BETAS
   NumericMatrix coef = wrap(BETA);
   rownames(coef) = names;
-
   int df = coef.length();
 
   // IC
@@ -290,7 +368,7 @@ List GLMcat(Formula formula,
     Named("iteration") = iteration,
     Named("ratio") = ratio,
     // Named("AIC") = AIC,
-    Named("pinv") = pinv,
+    // Named("pinv") = pinv,
     Named("var_beta") = var_beta,
     Rcpp::Named("df of the model") = df,
     // Rcpp::Named("fitted") = pi_ma,
@@ -334,9 +412,9 @@ List GLMcat(Formula formula,
 //' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 // [[Rcpp::export("predict_glmcat")]]
 NumericVector predict_glmcat(List model_object,
-                      DataFrame data,
-                      String type
-                      ){
+                             DataFrame data,
+                             String type
+){
 
   class distribution dist1;
   // Environment base_env("package:base");
@@ -421,7 +499,7 @@ NumericVector predict_glmcat(List model_object,
         Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
       }
     }else{
-      Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
+      Rcpp::stop("Unrecognized radio for prediction; options are: reference, adjacent, and sequential");
     }
     pi_total.row(i) = pi;
   }
@@ -447,12 +525,12 @@ NumericVector predict_glmcat(List model_object,
   }
 
   return predict_glmcat;
-    // List::create(
-    // Named("Design_Matrix") = Design_Matrix,
-    // Named("Eta") = predict_glmcated_eta,
-    // Named("cum_prob") = cum_prob,
-    // Named("pi_total") = pi_total
-    // Named("")
+  // List::create(
+  // Named("Design_Matrix") = Design_Matrix,
+  // Named("Eta") = predict_glmcated_eta,
+  // Named("cum_prob") = cum_prob,
+  // Named("pi_total") = pi_total
+  // Named("")
   // );
 
 }
@@ -464,14 +542,16 @@ RCPP_MODULE(GLMcatmodule){
                               _["ratio"] = "reference",
                               _["distribution"] = "logistic",
                               _["categories_order"] = CharacterVector::create(NA_STRING),
-                               _["proportional"] = CharacterVector::create(NA_STRING),
-                               _["data"],
-                                _["freedom_degrees"] = 1),
-                                "GLMcat models");
+                              _["proportional"] = CharacterVector::create(NA_STRING),
+                              _["data"],
+                               _["freedom_degrees"] = 1,
+                               _["beta_init"] = NumericVector::create(1),
+                               _["threshold"] = "standard"),
+                               "GLMcat models");
   Rcpp::function("predict_glmcat", &predict_glmcat,
                  List::create(_["model_object"] = R_NaN,
                               _["data"],
-                              _["type"] = "prob"
+                               _["type"] = "prob"
                  ),
                  "GLMcat model predictions");
 }

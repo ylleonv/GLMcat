@@ -25,8 +25,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // GLMcat
-List GLMcat(Formula formula, std::string ratio, std::string distribution, CharacterVector categories_order, CharacterVector proportional, DataFrame data, double freedom_degrees);
-RcppExport SEXP _GLMcat_GLMcat(SEXP formulaSEXP, SEXP ratioSEXP, SEXP distributionSEXP, SEXP categories_orderSEXP, SEXP proportionalSEXP, SEXP dataSEXP, SEXP freedom_degreesSEXP) {
+List GLMcat(Formula formula, std::string ratio, std::string distribution, CharacterVector categories_order, CharacterVector proportional, DataFrame data, double freedom_degrees, Eigen::VectorXd beta_init, std::string threshold);
+RcppExport SEXP _GLMcat_GLMcat(SEXP formulaSEXP, SEXP ratioSEXP, SEXP distributionSEXP, SEXP categories_orderSEXP, SEXP proportionalSEXP, SEXP dataSEXP, SEXP freedom_degreesSEXP, SEXP beta_initSEXP, SEXP thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -37,7 +37,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< CharacterVector >::type proportional(proportionalSEXP);
     Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
     Rcpp::traits::input_parameter< double >::type freedom_degrees(freedom_degreesSEXP);
-    rcpp_result_gen = Rcpp::wrap(GLMcat(formula, ratio, distribution, categories_order, proportional, data, freedom_degrees));
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type beta_init(beta_initSEXP);
+    Rcpp::traits::input_parameter< std::string >::type threshold(thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(GLMcat(formula, ratio, distribution, categories_order, proportional, data, freedom_degrees, beta_init, threshold));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -51,24 +53,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
     Rcpp::traits::input_parameter< String >::type type(typeSEXP);
     rcpp_result_gen = Rcpp::wrap(predict_glmcat(model_object, data, type));
-    return rcpp_result_gen;
-END_RCPP
-}
-// GLMcum
-List GLMcum(Formula formula, CharacterVector categories_order, CharacterVector proportional, DataFrame data, std::string distribution, double freedom_degrees, Eigen::VectorXd beta_init, std::string threshold);
-RcppExport SEXP _GLMcat_GLMcum(SEXP formulaSEXP, SEXP categories_orderSEXP, SEXP proportionalSEXP, SEXP dataSEXP, SEXP distributionSEXP, SEXP freedom_degreesSEXP, SEXP beta_initSEXP, SEXP thresholdSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Formula >::type formula(formulaSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type categories_order(categories_orderSEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type proportional(proportionalSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< std::string >::type distribution(distributionSEXP);
-    Rcpp::traits::input_parameter< double >::type freedom_degrees(freedom_degreesSEXP);
-    Rcpp::traits::input_parameter< Eigen::VectorXd >::type beta_init(beta_initSEXP);
-    Rcpp::traits::input_parameter< std::string >::type threshold(thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(GLMcum(formula, categories_order, proportional, data, distribution, freedom_degrees, beta_init, threshold));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -87,17 +71,14 @@ END_RCPP
 
 RcppExport SEXP _rcpp_module_boot_discretemodule();
 RcppExport SEXP _rcpp_module_boot_GLMcatmodule();
-RcppExport SEXP _rcpp_module_boot_cumulativemodule();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_GLMcat_Discrete_CM", (DL_FUNC) &_GLMcat_Discrete_CM, 8},
-    {"_GLMcat_GLMcat", (DL_FUNC) &_GLMcat_GLMcat, 7},
+    {"_GLMcat_GLMcat", (DL_FUNC) &_GLMcat_GLMcat, 9},
     {"_GLMcat_predict_glmcat", (DL_FUNC) &_GLMcat_predict_glmcat, 3},
-    {"_GLMcat_GLMcum", (DL_FUNC) &_GLMcat_GLMcum, 8},
     {"_GLMcat_Cat_ref1", (DL_FUNC) &_GLMcat_Cat_ref1, 2},
     {"_rcpp_module_boot_discretemodule", (DL_FUNC) &_rcpp_module_boot_discretemodule, 0},
     {"_rcpp_module_boot_GLMcatmodule", (DL_FUNC) &_rcpp_module_boot_GLMcatmodule, 0},
-    {"_rcpp_module_boot_cumulativemodule", (DL_FUNC) &_rcpp_module_boot_cumulativemodule, 0},
     {NULL, NULL, 0}
 };
 
