@@ -17,6 +17,4 @@ NOTE:
     
 There were no ERRORs
 
-There was 1 NOTE:
-
 ## Downstream dependencies
