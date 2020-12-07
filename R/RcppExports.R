@@ -42,9 +42,9 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' @return GLMcat returns a list which can be examined with the function summary.
 #' @export
 #' @examples
-#' data(DisturbedDreams)
+#' \dontrun{data(DisturbedDreams)
 #' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
-#'     distribution = "logistic", ratio = "reference")
+#'     distribution = "logistic", ratio = "reference")}
 #'
 GLMcat <- function(formula, ratio, distribution, categories_order, proportional, data, freedom_degrees) {
     .Call(`_GLMcat_GLMcat`, formula, ratio, distribution, categories_order, proportional, data, freedom_degrees)

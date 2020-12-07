@@ -36,7 +36,8 @@ GLMcat returns a list which can be examined with the function summary.
 Family of models for categorical responses (reference, adjacent and sequential ratio)
 }
 \examples{
-data(DisturbedDreams)
-GLMcat(formula = Level ~ Age, data = DisturbedDreams,
-distribution = "logistic",ratio = "reference")
+\dontrun{data(DisturbedDreams)
+ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+    distribution = "logistic", ratio = "reference")}
+
 }
