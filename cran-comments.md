@@ -4,12 +4,18 @@
 * win-builder (devel)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs.
+WARNING:
+    ‘gs+qpdf’ made some significant size reductions:
+       compacted ‘GLMcat_tutorial.pdf’ from 387Kb to 95Kb
+    consider running tools::compactPDF(gs_quality = "ebook") on these files
+
+NOTE:
+    installed size is 31.7Mb
+    sub-directories of 1Mb or more:
+      libs  31.1Mb
+      
+There were no ERRORs
 
 There was 1 NOTE:
-
-installed size is 22.6Mb
-    sub-directories of 1Mb or more:
-      libs  22.2Mb
 
 ## Downstream dependencies
