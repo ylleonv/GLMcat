@@ -16,8 +16,10 @@ Extract Log-likelihood for glmcat models.
 }
 \examples{
 data(DisturbedDreams)
-mod1 <- GLMcat(formula = Level ~ Age,
-categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-data = DisturbedDreams, distribution = "logistic")
+mod1 <- GLMcat(
+  formula = Level ~ Age,
+  categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+  data = DisturbedDreams, distribution = "logistic"
+)
 logLik(mod1)
 }

@@ -9,12 +9,11 @@ predict_glmcat(model_object = NaN, data, type = "prob")
 \arguments{
 \item{model_object}{a GLMcat model}
 
-\item{data}{a data frame in which to look for variables with which to predict_glmcat. Note that all predict_glmcator variables should be
-present having the same names as the variables used to fit the model.}
+\item{data}{a data frame in which to look for variables with which to predict_glmcat.}
 
-\item{type}{he type of predict_glmcations. \code{"prob"} gives probabilities,
+\item{type}{The type of prediction to obtain. \code{"prob"} gives probabilities,
 \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
-the linear predict_glmcator.}
+the linear predictor.}
 }
 \description{
 GLMcat model predictions

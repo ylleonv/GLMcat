@@ -18,8 +18,10 @@ Extract model coefficients from a glmcat object.
 }
 \examples{
 data(DisturbedDreams)
-mod1 <- GLMcat(formula = Level ~ Age,
-categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-data = DisturbedDreams, distribution = "logistic")
+mod1 <- GLMcat(
+  formula = Level ~ Age,
+  categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+  data = DisturbedDreams, distribution = "logistic"
+)
 coef(mod1)
 }

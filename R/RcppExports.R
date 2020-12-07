@@ -43,8 +43,9 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' @export
 #' @examples
 #' data(DisturbedDreams)
-#' GLMcat(formula = Level ~ Age, data = DisturbedDreams,
-#' distribution = "logistic",ratio = "reference")
+#' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+#'     distribution = "logistic", ratio = "reference")
+#'
 GLMcat <- function(formula, ratio, distribution, categories_order, proportional, data, freedom_degrees) {
     .Call(`_GLMcat_GLMcat`, formula, ratio, distribution, categories_order, proportional, data, freedom_degrees)
 }
@@ -52,11 +53,10 @@ GLMcat <- function(formula, ratio, distribution, categories_order, proportional,
 #' GLMcat model predictions
 #'
 #' @param model_object a GLMcat model
-#' @param data a data frame in which to look for variables with which to predict_glmcat. Note that all predict_glmcator variables should be
-#' present having the same names as the variables used to fit the model.
-#' @param type he type of predict_glmcations. \code{"prob"} gives probabilities,
+#' @param data a data frame in which to look for variables with which to predict_glmcat.
+#' @param type The type of prediction to obtain. \code{"prob"} gives probabilities,
 #' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
-#' the linear predict_glmcator.
+#' the linear predictor.
 #' @rdname predict_glmcat
 #' @export
 #' @examples

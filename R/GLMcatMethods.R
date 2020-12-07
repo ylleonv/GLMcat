@@ -4,7 +4,7 @@
 #' @param ... additional arguments affecting the summary produced.
 #' @rdname summary
 #' @export
-summary.glmcat <- function(object,...) {
+summary.glmcat <- function(object, ...) {
   coef <- object$coefficients
   se <- object$stderr
   tval <- coef / se
@@ -17,7 +17,7 @@ summary.glmcat <- function(object,...) {
   )
   colnames(object$coefficients) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
   sum_ma <- object$coefficients
-  printCoefmat(object$coefficients, P.values=TRUE, has.Pvalue=TRUE, ...)
+  printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
   # cf src/stats/R/lm.R and case with no weights and an intercept
   # f <- object$fitted.values
   # r <- object$residuals
@@ -44,17 +44,20 @@ summary.glmcat <- function(object,...) {
 #' @export
 #' @examples
 #' data(DisturbedDreams)
-#' mod1 <- GLMcat(formula = Level ~ Age,
-#' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#' data = DisturbedDreams, distribution = "logistic")
+#' mod1 <- GLMcat(
+#'   formula = Level ~ Age,
+#'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+#'   data = DisturbedDreams, distribution = "logistic"
+#' )
 #' coef(mod1)
-coef.glmcat <- function(object, na.rm = F,...) {
-  if(na.rm) {
+coef.glmcat <- function(object, na.rm = F, ...) {
+  if (na.rm) {
     coefs <- object$coefficients
     coefs[!is.na(coefs)]
   }
-  else
+  else {
     object$coefficients
+  }
 }
 
 #' Number of observations in a glmcat model
@@ -65,11 +68,13 @@ coef.glmcat <- function(object, na.rm = F,...) {
 #' @export
 #' @examples
 #' data(DisturbedDreams)
-#' mod1 <- GLMcat(formula = Level ~ Age,
-#' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#' data = DisturbedDreams, distribution = "logistic")
+#' mod1 <- GLMcat(
+#'   formula = Level ~ Age,
+#'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+#'   data = DisturbedDreams, distribution = "logistic"
+#' )
 #' nobs_glmcat(mod1)
-nobs_glmcat <- function(object,...) {
+nobs_glmcat <- function(object, ...) {
   return(object$nobs_glmcat)
 }
 
@@ -81,14 +86,15 @@ nobs_glmcat <- function(object,...) {
 #' @export
 #' @examples
 #' data(DisturbedDreams)
-#' mod1 <- GLMcat(formula = Level ~ Age,
-#' categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#' data = DisturbedDreams, distribution = "logistic")
+#' mod1 <- GLMcat(
+#'   formula = Level ~ Age,
+#'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+#'   data = DisturbedDreams, distribution = "logistic"
+#' )
 #' logLik(mod1)
-logLik.glmcat <- function(object,...) {
-  structure(object$`Log-likelihood`, df = object$df, nobs_glmcat = object$nobs_glmcat,
-            class = "logLik")
+logLik.glmcat <- function(object, ...) {
+  structure(object$`Log-likelihood`,
+    df = object$df, nobs_glmcat = object$nobs_glmcat,
+    class = "logLik"
+  )
 }
-
-
-

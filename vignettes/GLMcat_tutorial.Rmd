@@ -114,7 +114,7 @@ data("DisturbedDreams")
 summary(DisturbedDreams)
 ```
 
-We will fit the model $(Reference, Logistic, Complete)$ to the `DisturbedDreams` data using the funcion `GLMcat`. We save the fitted `GLMcat` model in the object `mod_ref_log_c` and we print it by simply typing its name:
+We will fit the model $(Reference, Logistic, Complete)$ to the `DisturbedDreams` data using the function `GLMcat`. We save the fitted `GLMcat` model in the object `mod_ref_log_c` and we print it by simply typing its name:
 
 ```{r }
 mod_ref_log_c <- GLMcat(
