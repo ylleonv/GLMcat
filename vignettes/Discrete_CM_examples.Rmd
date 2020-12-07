@@ -23,8 +23,8 @@ library(GLMcat)
 
 ### Dataset
 
-The choice of travel mode of n = 210 passengers in Australia was investigated by @louviere_2000, @greene2003econometric and @tutz_2011 The alternatives of travel mode are: air, train, bus, and car. As $category-specific$ variables they considered the travel time in vehicle (invt) and the general cost (gc), and, as the $global-variables$ they considered the household income (hinc), and the number of people traveling (psize).
-As example data, GLMcat includes the database: TravelChoice; which we can load as follows:
+The choice of travel mode of n = 210 passengers in Australia was investigated by @louviere_2000, @greene2003econometric and @tutz_2011 The alternatives of travel mode are: air, train, bus, and car. As $category-specific$ variables they considered the travel time in vehicle *(invt)* and the general cost *(gc)*, and, as the $global-variables$ they considered the household income *(hinc)*, and the number of people traveling *(psize)*.
+As example data, `GLMcat` includes the database: `TravelChoice`; which we can load as follows:
 
 ```{r }
 data("TravelChoice")
@@ -32,7 +32,7 @@ head(TravelChoice)
 str(TravelChoice)
 ```
 
-To execute the model proposed by Tutz (Example 8.4), we execute the Discrete_CM function with the specific parameters as follows:
+To execute the model proposed by @tutz_2011 (Example 8.4), we execute the `Discrete_CM `function with the specific parameters as follows:
 
 ```{r }
 exp_8.4 <- Discrete_CM(
@@ -216,14 +216,7 @@ Additional results presented in @PEYHARDI_choice
   distribution = "student",
   freedom_degrees = .05
 ))
-# logLik(car_.05)
 ```
 
-Adjacent examples
-Design matrix for cases
-
-```{r }
-dat_p <- TravelChoice[1:8,]
-```
 
 
