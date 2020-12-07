@@ -20,8 +20,9 @@ using namespace Eigen;
 //' @export
 //' @examples
 //' data(DisturbedDreams)
-//' GLMcat(formula = Level ~ Age, data = DisturbedDreams,
-//' distribution = "logistic",ratio = "reference")
+//' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+//'     distribution = "logistic", ratio = "reference")
+//'
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
             std::string ratio, std::string distribution,
@@ -292,7 +293,6 @@ List GLMcat(Formula formula,
     Named("pinv") = pinv,
     Named("var_beta") = var_beta,
     Rcpp::Named("df of the model") = df,
-    // Rcpp::Named("predict_glmcated") = predict_glmcated,
     // Rcpp::Named("fitted") = pi_ma,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
     // Rcpp::Named("Y_init_vec") = Y_init_vec,
@@ -321,11 +321,10 @@ List GLMcat(Formula formula,
 //' GLMcat model predictions
 //'
 //' @param model_object a GLMcat model
-//' @param data a data frame in which to look for variables with which to predict_glmcat. Note that all predict_glmcator variables should be
-//' present having the same names as the variables used to fit the model.
-//' @param type he type of predict_glmcations. \code{"prob"} gives probabilities,
+//' @param data a data frame in which to look for variables with which to predict_glmcat.
+//' @param type The type of prediction to obtain. \code{"prob"} gives probabilities,
 //' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
-//' the linear predict_glmcator.
+//' the linear predictor.
 //' @rdname predict_glmcat
 //' @export
 //' @examples
