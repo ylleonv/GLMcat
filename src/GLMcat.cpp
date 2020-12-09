@@ -282,8 +282,8 @@ List GLMcat(Formula formula,
   Std_Error = var_beta.diagonal();
   Std_Error = Std_Error.array().sqrt() ;
 
-  std::vector<std::string> text=as<std::vector<std::string>>(explanatory_complete);
-  std::vector<std::string> level_text=as<std::vector<std::string>>(levs1);
+  std::vector<std::string> text=as<std::vector<std::string> >(explanatory_complete);
+  std::vector<std::string> level_text=as<std::vector<std::string> >(levs1);
   // StringVector names(Q*P_c + P_p);
   // if(P_c > 0){
   //   for(int var = 0 ; var < explanatory_complete.size() ; var++){
