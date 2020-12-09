@@ -543,7 +543,7 @@ List Sort_DataFrame(DataFrame ModelMatrix,
                                                    _["choice"] = my_asnumeric(InputData[Choice_vec]),
                                                    ModelMatrix);
 
-  CharacterVector names1 = {"alternatives", "Cat_ref_vec", "id_case"};
+  CharacterVector names1 = CharacterVector::create("alternatives", "Cat_ref_vec", "id_case");
 
   DataFrame df_tans = my_transpose(A2);
   DataFrame df_tans_2 = A2 ;
@@ -869,7 +869,7 @@ List distribution::select_data_nested(Formula formula,
   String Response = Formula_l["Response"];
   DataFrame Var_spe_alt = Rcpp::as<DataFrame>(Var_spe_alt1);
 
-  CharacterVector var_informatives = {"Alternatives", "Cat_ref_vec", "individuals"};
+  CharacterVector var_informatives = CharacterVector::create("Alternatives", "Cat_ref_vec", "individuals");
   var_informatives[0] = Alternatives;
   var_informatives[2] = individuals;
 
