@@ -9,12 +9,12 @@
 #' Each case represents a single statistical observation although it comprises
 #' multiple observations.
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can defined an specific effect for a category.
-#' @param case_id an string with the name of the column that identifies each case.
-#' @param alternatives an string with the name of the column that identifies the vector of alternatives the individual could have chosen.
+#' @param case_id a string with the name of the column that identifies each case.
+#' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
 #' @param reference a string indicating the reference category
 #' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, this are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula; in the previous example, the intercept, hinc and psize.
 #' @param data a dataframe object in R, with the dependent variable as factor.
-#' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
+#' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
 #' @return Discrete_CM returns a list which can be examined with the function summary.
 #' @examples
@@ -33,9 +33,10 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' Family of models for categorical responses (reference, adjacent and sequential ratio)
 #'
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
-#' @param ratio an string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
-#' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
-#' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default.
+#' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
+#' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
+#' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
+#' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
 #' @param proportional a character vector indicating the name of the variables with a proportional effect.
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
@@ -48,8 +49,8 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 #'     distribution = "logistic", ratio = "reference")}
 #'
-GLMcat <- function(formula, ratio, distribution, categories_order, proportional, data, freedom_degrees, beta_init, threshold) {
-    .Call(`_GLMcat_GLMcat`, formula, ratio, distribution, categories_order, proportional, data, freedom_degrees, beta_init, threshold)
+GLMcat <- function(formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init) {
+    .Call(`_GLMcat_GLMcat`, formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init)
 }
 
 #' GLMcat model predictions

@@ -6,34 +6,37 @@
 \usage{
 GLMcat(
   formula,
+  data,
   ratio = "reference",
   distribution = "logistic",
-  categories_order = NA_character_,
   proportional = NA_character_,
-  data,
-  freedom_degrees = 1L,
-  beta_init = 1,
-  threshold = "standard"
+  categories_order = NA_character_,
+  ref_category = NA_character_,
+  freedom_degrees = NaN,
+  threshold = "standard",
+  beta_init = NaN
 )
 }
 \arguments{
 \item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.}
 
-\item{ratio}{an string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.}
+\item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{distribution}{an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
+\item{ratio}{a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.}
 
-\item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default.}
+\item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
 \item{proportional}{a character vector indicating the name of the variables with a proportional effect.}
 
-\item{data}{a dataframe object in R, with the dependent variable as factor.}
+\item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.}
+
+\item{ref_category}{a string indicating the reference category. Proper option for models with reference ratio.}
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
 
-\item{beta_init}{optional beta initialization vector.}
-
 \item{threshold}{restriction to impose on the the thresholds, options are: standard or equidistant.}
+
+\item{beta_init}{optional beta initialization vector.}
 }
 \value{
 GLMcat returns a list which can be examined with the function summary.

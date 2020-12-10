@@ -78,8 +78,8 @@ nobs_glmcat <- function(object, ...) {
   return(object$nobs_glmcat)
 }
 
-#' Log-likelihood glmcat models
-#' @description Extract Log-likelihood for glmcat models.
+#' LogLikelihood glmcat models
+#' @description Extract LogLikelihood for glmcat models.
 #' @rdname logLik
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
@@ -93,7 +93,7 @@ nobs_glmcat <- function(object, ...) {
 #' )
 #' logLik(mod1)
 logLik.glmcat <- function(object, ...) {
-  structure(object$`Log-likelihood`,
+  structure(object$LogLikelihood,
     df = object$df, nobs_glmcat = object$nobs_glmcat,
     class = "logLik"
   )

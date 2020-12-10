@@ -207,7 +207,7 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_student(const Eigen::VectorXd& eta
 //   Eigen::MatrixXd F_i_2 ;
 //   Eigen::VectorXd LogLikIter;
 //   LogLikIter = Eigen::MatrixXd::Zero(1,1) ;
-//   Eigen::MatrixXd var_beta;
+//   Eigen::MatrixXd cov_beta;
 //   Eigen::VectorXd Std_Error;
 //   double LogLik;
 //   Eigen::MatrixXd pi_ma(N, K);
@@ -274,9 +274,9 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_student(const Eigen::VectorXd& eta
 //     F_i_final = F_i;
 //   }
 //
-//   // var_beta = (((X_EXT.transpose() * F_i_final) * X_EXT).inverse());
-//   var_beta = F_i_final.inverse();
-//   Std_Error = var_beta.diagonal();
+//   // cov_beta = (((X_EXT.transpose() * F_i_final) * X_EXT).inverse());
+//   cov_beta = F_i_final.inverse();
+//   Std_Error = cov_beta.diagonal();
 //   Std_Error = Std_Error.array().sqrt() ;
 //
 //   std::vector<std::string> text=as<std::vector<std::string>>(explanatory_complete);
@@ -341,7 +341,7 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_student(const Eigen::VectorXd& eta
 //     Named("coefficients") = coef,
 //     Named("AIC") = AIC,
 //     Named("BIC") = BIC,
-//     // Named("var_beta") = var_beta,
+//     // Named("cov_beta") = cov_beta,
 //     Named("stderr") = Std_Error,
 //     Rcpp::Named("df") = df,
 //     Rcpp::Named("predict_glmcated") = predict_glmcated,
@@ -351,7 +351,7 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_student(const Eigen::VectorXd& eta
 //     Rcpp::Named("dev_log") = dev_log,
 //     Rcpp::Named("deviance") = deviance,
 //     Rcpp::Named("residuals") = residuals,
-//     Named("Log-likelihood") = LogLik
+//     Named("LogLikelihood") = LogLik
 //   );
 // }
 

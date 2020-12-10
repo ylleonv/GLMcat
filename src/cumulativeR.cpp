@@ -190,7 +190,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gumbel(const Eigen::VectorXd& et
 //   Eigen::MatrixXd F_i_2 ;
 //   Eigen::VectorXd LogLikIter;
 //   LogLikIter = Eigen::MatrixXd::Zero(1,1) ;
-//   Eigen::MatrixXd var_beta;
+//   Eigen::MatrixXd cov_beta;
 //   Eigen::VectorXd Std_Error;
 //   double LogLik;
 //   Eigen::MatrixXd pi_ma(N, K);
@@ -272,8 +272,8 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gumbel(const Eigen::VectorXd& et
 //
 //   }
 //
-//   var_beta = F_i_final.inverse();
-//   Std_Error = var_beta.diagonal();
+//   cov_beta = F_i_final.inverse();
+//   Std_Error = cov_beta.diagonal();
 //   Std_Error = Std_Error.array().sqrt() ;
 //
 //   // Rcout << "cum1" << std::endl;
@@ -372,7 +372,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gumbel(const Eigen::VectorXd& et
 //     // Named("ratio") = ratio,
 //     // Named("AIC") = AIC,
 //     // Named("pinv") = pinv,
-//     Named("var_beta") = var_beta,
+//     Named("cov_beta") = cov_beta,
 //     Rcpp::Named("df of the model") = df,
 //     // Rcpp::Named("predict_glmcated") = predict_glmcated,
 //     // Rcpp::Named("fitted") = pi_ma,
@@ -381,7 +381,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gumbel(const Eigen::VectorXd& et
 //     // Rcpp::Named("dev_log") = dev_log,
 //     Rcpp::Named("deviance") = deviance,
 //     // Rcpp::Named("residuals") = residuals,
-//     Named("Log-likelihood") = LogLik,
+//     Named("LogLikelihood") = LogLik,
 //     // Named("freedom_degrees") = freedom_degrees,
 //     // Named("Y_init") = Y_init,
 //     // Named("LogLikIter") = LogLikIter,

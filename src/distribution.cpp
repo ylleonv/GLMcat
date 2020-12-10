@@ -126,9 +126,25 @@ List distribution::All_pre_data_or(Formula formula,
   List M_matrix = Model_Matrix_or(input_data, formula);
 
   if(categories_order.length() == 1){
+    LogicalVector is_na_ref = is_na(categories_order);
+    // Rcout << is_na_ref << std::endl;
     // print(my_levels(M_matrix["Response"]));
-    categories_order = my_levels(M_matrix["Response"]);
+
+    if(!is_na_ref[0]){ // If it is a character diferent of NA
+      CharacterVector categories_order_n = my_levels(M_matrix["Response"]);
+      // Rcout << categories_order_n << std::endl;
+      int ind_ref = 0;
+      while(categories_order[0] != categories_order_n(ind_ref)){ind_ref = ind_ref+1;}
+      categories_order_n.erase(ind_ref);
+      categories_order_n.push_back(categories_order[0]);
+      // Rcout << categories_order_n << std::endl;
+      categories_order = categories_order_n;
+    }else{ // For other case default alphabetical
+      categories_order = my_levels(M_matrix["Response"]);
+    }
   }
+
+  // Rcout << categories_order_n << std::endl;
 
   List Cat_ref_or_L = Cat_ref_order(categories_order, M_matrix["Response"]);
   NumericMatrix Design = M_matrix["df_new"];

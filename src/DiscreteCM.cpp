@@ -14,12 +14,12 @@ using namespace Eigen;
 //' Each case represents a single statistical observation although it comprises
 //' multiple observations.
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can defined an specific effect for a category.
-//' @param case_id an string with the name of the column that identifies each case.
-//' @param alternatives an string with the name of the column that identifies the vector of alternatives the individual could have chosen.
+//' @param case_id a string with the name of the column that identifies each case.
+//' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
 //' @param reference a string indicating the reference category
 //' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, this are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula; in the previous example, the intercept, hinc and psize.
 //' @param data a dataframe object in R, with the dependent variable as factor.
-//' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
+//' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
 //' @return Discrete_CM returns a list which can be examined with the function summary.
 //' @examples
@@ -81,7 +81,7 @@ List Discrete_CM(Formula formula,
   double LogLik;
 
   Eigen::MatrixXd F_i_final = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
-  Eigen::MatrixXd var_beta;
+  Eigen::MatrixXd cov_beta;
   Eigen::VectorXd Std_Error;
 
   double epsilon = 0.0001 ;
@@ -164,8 +164,8 @@ List Discrete_CM(Formula formula,
 
   }
 
-  var_beta = F_i_final.inverse();
-  Std_Error = var_beta.diagonal();
+  cov_beta = F_i_final.inverse();
+  Std_Error = cov_beta.diagonal();
   Std_Error = Std_Error.array().sqrt() ;
 
   // Eigen::MatrixXd X_M_i_1 = X_EXT.block(0*Q , 0 , Q , X_EXT.cols());
@@ -177,7 +177,7 @@ List Discrete_CM(Formula formula,
   List output_list_dis = List::create(
     Named("Nb. iterations") = iteration-1 ,
     Named("coefficients") = BETA_2,
-    Named("Log-likelihood") = LogLikIter(LogLikIter.rows() - 1),
+    Named("LogLikelihood") = LogLikIter(LogLikIter.rows() - 1),
     Named("LogLikIter") =  LogLikIter,
     Named("X_M_i") =  X_M_i,
     Named("stderr") =  Std_Error

@@ -11,9 +11,10 @@ using namespace Eigen;
 //' Family of models for categorical responses (reference, adjacent and sequential ratio)
 //'
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
-//' @param ratio an string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
-//' @param distribution an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
-//' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default.
+//' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
+//' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
+//' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
+//' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
 //' @param proportional a character vector indicating the name of the variables with a proportional effect.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
@@ -28,14 +29,20 @@ using namespace Eigen;
 //'
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
+            DataFrame data,
             std::string ratio,
             std::string distribution,
-            CharacterVector categories_order,
             CharacterVector proportional,
-            DataFrame data,
+            CharacterVector categories_order,
+            CharacterVector ref_category,
             double freedom_degrees,
-            Eigen::VectorXd beta_init,
-            std::string threshold){
+            std::string threshold,
+            Eigen::VectorXd beta_init){
+
+  LogicalVector is_na_ref1 = is_na(categories_order);
+  if(is_na_ref1[0]){ // categories order is not given
+    categories_order = ref_category; // take ref_cat
+  }
 
   if((ratio != "cumulative") && (threshold != "standard")){
     Rcpp::stop("Unrecognized threshold restriction; for reference, adjacent and sequential ratio the only valid option is standard");
@@ -91,7 +98,7 @@ List GLMcat(Formula formula,
   MatrixXd F_i_2 ;
   VectorXd LogLikIter;
   LogLikIter = MatrixXd::Zero(1,1) ;
-  MatrixXd var_beta;
+  MatrixXd cov_beta;
   VectorXd Std_Error;
   double LogLik;
   MatrixXd pi_ma(N, K);
@@ -272,14 +279,14 @@ List GLMcat(Formula formula,
     // Rcout << LogLik << std::endl;
   }
 
-  // var_beta = (((X_EXT.transpose() * F_i_final) * X_EXT).inverse());
+  // cov_beta = (((X_EXT.transpose() * F_i_final) * X_EXT).inverse());
 
 
   // CompleteOrthogonalDecomposition<MatrixXd> cqr(F_i_final);
   // MatrixXd pinv = cqr.pseudoInverse();
 
-  var_beta = F_i_final.inverse();
-  Std_Error = var_beta.diagonal();
+  cov_beta = F_i_final.inverse();
+  Std_Error = cov_beta.diagonal();
   Std_Error = Std_Error.array().sqrt() ;
 
   std::vector<std::string> text=as<std::vector<std::string> >(explanatory_complete);
@@ -361,6 +368,7 @@ List GLMcat(Formula formula,
   ArrayXd dev_log = dev_r.array().log();
   double deviance = dev_log.sum();
   deviance = -2*deviance;
+  // bool conv = true;
 
   List output_list = List::create(
     Named("coefficients") = coef,
@@ -369,7 +377,7 @@ List GLMcat(Formula formula,
     Named("ratio") = ratio,
     // Named("AIC") = AIC,
     // Named("pinv") = pinv,
-    Named("var_beta") = var_beta,
+    Named("cov_beta") = cov_beta,
     Rcpp::Named("df of the model") = df,
     // Rcpp::Named("fitted") = pi_ma,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
@@ -377,7 +385,7 @@ List GLMcat(Formula formula,
     // Rcpp::Named("dev_log") = dev_log,
     Rcpp::Named("deviance") = deviance,
     // Rcpp::Named("residuals") = residuals,
-    Named("Log-likelihood") = LogLik,
+    Named("LogLikelihood") = LogLik,
     // Named("freedom_degrees") = freedom_degrees,
     // Named("Y_init") = Y_init,
     // Named("LogLikIter") = LogLikIter,
@@ -387,6 +395,7 @@ List GLMcat(Formula formula,
     Named("N_cats") = N_cats,
     Named("nobs_glmcat") = N,
     Named("distribution") = distribution,
+    Named("coverged") = true,
     Named("freedom_degrees") = freedom_degrees
   );
 
@@ -539,14 +548,16 @@ NumericVector predict_glmcat(List model_object,
 RCPP_MODULE(GLMcatmodule){
   Rcpp::function("GLMcat", &GLMcat,
                  List::create(_["formula"],
+                              _["data"],
                               _["ratio"] = "reference",
                               _["distribution"] = "logistic",
-                              _["categories_order"] = CharacterVector::create(NA_STRING),
                               _["proportional"] = CharacterVector::create(NA_STRING),
-                              _["data"],
-                               _["freedom_degrees"] = 1,
-                               _["beta_init"] = NumericVector::create(1),
-                               _["threshold"] = "standard"),
+                              _["categories_order"] = CharacterVector::create(NA_STRING),
+                              _["ref_category"] = CharacterVector::create(NA_STRING),
+                              _["freedom_degrees"] = R_NaN,
+                              _["threshold"] = "standard",
+                              _["beta_init"] = R_NaN
+                               ),
                                "GLMcat models");
   Rcpp::function("predict_glmcat", &predict_glmcat,
                  List::create(_["model_object"] = R_NaN,

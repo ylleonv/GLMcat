@@ -139,7 +139,7 @@ Student (1.35), train, LogLik = -183.49
 ))
 ```
 
-The results are clearly in favour of the reference alternative $j_0 =car$ since the gain in log-likelihood is *43.92* compared to MNL results, i.e., *24%* of the log-likelihood. It is a very huge difference compared to the results given in the literature ([@louviere_2000]; [@greene2003econometric]), obtained with MNL and with NL. 
+The results are clearly in favour of the reference alternative $j_0 =car$ since the gain in LogLikelihood is *43.92* compared to MNL results, i.e., *24%* of the LogLikelihood. It is a very huge difference compared to the results given in the literature ([@louviere_2000]; [@greene2003econometric]), obtained with MNL and with NL. 
 Additional results presented in @PEYHARDI_choice
 
 

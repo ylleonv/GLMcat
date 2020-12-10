@@ -2,7 +2,7 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{logLik.glmcat}
 \alias{logLik.glmcat}
-\title{Log-likelihood glmcat models}
+\title{LogLikelihood glmcat models}
 \usage{
 \method{logLik}{glmcat}(object, ...)
 }
@@ -12,7 +12,7 @@
 \item{...}{other arguments.}
 }
 \description{
-Extract Log-likelihood for glmcat models.
+Extract LogLikelihood for glmcat models.
 }
 \examples{
 data(DisturbedDreams)

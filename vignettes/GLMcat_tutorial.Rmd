@@ -138,7 +138,7 @@ nobs_glmcat(mod_ref_log_c)
 coef(mod_ref_log_c)
 ```
 
-* The log-likelihood
+* The LogLikelihood
 
 ```{r }
 logLik(mod_ref_log_c)
@@ -188,7 +188,7 @@ logLik(mod3)
 
 ### Family of adjacent models
 
-The equivalence between *(Adjacent,Logistic,Complete)* and *(Reference,Logistic,Complete)* models is evidenced by comparing the associated log-likelihood of both models:
+The equivalence between *(Adjacent,Logistic,Complete)* and *(Reference,Logistic,Complete)* models is evidenced by comparing the associated LogLikelihood of both models:
 ```{r }
 logLik(mod_ref_log_c)
 mod_adj_log_c <- GLMcat(
@@ -198,7 +198,7 @@ mod_adj_log_c <- GLMcat(
 logLik(mod_adj_log_c)
 summary(mod_adj_log_c)
 ```
-Remark that despite the fact that the log-likelihoods are equal, the parameters estimations are different $(\alpha \neq \alpha')$. Defining the matrix $A^T$ as follows:
+Remark that despite the fact that the LogLikelihoods are equal, the parameters estimations are different $(\alpha \neq \alpha')$. Defining the matrix $A^T$ as follows:
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, results='tex'}
 library(xtable)
@@ -239,7 +239,7 @@ logLik(mod_adj_cau_c_rev)
 summary(mod_adj_cau_c_rev)
 ```
 
-The log-likelihoods of the last two models are the same, this is because *Cauchy* distribution is symmetric; for non symmetric distributions this is not longer true. Note that if the Gumbel distribution is used with the reverse order, then, its log-likelihood is equal to the model using *Gompertz* as the distribution, this is because the *Gumbel* distribution is the symmetric of the *Gompertz* distribution. Otherwise, the parameter estimations are reversed:
+The LogLikelihoods of the last two models are the same, this is because *Cauchy* distribution is symmetric; for non symmetric distributions this is not longer true. Note that if the Gumbel distribution is used with the reverse order, then, its LogLikelihood is equal to the model using *Gompertz* as the distribution, this is because the *Gumbel* distribution is the symmetric of the *Gompertz* distribution. Otherwise, the parameter estimations are reversed:
 
 *(Adjacent, Gumbel, Proportional)*
 

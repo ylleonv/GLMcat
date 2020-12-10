@@ -18,9 +18,9 @@ Discrete_CM(
 \arguments{
 \item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can defined an specific effect for a category.}
 
-\item{case_id}{an string with the name of the column that identifies each case.}
+\item{case_id}{a string with the name of the column that identifies each case.}
 
-\item{alternatives}{an string with the name of the column that identifies the vector of alternatives the individual could have chosen.}
+\item{alternatives}{a string with the name of the column that identifies the vector of alternatives the individual could have chosen.}
 
 \item{reference}{a string indicating the reference category}
 
@@ -28,7 +28,7 @@ Discrete_CM(
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{distribution}{an string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
+\item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
 }
