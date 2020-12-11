@@ -1,5 +1,5 @@
 ---
-title: "A Tutorial on fitting Generalized Linear Models with the GLMcat Package"
+title: "A tutorial on fitting Generalized Linear Models for categorical responses with the GLMcat package"
 
 author:
   - Lorena León^[Université de Montpellier, ylorenaleonv@gmail.com]
@@ -7,7 +7,7 @@ author:
   - Catherine Trottier^[Université de Montpellier, catherine.trottier@umontpellier.fr]
 
 abstract: |
-  In statistical modeling, there is a wide variety of regression models for categorical responses. Yet, no software encapsulates all of these models in a standardized format. We introduce and illustrate the utility of GLMcat, the R package we developed to estimate generalized linear models implemented under the unified specification $(r, F, Z)$, where $r$ represents the ratio of probabilities (reference, cumulative, adjacent, or sequential), $F$ the cumulative distribution function for the linkage, and $Z$ the design matrix. We present the properties of the four families of models, which must be investigated when selecting the components $r$, $F$, and $Z$. The functions are user-friendly and fairly intuitive; offering the possibility to choose from a large range of models through a combination $(r, F, Z)$. Through different examples, we compare our package with VGAM and ordinal, two popular packages for implementing GLMs for categorical data.
+  In statistical modeling, there is a wide variety of regression models for categorical responses. Yet, no software encapsulates all of these models in a standardized format. We introduce and illustrate the utility of GLMcat, the R package we developed to estimate generalized linear models implemented under the unified specification $(r, F, Z)$, where $r$ represents the ratio of probabilities (reference, cumulative, adjacent, or sequential), $F$ the cumulative distribution function for the linkage, and $Z$ the design matrix. We present the properties of the four families of models, which must be investigated when selecting the components $r$, $F$, and $Z$. The functions are user-friendly and fairly intuitive; offering the possibility to choose from a large range of models through a combination $(r, F, Z)$.
   
 output: rmarkdown::pdf_document
 bibliography: bibliography_vignette.bib
@@ -17,31 +17,30 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
 ### Introduction to the *(r,F,Z)* methodology:
 
-A generalized linear model is characterized by two components: 1) the\textit{ random component} that defines the conditional distribution of the response variable $y_i$ given the realization of the explanatory variables $\boldsymbol{x_i}$; 2) the \textit{systematic component} which is determined by the \textit{linear predictor} $\eta$  (that specifies the linear entry of the independent variables), and, the link function $g$  that relates the expected response and the linear predictor. 
+A generalized linear model is characterized by three components: 1) the\textit{ random component} that defines the conditional distribution of the response variable $Y_i$ given the realization of the explanatory variables $\boldsymbol{x_i}$; 2) the \textit{systematic component} which is determined by the \textit{linear predictor} $\eta$  (that specifies the linear entry of the independent variables), and 3) the link function $g$  that relates the expected response and the linear predictor. 
 
-The random component of a GLM for a categorical response with $J$ categories is the vector $(\pi_1,...,\pi_{J})$ where $\sum \pi_r = 1$ . The linear predictor  $(\eta_1,...,\eta_{J-1})$ can be written as the product of the design matrix $Z$ and the unknown parameter vector $\beta$. The link function which characterizes this model is given by the equation  $g(\pi) = Z\beta$, with $J-1$ equations $g_j = \eta_j$. @peyhardi_new proposed to write the link function as\begin{equation}
+The random component of a GLM for a categorical response with $J$ categories is the multinomial distribution with vector of probabilities $(\pi_1,...,\pi_{J})$ where $\sum \pi_r = 1$ . The linear predictor  $(\eta_1,...,\eta_{J-1})$ can be written as the product of the design matrix $Z$ and the unknown parameter vector $\beta$. The link function which characterizes this model is given by the equation  $g(\pi) = Z\beta$, with $J-1$ equations $g_j = \eta_j$. @peyhardi_new proposed to write the link function as\begin{equation}
 g_j = F ^ {-1} \circ r_j \Leftrightarrow r_j = F(\eta_j) \quad \quad {j = 1,2,...,J-1}
 \end{equation}where $F$ is a cumulative distribution function and $r=(r_1,...,r_{J-1})$ is a transformation of the expected value vector.
 
-In the following, we will describe in more detail the components *Z*, *F*, *r* and their modalities.
+In the following, we will describe in more details the components *(r,F,Z)* and their modalities.
 
 #### Ratio of probabilities *r*:
-
-\begin{table}[h]
-\centering
+\begin{center}{
 \begin{tabular}{{lllll}}
 \hline
 \multicolumn{1}{|l|}{}           & \multicolumn{1}{l}{Cumulative} & \multicolumn{1}{l} {{Sequential}} & \multicolumn{1}{l|}{{Adjacent}} & \multicolumn{1}{l|}{{Reference}} \\
 \multicolumn{1}{|l|}{$r_j(\pi)$    \quad   \quad  } &  \multicolumn{1}{l}{$\pi_1+...+\pi_j$}       & \multicolumn{1}{l}{$\dfrac{\pi_j}{\pi_j +...+ \pi_J}$}           & \multicolumn{1}{l|}{$\dfrac{\pi_j}{\pi_j + \pi_{j+1}}$} & \multicolumn{1}{l|}{$\dfrac{\pi_j}{\pi_j + \pi_J}$}              \\ \hline
 \multicolumn{1}{|l|}{$Y$}           & 
 \multicolumn{1}{l}{} & \multicolumn{1}{l} {\centering{{ordinal}}} & \multicolumn{1}{l|}{} & \multicolumn{1}{l|}{\centering {nominal}} \\ \cline{1-5} 
-
 \end{tabular}
-\end{table}
+}
+\end{center}
 
-Summary of each ratio.
+
 
 ####  Cumulative distribution function *F*: 
 The distribution functions available in `GLMcat` to fit the models are: *Logistic*, *Normal*, *Cauchit*, *Student (with any df)*, *Gompertz* and *Gumbel*.
@@ -100,8 +99,8 @@ We used the 223 observations of the *boy's disturbed dreams* benchmark dataset d
 For more information see the manual entry for the `DisturbedDreams` data: `help(DisturbedDreams)`.
 
 ```{r , include = FALSE}
-# devtools::load_all()
-library(GLMcat)
+devtools::load_all()
+# library(GLMcat)
 ```
 
 ```{r}
@@ -160,8 +159,6 @@ ind <- sample(x = 1:nrow(DisturbedDreams), size = 3)
 predict_glmcat(mod_ref_log_c, data = DisturbedDreams[ind, ], type = "prob")
 # Linear predictor
 predict_glmcat(mod_ref_log_c, data = DisturbedDreams[ind, ], type = "linear.predict")
-# Cumulative Probabilities
-predict_glmcat(mod_ref_log_c, data = DisturbedDreams[ind, ], type = "cum.prob")
 ```
 
 We will assume now that we are interested in making the effect of the variable predictor proportional, to that end, we type the name of the predictor variable as the input for the parameter `proportional`. The model to fit corresponds to the triplet *(Reference, Logistic, Proportional)*:
