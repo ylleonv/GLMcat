@@ -23,7 +23,7 @@ library(GLMcat)
 
 ### Dataset
 
-The choice of travel mode of n = 210 passengers in Australia was investigated by @louviere_2000, @greene2003econometric and @tutz_2011 The alternatives of travel mode are: air, train, bus, and car. As $category-specific$ variables they considered the travel time in vehicle *(invt)* and the general cost *(gc)*, and, as the $global-variables$ they considered the household income *(hinc)*, and the number of people traveling *(psize)*.
+The choice of travel mode of n = 210 passengers in Australia was investigated by @louviere_2000, @greene2003econometric and @tutz_2011. The alternatives of travel mode are: air, train, bus, and car. As $category-specific$ variables they considered the travel time in vehicle *(invt)* and the general cost *(gc)*, and, as the $global-variables$ they considered the household income *(hinc)*, and the number of people traveling *(psize)*.
 As example data, `GLMcat` includes the database: `TravelChoice`; which we can load as follows:
 
 ```{r }
@@ -32,7 +32,7 @@ head(TravelChoice)
 str(TravelChoice)
 ```
 
-To execute the model proposed by @tutz_2011 (Example 8.4), we execute the `Discrete_CM `function with the specific parameters as follows:
+To execute the model proposed by @tutz_2011 (Example 8.4), we execute the `Discrete_CM ` function with the specific parameters as follows:
 
 ```{r }
 exp_8.4 <- Discrete_CM(
@@ -78,7 +78,7 @@ Constants only model
 ))
 ```
 
-### The results reported by @PEYHARDI_choice:
+### The results reported by @PEYHARDI_choice
 Student (3), air, LogLik = -185.65
 
 ```{r }
@@ -139,8 +139,8 @@ Student (1.35), train, LogLik = -183.49
 ))
 ```
 
-The results are clearly in favour of the reference alternative $j_0 =car$ since the gain in LogLikelihood is *43.92* compared to MNL results, i.e., *24%* of the LogLikelihood. It is a very huge difference compared to the results given in the literature ([@louviere_2000]; [@greene2003econometric]), obtained with MNL and with NL. 
-Additional results presented in @PEYHARDI_choice
+The results are clearly in favour of the reference alternative $j_0 =car$ since the gain in LogLikelihood is *43.92* compared to the multinomial logit model (MNL) results, i.e., *24%* of the LogLikelihood. It is a very huge difference compared to the results given in the literature ([@louviere_2000]; [@greene2003econometric]), obtained with MNL and with the nested model. 
+Additional results presented by @PEYHARDI_choice
 
 
 ```{r }
@@ -218,5 +218,5 @@ Additional results presented in @PEYHARDI_choice
 ))
 ```
 
-
+### References
 
