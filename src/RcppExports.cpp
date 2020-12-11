@@ -45,7 +45,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // predict_glmcat
-NumericVector predict_glmcat(List model_object, DataFrame data, String type);
+NumericMatrix predict_glmcat(List model_object, DataFrame data, String type);
 RcppExport SEXP _GLMcat_predict_glmcat(SEXP model_objectSEXP, SEXP dataSEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

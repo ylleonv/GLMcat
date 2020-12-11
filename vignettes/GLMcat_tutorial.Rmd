@@ -113,7 +113,7 @@ We will fit the model $(Reference, Logistic, Complete)$ to the `DisturbedDreams`
 
 ```{r }
 mod_ref_log_c <- GLMcat(
-  formula = Level ~ Age, ratio = "reference",
+  formula = Level ~ Age, ratio = "reference", ref_category = "Very.severe",
   data = DisturbedDreams, distribution = "logistic"
 )
 ```
@@ -168,7 +168,7 @@ We will assume now that we are interested in making the effect of the variable p
 
 ```{r }
 mod2 <- GLMcat(
-  formula = Level ~ Age, proportional = "Age",
+  formula = Level ~ Age, proportional = "Age", ref_category = "Very.severe",
   data = DisturbedDreams, distribution = "logistic"
 )
 summary(mod2)
@@ -178,7 +178,7 @@ logLik(mod2)
 Another variation of the reference model is obtained by changing the distribution function. Let's fit now the model *(Reference, Student (0.5), Complete)*:
 ```{r }
 mod3 <- GLMcat(
-  formula = Level ~ Age,
+  formula = Level ~ Age, ref_category = "Very.severe",
   data = DisturbedDreams, distribution = "student", freedom_degrees = 0.5
 )
 summary(mod3)

@@ -68,12 +68,38 @@ List Model_Matrix_or(DataFrame data, Formula formula) {
   DataFrame df_new1 = model_frame(Rcpp::_["formula"] = formula, _["data"] = data);
   SEXP Response = df_new1[0];
   NumericMatrix df_new = model_matrix(df_new1, _["data"] = data);
-
   return List::create(
     Named("df_new") = df_new,
     Named("Response") = Response
   );
+}
 
+List Model_Matrix_or_pre(DataFrame data, Formula formula) {
+  // modification of the formula and just model.matrix with drop
+  Environment stats_env("package:stats");
+  Environment base_stats("package:base");
+  Function model_frame = stats_env["model.frame"];
+  Function model_matrix = stats_env["model.matrix"];
+  Function my_strsplit = base_stats["strsplit"];
+  Function my_paste = base_stats["paste"];
+  Function my_as_formula = stats_env["as.formula"];
+  Function my_format = base_stats["format"];
+  // Here I take off the response to have only the explanatory variables as entry to the formula ~ predictors
+  // in order to predict for new data
+  CharacterVector st1 = my_format(formula);
+  String str_for = my_paste(st1,  _["collapse"] = "");
+  List list1 = (my_strsplit(str_for, "~"));
+  CharacterVector vars = list1[0];
+  String vars_string = vars[1];
+  Formula new_for = my_as_formula(my_paste("~", vars_string,  _["collapse"] = ""));
+
+  DataFrame df_new1 = model_frame(Rcpp::_["formula"] = new_for, _["data"] = data);
+  SEXP Response = df_new1[0];
+  NumericMatrix df_new = model_matrix(df_new1, _["data"] = data);
+  return List::create(
+    Named("df_new") = df_new,
+    Named("Response") = Response
+  );
 }
 
 
@@ -262,8 +288,7 @@ List distribution::All_pre_data_NEWDATA(Formula formula,
   Function my_asnumeric = base_env["as.numeric"];
   Function my_cbind = base_env["cbind"];
   Function my_order = base_env["order"];
-
-  List M_matrix = Model_Matrix_or(NEWDATA, formula);
+  List M_matrix = Model_Matrix_or_pre(NEWDATA, formula);
   // List Cat_ref_or_L = Cat_ref_order(categories_order, M_matrix["Response"]);
   NumericMatrix Design = M_matrix["df_new"];
 

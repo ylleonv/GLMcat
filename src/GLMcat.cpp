@@ -420,7 +420,7 @@ List GLMcat(Formula formula,
 //' data = DisturbedDreams, distribution = "logistic")
 //' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 // [[Rcpp::export("predict_glmcat")]]
-NumericVector predict_glmcat(List model_object,
+NumericMatrix predict_glmcat(List model_object,
                              DataFrame data,
                              String type
 ){
@@ -430,6 +430,8 @@ NumericVector predict_glmcat(List model_object,
   // Function my_rowSums = base_env["rowSums"];
   int N_cats = model_object["N_cats"];
   Eigen::MatrixXd coef = model_object["coefficients"];
+
+  // model_object["coefficients"]
 
   List newdataList = dist1.All_pre_data_NEWDATA(model_object["formula"],
                                                 data,
@@ -448,8 +450,6 @@ NumericVector predict_glmcat(List model_object,
   int N = data.rows();
   Eigen::MatrixXd X_M_i;
   Eigen::MatrixXd pi_total = Eigen::MatrixXd::Zero(N,N_cats-1);
-
-
   for (int i=0; i < N; i++){
 
     X_M_i = Design_Matrix.block(i*(N_cats-1) , 0 , N_cats-1 , Design_Matrix.cols());
@@ -507,8 +507,26 @@ NumericVector predict_glmcat(List model_object,
       }else{
         Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
       }
+    }else if(ratio == "cumulative"){
+      CumulativeR cum;
+      // Vector pi depends on selected distribution
+      if(distribution == "logistic"){
+        pi = cum.inverse_logistic(predict_glmcated_eta);
+      }else if(distribution == "normal"){
+        pi = cum.inverse_normal(predict_glmcated_eta);
+      }else if(distribution == "cauchit"){
+        pi = cum.inverse_cauchit(predict_glmcated_eta);
+      }else if(distribution == "gompertz"){
+        pi = cum.inverse_gompertz(predict_glmcated_eta);
+      }else if(distribution == "student"){
+        pi = cum.inverse_student(predict_glmcated_eta,freedom_degrees);
+      }else if(distribution == "gumbel"){
+        pi = cum.inverse_gumbel(predict_glmcated_eta);
+      }else{
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+      }
     }else{
-      Rcpp::stop("Unrecognized radio for prediction; options are: reference, adjacent, and sequential");
+      Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
     }
     pi_total.row(i) = pi;
   }
@@ -522,26 +540,23 @@ NumericVector predict_glmcat(List model_object,
   pi_total.col(N_cats-1) = Ones1 - cum_prob1;
 
   NumericVector predict_glmcat;
+  NumericMatrix predict_mat;
+  CharacterVector names_col = model_object["categories_order"];
 
   if(type == "prob"){
     predict_glmcat = pi_total;
-  }else if(type == "cum.prob"){
-    predict_glmcat = cum_prob;
+    predict_mat = wrap(predict_glmcat);
+    colnames(predict_mat) = names_col;
   }else if(type == "linear.predict"){
+    names_col.erase(N_cats-1);
     predict_glmcat = Design_Matrix * coef;
+    NumericMatrix predict_glmcat1( N_cats-1, pi_total.rows() , predict_glmcat.begin());
+    predict_mat = transpose(predict_glmcat1);
+    colnames(predict_mat) = names_col;
   }else{
-    Rcpp::stop("Unrecognized type parameter; options are: prob, cum.prob, linear.predict");
+    Rcpp::stop("Unrecognized type parameter; options are: prob, linear.predict");
   }
-
-  return predict_glmcat;
-  // List::create(
-  // Named("Design_Matrix") = Design_Matrix,
-  // Named("Eta") = predict_glmcated_eta,
-  // Named("cum_prob") = cum_prob,
-  // Named("pi_total") = pi_total
-  // Named("")
-  // );
-
+  return predict_mat;
 }
 
 
@@ -549,16 +564,16 @@ RCPP_MODULE(GLMcatmodule){
   Rcpp::function("GLMcat", &GLMcat,
                  List::create(_["formula"],
                               _["data"],
-                              _["ratio"] = "reference",
-                              _["distribution"] = "logistic",
-                              _["proportional"] = CharacterVector::create(NA_STRING),
-                              _["categories_order"] = CharacterVector::create(NA_STRING),
-                              _["ref_category"] = CharacterVector::create(NA_STRING),
-                              _["freedom_degrees"] = R_NaN,
-                              _["threshold"] = "standard",
-                              _["beta_init"] = R_NaN
-                               ),
-                               "GLMcat models");
+                               _["ratio"] = "reference",
+                               _["distribution"] = "logistic",
+                               _["proportional"] = CharacterVector::create(NA_STRING),
+                               _["categories_order"] = CharacterVector::create(NA_STRING),
+                               _["ref_category"] = CharacterVector::create(NA_STRING),
+                               _["freedom_degrees"] = R_NaN,
+                               _["threshold"] = "standard",
+                               _["beta_init"] = R_NaN
+                 ),
+                 "GLMcat models");
   Rcpp::function("predict_glmcat", &predict_glmcat,
                  List::create(_["model_object"] = R_NaN,
                               _["data"],
