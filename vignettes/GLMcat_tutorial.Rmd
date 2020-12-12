@@ -43,7 +43,7 @@ The linear predictor is not directly related to the expectation $\boldsymbol{\pi
 
 Each component $r_j(\boldsymbol{\pi})$ can be viewed as a (conditional) probability. 
 For the reference ratio, each category $j$ is compared to the reference category $J$.
-For the adajacent ratio, each category $j$ is compared to its adjacent category $j+1$. 
+For the adjacent ratio, each category $j$ is compared to its adjacent category $j+1$. 
 For the cumulative ratio, the probabilities of categories are cumulated.
 For the sequential ratio, each category $j$ is compared to its following category, $j+1, \ldots, J$.
 The adjacent, cumulative and sequential ratios all rely on an ordering assumption among categories. 
@@ -51,7 +51,7 @@ The reference ratio is devoted to nominal responses.
 
 ####  Cumulative distribution function *F*\
 
-The cumulative distribution functions (cdfs) available in `GLMcat` to fit the models are: *logistic*, *normal*, *Cauchy*, *Student (with any df)*, *Gompertz* and *Gumbel*. The *logistic* and *normal* cdfs are the symmetric distributions most commonly used to define link functions in generalized linear models. However, for specific scenarios, the use of other distributions may result in a more accurate fit. An example is presented by @peyhardi_travel, where the employment of the *Student* cdf leaded to a better fit for a modelling exercise on travel choice data. For the asymmetric case, the *Gumbel* and *Gompertz* cdfs are the most commonly used.
+The cumulative distribution functions (cdfs) available in `GLMcat` to fit the models are: *logistic*, *normal*, *Cauchy*, *Student (with any df)*, *Gompertz* and *Gumbel*. The *logistic* and *normal* cdfs are the symmetric distributions most commonly used to define link functions in generalized linear models. However, for specific scenarios, the use of other distributions may result in a more accurate fit. An example is presented by @peyhardi_travel, where the employment of the *Student* cdf leaded to a better fit for a modeling exercise on travel choice data. For the asymmetric case, the *Gumbel* and *Gompertz* cdfs are the most commonly used.
 
 #### Design Matrix $Z$\
 
@@ -373,6 +373,6 @@ summary(seq_gom_p)
 
 ### Conclusion
 
-The models for categorical response data have been evolved in different fields of research under different names. Some of them are fairly similar or are even the same. Until recently, there was no methodology that encompassed these models in a comparable scheme. `GLMcat` is based on the new specification of a generalized linear model given by the *(r,F,Z)*-triplet, which groups together all the proposed methodologies for modelling categorical responses. `GLMcat` offers a full picture of the spectrum of models where the user has three components to combine in order to obtain a model that fulfils the specifications of the problem.
+The models for categorical response data have been evolved in different fields of research under different names. Some of them are fairly similar or are even the same. Until recently, there was no methodology that encompassed these models in a comparable scheme. `GLMcat` is based on the new specification of a generalized linear model given by the *(r,F,Z)*-triplet, which groups together all the proposed methodologies for modelling categorical responses. `GLMcat` offers a full picture of the spectrum of models where the user has three components to combine in order to obtain a model that meets the specifications of the problem.
 
 ### References

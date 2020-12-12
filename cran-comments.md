@@ -4,9 +4,6 @@
 * win-builder (devel)
 
 ## R CMD check results
-WARNING:
-        ‘gs+qpdf’ made some significant size reductions:
-       compacted ‘GLMcat_tutorial.pdf’ from 392Kb to 100Kb
 
 NOTE:
     - installed size is 19.9Mb
