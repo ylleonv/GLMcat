@@ -1,5 +1,5 @@
 ---
-title: "Discrete Choice Models in GLMcat"
+title: "An example of discrete choice modeling in `GLMcat`"
 
 author:
   - Lorena León^[Université de Montpellier, ylorenaleonv@gmail.com]
@@ -14,11 +14,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r }
-# devtools::load_all()
-library(GLMcat)
-```
-
 In econometrics there is a wide variety of binary models with different functions, but none of them can be extended to the multivariate case because the differences of such random variables are not usually known. The very well known Random Utility models (RUM) don't have closed-form solutions, thus, for more than four categories ($J > 4$), these models are difficult to estimate. On the other side, Generalized Linear Models (GLM) have an analytic solution, which make it easier the estimation process, and there is a great flexibility at using different distribution functions for the link function. 
  
 Following the approach of @peyhardi_new for writing GLMs, qualitative choice models can be written as *(Reference, Logistic, Z)* models. The function `Discrete_CM` in the `GLMcat` package is available to implement these models.
@@ -28,6 +23,11 @@ Following the approach of @peyhardi_new for writing GLMs, qualitative choice mod
 
 The choice of travel mode of *n = 210* passengers in Australia was investigated by @louviere_2000, @greene2003econometric and @tutz_2011. The alternatives of travel mode are: air, train, bus, and car. As $category-specific$ variables they considered the travel time in vehicle *(invt)* and the general cost *(gc)*, and, as the $global-variables$ they considered the household income *(hinc)*, and the number of people traveling *(psize)*.
 As example data, `GLMcat` includes the database: `TravelChoice`; which we can load as follows:
+
+```{r }
+# devtools::load_all()
+library(GLMcat)
+```
 
 ```{r }
 data("TravelChoice")
@@ -46,17 +46,12 @@ exp_8.4 <- Discrete_CM(
   data = TravelChoice,
   alternative_specific = c("gc", "invt"),
   distribution = "logistic")
-```
-
-The reported estimates given in Table 8.4 correspond to the output:
-
-```{r }
 summary(exp_8.4)
 ```
 
-According with @tutz_2011, the income seems to be influential for the preference of train and bus over airplane. And, time in vehicle seems to have an impact for the choice of travel mode. Also, cost turns out to be non-influential if income is in the predictor.
+According to @tutz_2011, the income seems to be influential for the preference of train and bus over airplane. And, time in vehicle seems to have an impact for the choice of travel mode. Also, cost turns out to be non-influential if income is in the predictor.
 
-To replicate the results of @louviere_2000 we can use the following lines of code. Note that for the variables *hinc* and *psize* there is an specification for it to be estimated only for category *air*.
+To replicate the results of @louviere_2000 we can use the following lines of code. Note that for the variables *hinc* and *psize* the effect is specified only for category *air*.
 
 ```{r }
 (constant_model <- Discrete_CM(
@@ -136,7 +131,11 @@ mod_4 <- Discrete_CM(
 logLik(mod_4)
 ```
 
-The results are clearly in favour of the reference alternative $j_0 =car$ together with *Student(0.2)* since the gain in LogLikelihood is *43.92* compared to the multinomial logit model (MNL) results, i.e., *24%* of the LogLikelihood. It is a very huge difference compared to the results given in the literature ([@louviere_2000]; [@greene2003econometric]), obtained with MNL and with the nested model. 
+The results are clearly in favour of the reference alternative $j_0 =car$ together with *Student(0.2)* since the gain in LogLikelihood is *43.92* compared to the multinomial logit model (MNL) results, i.e., *24%* of the LogLikelihood. It is a considerable difference compared to the results given in the literature [[@louviere_2000]; [@greene2003econometric]], obtained with MNL and with the nested model. 
+
+### Conclusion
+
+Until recently, only the logit and probit binary models were extended to the case of multinomial choices, resulting in the multinomial logit and the multinomial probit. The recently introduced family of reference models, defines a multivariate extension of any binary choice model, i.e. for any link function. The `GLMcat` library through the `Discrete_CM` function offers this whole range of models, as demonstrated in the example above.
 
 ### References
 
