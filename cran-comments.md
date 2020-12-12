@@ -5,14 +5,13 @@
 
 ## R CMD check results
 WARNING:
-    ‘gs+qpdf’ made some significant size reductions:
-       compacted ‘GLMcat_tutorial.pdf’ from 387Kb to 95Kb
-    consider running tools::compactPDF(gs_quality = "ebook") on these files
+        ‘gs+qpdf’ made some significant size reductions:
+       compacted ‘GLMcat_tutorial.pdf’ from 392Kb to 100Kb
 
 NOTE:
-    - installed size is 31.7Mb
+    - installed size is 19.9Mb
       sub-directories of 1Mb or more:
-      libs  31.1Mb
+      libs  19.9Mb
     - Package in Depends/Imports which should probably only be in LinkingTo: 'BH'
     
 There were no ERRORs
