@@ -13,15 +13,14 @@ using namespace Eigen;
 //' We call the group of observations for an individual a “case”.
 //' Each case represents a single statistical observation although it comprises
 //' multiple observations.
-//' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can defined an specific effect for a category.
+//' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
 //' @param case_id a string with the name of the column that identifies each case.
 //' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
 //' @param reference a string indicating the reference category
-//' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, this are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula; in the previous example, the intercept, hinc and psize.
+//' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-//' @return Discrete_CM returns a list which can be examined with the function summary.
 //' @examples
 //' library(GLMcat)
 //' data(TravelChoice)
@@ -29,7 +28,7 @@ using namespace Eigen;
 //' case_id = "indv",alternatives = "mode",reference = "air",
 //' data = TravelChoice,  alternative_specific = c("gc", "invt"),
 //' distribution = "logistic")
-//' @note For this models it is not allowed to exclude the intercept.
+//' @note For these models it is not allowed to exclude the intercept.
 //' @export
 // [[Rcpp::export("Discrete_CM")]]
 List Discrete_CM(Formula formula,

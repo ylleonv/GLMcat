@@ -8,23 +8,23 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
-//' Family of models for categorical responses (reference, adjacent and sequential ratio)
+//' Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 //'
-//' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
-//' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
+//' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
+//' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential. Default value is reference.
 //' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 //' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
 //' @param proportional a character vector indicating the name of the variables with a proportional effect.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-//' @param threshold restriction to impose on the the thresholds, options are: standard or equidistant.
+//' @param threshold restriction to impose on the thresholds, options are: standard or equidistant.
 //' @param beta_init optional beta initialization vector.
-//' @return GLMcat returns a list which can be examined with the function summary.
 //' @export
 //' @examples
 //' \dontrun{data(DisturbedDreams)
 //' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+//'     ref_category = "Very.severe",
 //'     distribution = "logistic", ratio = "reference")}
 //'
 // [[Rcpp::export("GLMcat")]]
@@ -408,7 +408,7 @@ List GLMcat(Formula formula,
 //' GLMcat model predictions
 //'
 //' @param model_object a GLMcat model
-//' @param data a data frame in which to look for variables with which to predict_glmcat.
+//' @param data a data frame with the predictor variables used in the GLMcat model.
 //' @param type The type of prediction to obtain. \code{"prob"} gives probabilities,
 //' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
 //' the linear predictor.

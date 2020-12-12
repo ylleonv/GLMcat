@@ -1,6 +1,6 @@
 #' Travel Mode Choice
 #'
-#' The data set contains 210 observations on choice of travel mode choice for travel between Sydney and Melbourne, Australia.
+#' The data set contains 210 observations on mode choice for travel between Sydney and Melbourne, Australia.
 #'
 #' @docType data
 #' @usage data(TravelChoice)

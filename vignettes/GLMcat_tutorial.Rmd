@@ -50,12 +50,15 @@ The adjacent, cumulative and sequential ratios all rely on an ordering assumptio
 The reference ratio is devoted to nominal responses.
 
 ####  Cumulative distribution function *F*\
-The cumulative distribution functions (cdfs) available in `GLMcat` to fit the models are: *logistic*, *normal*, *Cauchy*, *Student (with any df)*, *Gompertz* and *Gumbel*. The *logistic* and *normal* cdfs are the most commonly used symmetric distributions to define link functions in generalized linear models. However, for specific scenarios, the use of other distributions may result in a more accurate fit. An example is presented by @peyhardi_travel, where the employment of the *Student* cdf leaded to a better fit for a modelling exercise on travel choice data. For the asymmetric case, the *Gumbel* and *Gompertz* cdfs are the most commonly used.
+
+The cumulative distribution functions (cdfs) available in `GLMcat` to fit the models are: *logistic*, *normal*, *Cauchy*, *Student (with any df)*, *Gompertz* and *Gumbel*. The *logistic* and *normal* cdfs are the symmetric distributions most commonly used to define link functions in generalized linear models. However, for specific scenarios, the use of other distributions may result in a more accurate fit. An example is presented by @peyhardi_travel, where the employment of the *Student* cdf leaded to a better fit for a modelling exercise on travel choice data. For the asymmetric case, the *Gumbel* and *Gompertz* cdfs are the most commonly used.
 
 #### Design Matriz $Z$\
+
 It is possible to impose restrictions on the thresholds, or on the effects of the covariates, for example, for them to vary or not according to the response categories.
 
 - Constraints on the effects: \
+
 It is plausible for a predictor to have specific level of impact on the different categories of the response. Thus, the $J-1$ linear predictors are of the form: $\eta_j =\alpha_j + x' \delta_j$  with $\beta = (\alpha_1,..., \alpha_{J-1}, \delta_1', ..., \delta_{J-1}')$. And, its associated design matrix is:
 \begin{equation}
 Z_c=\left( \begin{array}{cccccc}

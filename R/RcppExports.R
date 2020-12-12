@@ -8,15 +8,14 @@
 #' We call the group of observations for an individual a “case”.
 #' Each case represents a single statistical observation although it comprises
 #' multiple observations.
-#' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can defined an specific effect for a category.
+#' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
 #' @param case_id a string with the name of the column that identifies each case.
 #' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
 #' @param reference a string indicating the reference category
-#' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, this are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula; in the previous example, the intercept, hinc and psize.
+#' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-#' @return Discrete_CM returns a list which can be examined with the function summary.
 #' @examples
 #' library(GLMcat)
 #' data(TravelChoice)
@@ -24,29 +23,29 @@
 #' case_id = "indv",alternatives = "mode",reference = "air",
 #' data = TravelChoice,  alternative_specific = c("gc", "invt"),
 #' distribution = "logistic")
-#' @note For this models it is not allowed to exclude the intercept.
+#' @note For these models it is not allowed to exclude the intercept.
 #' @export
 Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees) {
     .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees)
 }
 
-#' Family of models for categorical responses (reference, adjacent and sequential ratio)
+#' Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 #'
-#' @param formula a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.
-#' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.
+#' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
+#' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential. Default value is reference.
 #' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 #' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
 #' @param proportional a character vector indicating the name of the variables with a proportional effect.
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-#' @param threshold restriction to impose on the the thresholds, options are: standard or equidistant.
+#' @param threshold restriction to impose on the thresholds, options are: standard or equidistant.
 #' @param beta_init optional beta initialization vector.
-#' @return GLMcat returns a list which can be examined with the function summary.
 #' @export
 #' @examples
 #' \dontrun{data(DisturbedDreams)
 #' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+#'     ref_category = "Very.severe",
 #'     distribution = "logistic", ratio = "reference")}
 #'
 GLMcat <- function(formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init) {
@@ -56,7 +55,7 @@ GLMcat <- function(formula, data, ratio, distribution, proportional, categories_
 #' GLMcat model predictions
 #'
 #' @param model_object a GLMcat model
-#' @param data a data frame in which to look for variables with which to predict_glmcat.
+#' @param data a data frame with the predictor variables used in the GLMcat model.
 #' @param type The type of prediction to obtain. \code{"prob"} gives probabilities,
 #' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
 #' the linear predictor.

@@ -61,7 +61,7 @@ coef.glmcat <- function(object, na.rm = F, ...) {
 }
 
 #' Number of observations in a glmcat model
-#' @description Extract the number of observations from a glmcat model.
+#' @description Extract the number of observations from a GLMcat model.
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
 #' @rdname nobs_glmcat
@@ -79,7 +79,7 @@ nobs_glmcat <- function(object, ...) {
 }
 
 #' LogLikelihood glmcat models
-#' @description Extract LogLikelihood for glmcat models.
+#' @description Extract LogLikelihood for GLMcat models.
 #' @rdname logLik
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
