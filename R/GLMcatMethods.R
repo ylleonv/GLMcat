@@ -46,7 +46,7 @@ summary.glmcat <- function(object, ...) {
 #' data(DisturbedDreams)
 #' mod1 <- GLMcat(
 #'   formula = Level ~ Age,
-#'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
+#'   ref_category = "Very.severe",
 #'   data = DisturbedDreams, distribution = "logistic"
 #' )
 #' coef(mod1)

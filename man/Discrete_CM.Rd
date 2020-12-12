@@ -16,7 +16,7 @@ Discrete_CM(
 )
 }
 \arguments{
-\item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can defined an specific effect for a category.}
+\item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.}
 
 \item{case_id}{a string with the name of the column that identifies each case.}
 
@@ -24,16 +24,13 @@ Discrete_CM(
 
 \item{reference}{a string indicating the reference category}
 
-\item{alternative_specific}{a character vector with the name of the explanatory variables that are different for each case, this are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula; in the previous example, the intercept, hinc and psize.}
+\item{alternative_specific}{a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.}
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
 \item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
-}
-\value{
-Discrete_CM returns a list which can be examined with the function summary.
 }
 \description{
 Discrete choice model: Requires data in long form.
@@ -44,7 +41,7 @@ Each case represents a single statistical observation although it comprises
 multiple observations.
 }
 \note{
-For this models it is not allowed to exclude the intercept.
+For these models it is not allowed to exclude the intercept.
 }
 \examples{
 library(GLMcat)

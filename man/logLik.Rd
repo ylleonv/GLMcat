@@ -12,7 +12,7 @@
 \item{...}{other arguments.}
 }
 \description{
-Extract LogLikelihood for glmcat models.
+Extract LogLikelihood for GLMcat models.
 }
 \examples{
 data(DisturbedDreams)

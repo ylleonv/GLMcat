@@ -12,7 +12,7 @@ nobs_glmcat(object, ...)
 \item{...}{other arguments.}
 }
 \description{
-Extract the number of observations from a glmcat model.
+Extract the number of observations from a GLMcat model.
 }
 \examples{
 data(DisturbedDreams)

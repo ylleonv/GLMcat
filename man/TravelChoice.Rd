@@ -28,7 +28,7 @@ Download from on-line (18/09/2020) complements to Greene, W.H. (2011) Econometri
 data(TravelChoice)
 }
 \description{
-The data set contains 210 observations on choice of travel mode choice for travel between Sydney and Melbourne, Australia.
+The data set contains 210 observations on mode choice for travel between Sydney and Melbourne, Australia.
 }
 \examples{
 data(TravelChoice)

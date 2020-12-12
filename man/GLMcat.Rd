@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{GLMcat}
 \alias{GLMcat}
-\title{Family of models for categorical responses (reference, adjacent and sequential ratio)}
+\title{Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)}
 \usage{
 GLMcat(
   formula,
@@ -18,11 +18,11 @@ GLMcat(
 )
 }
 \arguments{
-\item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ model is interpreted as a specification that the response y is modelled by a linear predict_glmcator specified symbolically by model.}
+\item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.}
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{ratio}{a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential.}
+\item{ratio}{a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
 \item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
@@ -34,19 +34,17 @@ GLMcat(
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
 
-\item{threshold}{restriction to impose on the the thresholds, options are: standard or equidistant.}
+\item{threshold}{restriction to impose on the thresholds, options are: standard or equidistant.}
 
 \item{beta_init}{optional beta initialization vector.}
 }
-\value{
-GLMcat returns a list which can be examined with the function summary.
-}
 \description{
-Family of models for categorical responses (reference, adjacent and sequential ratio)
+Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 }
 \examples{
 \dontrun{data(DisturbedDreams)
 ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
+    ref_category = "Very.severe",
     distribution = "logistic", ratio = "reference")}
 
 }

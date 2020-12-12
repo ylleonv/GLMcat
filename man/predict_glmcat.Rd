@@ -9,7 +9,7 @@ predict_glmcat(model_object = NaN, data, type = "prob")
 \arguments{
 \item{model_object}{a GLMcat model}
 
-\item{data}{a data frame in which to look for variables with which to predict_glmcat.}
+\item{data}{a data frame with the predictor variables used in the GLMcat model.}
 
 \item{type}{The type of prediction to obtain. \code{"prob"} gives probabilities,
 \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
