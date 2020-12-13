@@ -17,7 +17,6 @@ LinkingTo:
     RcppEigen
 Imports: 
     Rcpp,
-    BH,
     stats,
     base
 Suggests: 
