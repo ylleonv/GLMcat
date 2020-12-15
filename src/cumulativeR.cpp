@@ -71,60 +71,60 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_logistic(const Eigen::VectorXd& 
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
-  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
-  {F(j,j) =  pdf_logit(eta(j));}
-  return (F * R);
+  {F_1(j,j) =  pdf_logit(eta(j));}
+  return (F_1 * R);
 }
 
 Eigen::MatrixXd CumulativeR::inverse_derivative_normal(const Eigen::VectorXd& eta) const
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
-  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
-  { F(j,j) = pdf_normal( eta(j) ); }
-  return (F * R);
+  { F_1(j,j) = pdf_normal( eta(j) ); }
+  return (F_1 * R);
 }
 
 Eigen::MatrixXd CumulativeR::inverse_derivative_cauchit(const Eigen::VectorXd& eta) const
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
-  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
-  { F(j,j) = pdf_cauchit( eta(j) ); }
-  return (F * R);
+  { F_1(j,j) = pdf_cauchit( eta(j) ); }
+  return (F_1 * R);
 }
 
 Eigen::MatrixXd CumulativeR::inverse_derivative_student(const Eigen::VectorXd& eta,const double& freedom_degrees) const
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
-  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
-  { F(j,j) = pdf_student( eta(j) , freedom_degrees); }
-  return (F * R);
+  { F_1(j,j) = pdf_student( eta(j) , freedom_degrees); }
+  return (F_1 * R);
 }
 
 Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& eta) const
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
-  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
-  { F(j,j) = pdf_gompertz( eta(j) ); }
-  return (F * R);
+  { F_1(j,j) = pdf_gompertz( eta(j) ); }
+  return (F_1 * R);
 }
 
 Eigen::MatrixXd CumulativeR::inverse_derivative_gumbel(const Eigen::VectorXd& eta) const
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
-  Eigen::MatrixXd F = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
-  { F(j,j) = pdf_gumbel( eta(j) ); }
-  return (F * R);
+  { F_1(j,j) = pdf_gumbel( eta(j) ); }
+  return (F_1 * R);
 }
 
 // // [[Rcpp::export("GLMcum")]]

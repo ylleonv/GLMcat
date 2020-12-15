@@ -8,7 +8,7 @@
 \describe{
 \item{indv}{Id of the individual}
 \item{mode}{available options: air, train, bus or car}
-\item{choice}{a logical value indicating as TRUE the transportation mode chosen by the traveler}
+\item{choice}{a logical vector indicating as TRUE the transportation mode chosen by the traveler}
 As category-specific variables:
 \item{invt}{travel time in vehicle}
 \item{gc}{generalized cost measure}
