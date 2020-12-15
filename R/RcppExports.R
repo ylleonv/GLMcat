@@ -43,10 +43,10 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' @param beta_init optional beta initialization vector.
 #' @export
 #' @examples
-#' \dontrun{data(DisturbedDreams)
+#' data(DisturbedDreams)
 #' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 #'     ref_category = "Very.severe",
-#'     distribution = "logistic", ratio = "reference")}
+#'     distribution = "logistic", ratio = "reference")
 #'
 GLMcat <- function(formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init) {
     .Call(`_GLMcat_GLMcat`, formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init)

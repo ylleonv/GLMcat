@@ -50,7 +50,7 @@ summary.glmcat <- function(object, ...) {
 #'   data = DisturbedDreams, distribution = "logistic"
 #' )
 #' coef(mod1)
-coef.glmcat <- function(object, na.rm = F, ...) {
+coef.glmcat <- function(object, na.rm = FALSE, ...) {
   if (na.rm) {
     coefs <- object$coefficients
     coefs[!is.na(coefs)]

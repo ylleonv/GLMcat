@@ -22,10 +22,10 @@ using namespace Eigen;
 //' @param beta_init optional beta initialization vector.
 //' @export
 //' @examples
-//' \dontrun{data(DisturbedDreams)
+//' data(DisturbedDreams)
 //' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 //'     ref_category = "Very.severe",
-//'     distribution = "logistic", ratio = "reference")}
+//'     distribution = "logistic", ratio = "reference")
 //'
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,

@@ -16,7 +16,6 @@
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom stats model.frame model.matrix as.formula pnorm printCoefmat
-# #' @importFrom base t as.numeric cbind order strsplit format paste sub rev trimws as.character unique length matrix
 ## usethis namespace: end
 
 loadModule("GLMcatmodule", TRUE)

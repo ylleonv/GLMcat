@@ -10,4 +10,4 @@ TravelChoice <- as.data.frame(cbind(indv, choice, mode, TravelChoice1[, -1]))
 colnames(TravelChoice) <- c("indv", "mode", "choice", "ttme", "invc", "invt", "gc", "hinc", "psize")
 TravelChoice$indv <- as.factor(TravelChoice$indv)
 
-# usethis::use_data(TravelChoice,compress = "bzip2", overwrite = T)
+# usethis::use_data(TravelChoice,compress = "bzip2", overwrite = TRUE)

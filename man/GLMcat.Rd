@@ -42,9 +42,9 @@ GLMcat(
 Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 }
 \examples{
-\dontrun{data(DisturbedDreams)
+data(DisturbedDreams)
 ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
     ref_category = "Very.severe",
-    distribution = "logistic", ratio = "reference")}
+    distribution = "logistic", ratio = "reference")
 
 }
