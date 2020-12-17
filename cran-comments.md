@@ -7,3 +7,5 @@ Hello, thanks again for your reply.
  
  - I replaced GLMcat by 'GLMcat' in all the necessary cases
  
+That was the only remark of the last CRAN revision.
+ 
