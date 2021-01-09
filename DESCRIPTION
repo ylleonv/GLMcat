@@ -17,8 +17,7 @@ LinkingTo:
     RcppEigen
 Imports: 
     Rcpp,
-    stats,
-    base
+    stats
 Suggests: 
     knitr,
     rmarkdown,
