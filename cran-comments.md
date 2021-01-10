@@ -3,9 +3,14 @@
 * ubuntu 18.04.5 (on travis-ci), R 3.6.3
 * win-builder (devel)
 
-Hello, thanks again for your reply. 
+Hello, 
  
- - I replaced GLMcat by 'GLMcat' in all the necessary cases
+ - The only modification was to remove the base package from Imports in the description file
  
-That was the only remark of the last CRAN revision.
- 
+There was 1 NOTE:
+installed size is 19.3Mb
+     sub-directories of 1Mb or more:
+     libs 18.9Mb
+
+It seems that this is a common note among packages using C++ through the Rcpp library.
+
