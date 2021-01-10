@@ -3,7 +3,7 @@
 * ubuntu 18.04.5 (on travis-ci), R 3.6.3
 * win-builder (devel)
 
-Hello, 
+Hello, I hereby submit version 0.1.1 of GLMcat
  
  - The only modification was to remove the base package from Imports in the description file
  
