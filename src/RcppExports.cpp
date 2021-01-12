@@ -25,7 +25,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // GLMcat
-List GLMcat(Formula formula, DataFrame data, std::string ratio, std::string distribution, CharacterVector proportional, CharacterVector categories_order, CharacterVector ref_category, double freedom_degrees, std::string threshold, Eigen::VectorXd beta_init);
+List GLMcat(Formula formula, DataFrame data, std::string ratio, std::string distribution, CharacterVector proportional, CharacterVector categories_order, CharacterVector ref_category, double freedom_degrees, std::string threshold, NumericVector beta_init);
 RcppExport SEXP _GLMcat_GLMcat(SEXP formulaSEXP, SEXP dataSEXP, SEXP ratioSEXP, SEXP distributionSEXP, SEXP proportionalSEXP, SEXP categories_orderSEXP, SEXP ref_categorySEXP, SEXP freedom_degreesSEXP, SEXP thresholdSEXP, SEXP beta_initSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -39,7 +39,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< CharacterVector >::type ref_category(ref_categorySEXP);
     Rcpp::traits::input_parameter< double >::type freedom_degrees(freedom_degreesSEXP);
     Rcpp::traits::input_parameter< std::string >::type threshold(thresholdSEXP);
-    Rcpp::traits::input_parameter< Eigen::VectorXd >::type beta_init(beta_initSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type beta_init(beta_initSEXP);
     rcpp_result_gen = Rcpp::wrap(GLMcat(formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init));
     return rcpp_result_gen;
 END_RCPP

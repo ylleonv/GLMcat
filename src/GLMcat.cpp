@@ -37,7 +37,8 @@ List GLMcat(Formula formula,
             CharacterVector ref_category,
             double freedom_degrees,
             std::string threshold,
-            Eigen::VectorXd beta_init){
+            NumericVector beta_init){
+            // Eigen::VectorXd beta_init){
 
   LogicalVector is_na_ref1 = is_na(categories_order);
   if(is_na_ref1[0]){ // categories order is not given
@@ -80,8 +81,10 @@ List GLMcat(Formula formula,
   Eigen::VectorXd BETA3 = BETA2;
 
   Eigen::MatrixXd BETA = BETA2;
+
   if(beta_init.size() >= 2 ){
-    BETA = beta_init;
+    // BETA = beta_init;
+    BETA = as<Eigen::Map<Eigen::VectorXd> >(beta_init);
   }
   //
   int iteration = 0;
@@ -571,7 +574,8 @@ RCPP_MODULE(GLMcatmodule){
                                _["ref_category"] = CharacterVector::create(NA_STRING),
                                _["freedom_degrees"] = R_NaN,
                                _["threshold"] = "standard",
-                               _["beta_init"] = R_NaN
+                               _["beta_init"] = NumericVector::create(NA_REAL)
+                               // _["beta_init"] = R_NaN
                  ),
                  "GLMcat models");
   Rcpp::function("predict_glmcat", &predict_glmcat,
