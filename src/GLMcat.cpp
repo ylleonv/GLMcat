@@ -375,25 +375,25 @@ List GLMcat(Formula formula,
   MatrixXd residuals = Y_init - pi_ma1;
   VectorXd pi_ma_vec(Map<VectorXd>(pi_ma1.data(), pi_ma1.cols()*pi_ma1.rows()));
   VectorXd Y_init_vec(Map<VectorXd>(Y_init.data(), Y_init.cols()*Y_init.rows()));
-  VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
-  VectorXd dev_r(Y_init.rows());
-
-  int el_1 = 0;
-  for (int element = 0 ; element < div_arr.size() ;  element++){
-    if (div_arr[element] != 0){
-      dev_r[el_1] = div_arr[element];
-      el_1 = el_1 +1 ;
-    }
-  }
-
+  // VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
+  // VectorXd dev_r(Y_init.rows());
+  //
+  // int el_1 = 0;
+  // for (int element = 0 ; element < div_arr.size() ;  element++){
+  //   if (div_arr[element] != 0){
+  //     dev_r[el_1] = div_arr[element];
+  //     el_1 = el_1 +1 ;
+  //   }
+  // }
+  //
   // Rcout << "size of dv_r" << std::endl;
-  // Rcout << div_arr.size() << std::endl;
+  // Rcout << div_arr.rows() << std::endl;
   // Rcout << dev_r.rows() << std::endl;
   // Rcout << dev_r.cols() << std::endl;
-
-  ArrayXd dev_log = dev_r.array().log();
-  double deviance = dev_log.sum();
-  deviance = -2*deviance;
+  //
+  // ArrayXd dev_log = dev_r.array().log();
+  // double deviance = dev_log.sum();
+  // deviance = -2*deviance;
   // bool conv = true;
 
   List output_list = List::create(
@@ -409,7 +409,7 @@ List GLMcat(Formula formula,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
     // Rcpp::Named("Y_init_vec") = Y_init_vec,
     // Rcpp::Named("dev_log") = dev_log,
-    Rcpp::Named("deviance") = deviance,
+    // Rcpp::Named("deviance") = deviance,
     // Rcpp::Named("residuals") = residuals,
     Named("LogLikelihood") = LogLik,
     // Named("freedom_degrees") = freedom_degrees,
