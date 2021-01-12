@@ -16,6 +16,7 @@ ReferenceF::ReferenceF(void) {
 Eigen::VectorXd ReferenceF::inverse_logistic(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
+  Eigen::VectorXd pi_return( eta.size() );
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
@@ -26,7 +27,8 @@ Eigen::VectorXd ReferenceF::inverse_logistic(const Eigen::VectorXd& eta) const
 
     norm1 += pi[j];
   }
-  return (pi/norm1);
+  pi_return = pi/norm1;
+  return pi_return;
 }
 
 Eigen::VectorXd ReferenceF::inverse_normal(const Eigen::VectorXd& eta) const
