@@ -15,21 +15,22 @@ ReferenceF::ReferenceF(void) {
 
 Eigen::VectorXd ReferenceF::inverse_logistic(const Eigen::VectorXd& eta) const
 {
-  Eigen::VectorXd pi( eta.size() );
-
-  Eigen::VectorXd pi_return(eta.size());
+  Eigen::VectorXd pi( eta.size() -1);
+  // Eigen::VectorXd pi_return1(eta.size());
+  // Eigen::VectorXd pi_return(eta.size());
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
     pi[j] = cdf_logit( eta(j) ) / ( 1-
-      std::max(1e-10, std::min(1-1e-6,cdf_logit( eta(j) )))
+      std::max(1e-10, std::min(1-1e-6, cdf_logit(eta(j))))
     );
 
 
     norm1 += pi[j];
   }
-  pi_return = pi/norm1;
-  return pi_return;
+  // pi_return = pi/norm1;
+  // return pi_return;
+  return pi/norm1;
 }
 
 Eigen::VectorXd ReferenceF::inverse_normal(const Eigen::VectorXd& eta) const
