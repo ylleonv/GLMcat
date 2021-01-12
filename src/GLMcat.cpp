@@ -117,7 +117,8 @@ List GLMcat(Formula formula,
 
     // Loop by subject
     for (int i=0; i < N; i++){
-      MatrixXd pi_ma(N, Q);
+
+      MatrixXd pi_ma(N, K);
       // Block of size (p,q), starting at (i,j): matrix.block(i,j,p,q);
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
       Y_M_i = Y_init.row(i);
@@ -241,21 +242,20 @@ List GLMcat(Formula formula,
       F_i = F_i + F_i_2;
       LogLik = LogLik + (Y_M_i.transpose().eval()*VectorXd(pi.array().log())) + ( (1 - Y_M_i.sum()) * std::log(1 - pi.sum()) );
 
-      // MatrixXd pi_mat = pi;
+      MatrixXd pi_mat = pi;
       // MatrixXd pi_mat1 = pi_mat.transpose();
       // VectorXd pi_vec1 = pi_mat1;
       //
       // VectorXd pi_vec1(Map<VectorXd>(pi_mat1.data(), pi_mat1.cols()*pi_mat1.rows()));
 
-      // pi_ma.row(i) = pi_mat.transpose();
+      pi_ma.row(i) = pi_mat.transpose();
       // pi_ma.block(i,0,1,Q) = pi_vec1.transpose();
-      pi_ma.row(i) = pi.transpose();
+      // pi_ma.row(i) = pi;
 
       pi_ma1 = pi_ma;
     }
 
-    pi_ma1.resize(pi_ma1.rows(),Q+1);
-
+    // pi_ma1.resize(pi_ma1.rows(),Q+1);
     VectorXd Ones1 = VectorXd::Ones(pi_ma1.rows());
     pi_ma1.col(Q) = Ones1 - pi_ma1.rowwise().sum() ;
 
@@ -377,6 +377,7 @@ List GLMcat(Formula formula,
   VectorXd Y_init_vec(Map<VectorXd>(Y_init.data(), Y_init.cols()*Y_init.rows()));
   VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
   VectorXd dev_r(Y_init.rows());
+
   int el_1 = 0;
   for (int element = 0 ; element < div_arr.size() ;  element++){
     if (div_arr[element] != 0){
@@ -384,6 +385,12 @@ List GLMcat(Formula formula,
       el_1 = el_1 +1 ;
     }
   }
+
+  // Rcout << "size of dv_r" << std::endl;
+  // Rcout << div_arr.size() << std::endl;
+  // Rcout << dev_r.rows() << std::endl;
+  // Rcout << dev_r.cols() << std::endl;
+
   ArrayXd dev_log = dev_r.array().log();
   double deviance = dev_log.sum();
   deviance = -2*deviance;
