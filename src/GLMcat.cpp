@@ -236,7 +236,8 @@ List GLMcat(Formula formula,
       F_i = F_i + F_i_2;
       LogLik = LogLik + (Y_M_i.transpose().eval()*VectorXd(pi.array().log())) + ( (1 - Y_M_i.sum()) * std::log(1 - pi.sum()) );
 
-      pi_ma.row(i) = pi.transpose();
+      MatrixXd pi1 = pi;
+      pi_ma.row(i) = pi1.transpose();
 
     }
 
