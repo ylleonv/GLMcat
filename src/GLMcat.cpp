@@ -38,7 +38,7 @@ List GLMcat(Formula formula,
             double freedom_degrees,
             std::string threshold,
             NumericVector beta_init){
-            // Eigen::VectorXd beta_init){
+  // Eigen::VectorXd beta_init){
 
   LogicalVector is_na_ref1 = is_na(categories_order);
   if(is_na_ref1[0]){ // categories order is not given
@@ -81,8 +81,7 @@ List GLMcat(Formula formula,
   Eigen::VectorXd BETA3 = BETA2;
 
   Eigen::MatrixXd BETA = BETA2;
-
-  if(beta_init.size() >= 2 ){
+  if(beta_init.length() >= 2 ){
     // BETA = beta_init;
     BETA = as<Eigen::Map<Eigen::VectorXd> >(beta_init);
   }
@@ -236,11 +235,7 @@ List GLMcat(Formula formula,
       F_i = F_i + F_i_2;
       LogLik = LogLik + (Y_M_i.transpose().eval()*VectorXd(pi.array().log())) + ( (1 - Y_M_i.sum()) * std::log(1 - pi.sum()) );
 
-      MatrixXd pi1 = pi;
-      MatrixXd pi2 = pi1.transpose();
-      VectorXd pi3 = pi2;
-
-      pi_ma.row(i) = pi3;
+      pi_ma.row(i) = pi.transpose();
 
     }
 
@@ -364,8 +359,7 @@ List GLMcat(Formula formula,
   VectorXd pi_ma_vec(Map<VectorXd>(pi_ma.data(), pi_ma.cols()*pi_ma.rows()));
   VectorXd Y_init_vec(Map<VectorXd>(Y_init.data(), Y_init.cols()*Y_init.rows()));
   VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
-  int yinit_rows = Y_init.rows();
-  VectorXd dev_r(yinit_rows);
+  VectorXd dev_r(Y_init.rows());
   int el_1 = 0;
   for (int element = 0 ; element < div_arr.size() ;  element++){
     if (div_arr[element] != 0){
@@ -580,7 +574,7 @@ RCPP_MODULE(GLMcatmodule){
                                _["freedom_degrees"] = R_NaN,
                                _["threshold"] = "standard",
                                _["beta_init"] = NumericVector::create(NA_REAL)
-                               // _["beta_init"] = R_NaN
+                                // _["beta_init"] = R_NaN
                  ),
                  "GLMcat models");
   Rcpp::function("predict_glmcat", &predict_glmcat,
