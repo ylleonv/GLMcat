@@ -223,9 +223,6 @@ List GLMcat(Formula formula,
       // Rcout << "Cov_i.determinant()" << std::endl;
       // Rcout << Cov_i.determinant() << std::endl;
       W_in = D * Cov_i.inverse();
-
-
-
       Score_i_2 = X_M_i.transpose() * W_in * (Y_M_i - pi);
       Score_i = Score_i + Score_i_2;
       F_i_2 = X_M_i.transpose() * (W_in) * (D.transpose() * X_M_i);
@@ -250,10 +247,10 @@ List GLMcat(Formula formula,
 
     }
 
-    VectorXd pima3 = pi_ma.rowwise().sum();
-    pi_ma.resize(pi_ma.rows(), K);
-    VectorXd Ones1 = VectorXd::Ones(pi_ma.rows());
-    pi_ma.col(Q) = Ones1 - pima3 ;
+    // VectorXd pima3 = pi_ma.rowwise().sum();
+    // pi_ma.resize(pi_ma.rows(), K);
+    // VectorXd Ones1 = VectorXd::Ones(pi_ma.rows());
+    // pi_ma.col(Q) = Ones1 - pima3 ;
 
     // To stop when LogLik is smaller than the previous
     if(iteration>1){
@@ -288,12 +285,17 @@ List GLMcat(Formula formula,
     // Rcout << "LogLik" << std::endl;
     // Rcout << LogLik << std::endl;
   }
+  // Rcout << "pi_ma" << std::endl;
+  // Rcout << pi_ma << std::endl;
+  VectorXd pima3 = pi_ma.rowwise().sum();
+  MatrixXd pimadef = pi_ma;
+  pimadef.conservativeResize(pi_ma.rows(), K);
+  VectorXd Ones1 = VectorXd::Ones(pi_ma.rows());
+  pimadef.col(Q) = Ones1 - pima3 ;
+  // pimadef.block(0,Q,pi_ma.rows(),1) = Ones1 - pima3 ;
 
-  // cov_beta = (((X_EXT.transpose() * F_i_final) * X_EXT).inverse());
-
-
-  // CompleteOrthogonalDecomposition<MatrixXd> cqr(F_i_final);
-  // MatrixXd pinv = cqr.pseudoInverse();
+  // Rcout << "pimadef" << std::endl;
+  // Rcout << pimadef << std::endl;
 
   cov_beta = F_i_final.inverse();
   Std_Error = cov_beta.diagonal();
@@ -301,19 +303,6 @@ List GLMcat(Formula formula,
 
   std::vector<std::string> text=as<std::vector<std::string> >(explanatory_complete);
   std::vector<std::string> level_text=as<std::vector<std::string> >(levs1);
-  // StringVector names(Q*P_c + P_p);
-  // if(P_c > 0){
-  //   for(int var = 0 ; var < explanatory_complete.size() ; var++){
-  //     for(int cat = 0 ; cat < Q ; cat++){
-  //       names[(Q*var) + cat] = dist1.concatenate(text[var], level_text[cat]);
-  //     }
-  //   }
-  // }
-  // if(P_p > 0){
-  //   for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-  //     names[(Q*P_c) + var_p] = proportional[var_p];
-  //   }
-  // }
 
   StringVector names;
   if(threshold == "equidistant"){
@@ -352,19 +341,14 @@ List GLMcat(Formula formula,
   NumericMatrix coef = wrap(BETA);
   rownames(coef) = names;
   int df = coef.length();
-
-  // IC
-  // double AIC = (-2*LogLik) + (2 *coef.length());
-  // double BIC = (-2*LogLik) + (coef.length() * log(N) );
-
   MatrixXd predict_glmcated = X_EXT * BETA;
 
   VectorXd Ones2 = VectorXd::Ones(Y_init.rows());
   VectorXd vex1 = (Y_init.rowwise().sum()) ;
   Y_init.conservativeResize( Y_init.rows(), K);
   Y_init.col(Q) = (vex1 - Ones2).array().abs() ;
-  MatrixXd residuals = Y_init - pi_ma;
-  VectorXd pi_ma_vec(Map<VectorXd>(pi_ma.data(), pi_ma.cols()*pi_ma.rows()));
+  MatrixXd residuals = Y_init - pimadef;
+  VectorXd pi_ma_vec(Map<VectorXd>(pimadef.data(), pimadef.cols()*pimadef.rows()));
   VectorXd Y_init_vec(Map<VectorXd>(Y_init.data(), Y_init.cols()*Y_init.rows()));
   VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
   VectorXd dev_r(Y_init.rows());
