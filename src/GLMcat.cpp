@@ -238,7 +238,9 @@ List GLMcat(Formula formula,
 
       MatrixXd pi1 = pi;
       MatrixXd pi2 = pi1.transpose();
-      pi_ma.row(i) = pi2;
+      VectorXd pi3 = pi2;
+
+      pi_ma.row(i) = pi3;
 
     }
 
