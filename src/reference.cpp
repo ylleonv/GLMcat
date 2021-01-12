@@ -13,7 +13,7 @@ ReferenceF::ReferenceF(void) {
   distribution dist;
 }
 
-Eigen::VectorXd ReferenceF::inverse_logistic(const Eigen::VectorXd& eta)
+Eigen::VectorXd ReferenceF::inverse_logistic(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
   // Eigen::VectorXd pi_return1(eta.size());
@@ -46,7 +46,7 @@ Eigen::VectorXd ReferenceF::inverse_normal(const Eigen::VectorXd& eta) const
   return (pi/norm1);
 }
 
-Eigen::MatrixXd ReferenceF::inverse_derivative_logistic(const Eigen::VectorXd& eta2 )
+Eigen::MatrixXd ReferenceF::inverse_derivative_logistic(const Eigen::VectorXd& eta2 ) const
 {
   Eigen::VectorXd pi1 = ReferenceF::inverse_logistic(eta2);
   Eigen::MatrixXd D1 = Eigen::MatrixXd::Zero(pi1.rows(),pi1.rows());
