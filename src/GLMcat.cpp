@@ -103,7 +103,7 @@ List GLMcat(Formula formula,
   MatrixXd cov_beta;
   VectorXd Std_Error;
   double LogLik;
-  MatrixXd pi_ma1;
+  MatrixXd pi_ma(N, Q);
   MatrixXd F_i_final = MatrixXd::Zero(BETA.rows(), BETA.rows());
 
   // for (int iteration=1; iteration < 18; iteration++){
@@ -117,15 +117,11 @@ List GLMcat(Formula formula,
 
     // Loop by subject
     for (int i=0; i < N; i++){
-
-      MatrixXd pi_ma(N, K);
       // Block of size (p,q), starting at (i,j): matrix.block(i,j,p,q);
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
       Y_M_i = Y_init.row(i);
       eta = X_M_i * BETA;
-
       VectorXd eta1 = eta;
-
       if(ratio == "reference"){
         ReferenceF ref;
         if(distribution == "logistic"){
@@ -174,7 +170,6 @@ List GLMcat(Formula formula,
         }
       }else if(ratio == "sequential"){
         SequentialR seq;
-        // Vector pi depends on selected distribution
         if(distribution == "logistic"){
           pi = seq.inverse_logistic(eta);
           D = seq.inverse_derivative_logistic(eta);
@@ -198,7 +193,6 @@ List GLMcat(Formula formula,
         }
       }else if(ratio == "cumulative"){
         CumulativeR cum;
-        // Vector pi depends on selected distribution
         if(distribution == "logistic"){
           pi = cum.inverse_logistic(eta);
           D = cum.inverse_derivative_logistic(eta);
@@ -229,11 +223,7 @@ List GLMcat(Formula formula,
       // Rcout << "Cov_i.determinant()" << std::endl;
       // Rcout << Cov_i.determinant() << std::endl;
       W_in = D * Cov_i.inverse();
-      // Rcout << "W_in" << std::endl;
-      // Rcout << pi.rows() << std::endl;
-      // Rcout << pi_ma.cols() << std::endl;
-      // Rcout << pi << std::endl;
-      // Rcout << pi_ma << std::endl;
+
 
 
       Score_i_2 = X_M_i.transpose() * W_in * (Y_M_i - pi);
@@ -244,20 +234,26 @@ List GLMcat(Formula formula,
 
       // MatrixXd pi_mat = pi;
       // MatrixXd pi_mat1 = pi_mat.transpose();
-      // VectorXd pi_vec1 = pi_mat1;
+      // // VectorXd pi_vec1 = pi_mat1;
       //
       // VectorXd pi_vec1(Map<VectorXd>(pi_mat1.data(), pi_mat1.cols()*pi_mat1.rows()));
 
-      // pi_ma.row(i) = pi_mat.transpose();
-      // pi_ma.block(i,0,1,Q) = pi_vec1.transpose();
-      pi_ma.row(i) = pi;
+      pi_ma.row(i) = pi.transpose();
+      // pi_ma.row(i) = pi_vec1;
+      // pi_ma.row(i) = pi;
 
-      pi_ma1 = pi_ma;
+      // Rcout << "W_in" << std::endl;
+      // Rcout << pi.rows() << std::endl;
+      // Rcout << pi_ma.cols() << std::endl;
+      // Rcout << pi << std::endl;
+      // Rcout << pi_ma << std::endl;
+
     }
 
-    // pi_ma1.resize(pi_ma1.rows(),Q+1);
-    VectorXd Ones1 = VectorXd::Ones(pi_ma1.rows());
-    pi_ma1.col(Q) = Ones1 - pi_ma1.rowwise().sum() ;
+    VectorXd pima3 = pi_ma.rowwise().sum();
+    pi_ma.resize(pi_ma.rows(), K);
+    VectorXd Ones1 = VectorXd::Ones(pi_ma.rows());
+    pi_ma.col(Q) = Ones1 - pima3 ;
 
     // To stop when LogLik is smaller than the previous
     if(iteration>1){
@@ -265,8 +261,6 @@ List GLMcat(Formula formula,
         break;
       // iteration = 25;
     }
-
-
     LogLikIter.conservativeResize(iteration+2, 1);
     LogLikIter(iteration+1) = LogLik;
     Stop_criteria = (abs(LogLikIter(iteration+1) - LogLikIter(iteration))) / (epsilon + (abs(LogLikIter(iteration+1)))) ;
@@ -283,9 +277,6 @@ List GLMcat(Formula formula,
     BETA = BETA + (F_i.inverse() * Score_i);
     // check_tutz = ((BETA - beta_old).norm())/(beta_old.norm()+check_tutz);
     iteration = iteration + 1;
-
-
-
     // if (iteration == 30) {
     //   cout << "Max iter" << endl;
     //   Rcpp::stop("Max iter");
@@ -372,28 +363,21 @@ List GLMcat(Formula formula,
   VectorXd vex1 = (Y_init.rowwise().sum()) ;
   Y_init.conservativeResize( Y_init.rows(), K);
   Y_init.col(Q) = (vex1 - Ones2).array().abs() ;
-  MatrixXd residuals = Y_init - pi_ma1;
-  VectorXd pi_ma_vec(Map<VectorXd>(pi_ma1.data(), pi_ma1.cols()*pi_ma1.rows()));
+  MatrixXd residuals = Y_init - pi_ma;
+  VectorXd pi_ma_vec(Map<VectorXd>(pi_ma.data(), pi_ma.cols()*pi_ma.rows()));
   VectorXd Y_init_vec(Map<VectorXd>(Y_init.data(), Y_init.cols()*Y_init.rows()));
-  // VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
-  // VectorXd dev_r(Y_init.rows());
-  //
-  // int el_1 = 0;
-  // for (int element = 0 ; element < div_arr.size() ;  element++){
-  //   if (div_arr[element] != 0){
-  //     dev_r[el_1] = div_arr[element];
-  //     el_1 = el_1 +1 ;
-  //   }
-  // }
-  //
-  // Rcout << "size of dv_r" << std::endl;
-  // Rcout << div_arr.rows() << std::endl;
-  // Rcout << dev_r.rows() << std::endl;
-  // Rcout << dev_r.cols() << std::endl;
-  //
-  // ArrayXd dev_log = dev_r.array().log();
-  // double deviance = dev_log.sum();
-  // deviance = -2*deviance;
+  VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
+  VectorXd dev_r(Y_init.rows());
+  int el_1 = 0;
+  for (int element = 0 ; element < div_arr.size() ;  element++){
+    if (div_arr[element] != 0){
+      dev_r[el_1] = div_arr[element];
+      el_1 = el_1 +1 ;
+    }
+  }
+  ArrayXd dev_log = dev_r.array().log();
+  double deviance = dev_log.sum();
+  deviance = -2*deviance;
   // bool conv = true;
 
   List output_list = List::create(
@@ -409,7 +393,7 @@ List GLMcat(Formula formula,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
     // Rcpp::Named("Y_init_vec") = Y_init_vec,
     // Rcpp::Named("dev_log") = dev_log,
-    // Rcpp::Named("deviance") = deviance,
+    Rcpp::Named("deviance") = deviance,
     // Rcpp::Named("residuals") = residuals,
     Named("LogLikelihood") = LogLik,
     // Named("freedom_degrees") = freedom_degrees,
