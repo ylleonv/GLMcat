@@ -364,7 +364,8 @@ List GLMcat(Formula formula,
   VectorXd pi_ma_vec(Map<VectorXd>(pi_ma.data(), pi_ma.cols()*pi_ma.rows()));
   VectorXd Y_init_vec(Map<VectorXd>(Y_init.data(), Y_init.cols()*Y_init.rows()));
   VectorXd div_arr = Y_init_vec.array() / pi_ma_vec.array();
-  VectorXd dev_r(Y_init.rows());
+  int yinit_rows = Y_init.rows();
+  VectorXd dev_r(yinit_rows);
   int el_1 = 0;
   for (int element = 0 ; element < div_arr.size() ;  element++){
     if (div_arr[element] != 0){
