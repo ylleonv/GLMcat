@@ -14,7 +14,7 @@ GLMcat(
   ref_category = NA_character_,
   freedom_degrees = NaN,
   threshold = "standard",
-  beta_init = NaN
+  beta_init = NA_real_
 )
 }
 \arguments{
