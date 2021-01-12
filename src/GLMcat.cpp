@@ -122,11 +122,13 @@ List GLMcat(Formula formula,
       Y_M_i = Y_init.row(i);
       eta = X_M_i * BETA;
 
+      VectorXd eta1 = eta;
+
       if(ratio == "reference"){
         ReferenceF ref;
         if(distribution == "logistic"){
-          pi = ref.inverse_logistic(eta);
-          D = ref.inverse_derivative_logistic(eta);
+          pi = ref.inverse_logistic(eta1);
+          D = ref.inverse_derivative_logistic(eta1);
         }else if(distribution == "normal"){
           pi = ref.inverse_normal(eta);
           D = ref.inverse_derivative_normal(eta);
