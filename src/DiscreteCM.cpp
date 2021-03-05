@@ -21,6 +21,7 @@ using namespace Eigen;
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
+//' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 //' @examples
 //' library(GLMcat)
 //' data(TravelChoice)
@@ -38,7 +39,8 @@ List Discrete_CM(Formula formula,
                  CharacterVector alternative_specific,
                  DataFrame data,
                  std::string distribution,
-                 double freedom_degrees
+                 double freedom_degrees,
+                 String intercept
 ){
 
   class distribution dist1;
@@ -48,7 +50,8 @@ List Discrete_CM(Formula formula,
                                          alternatives,
                                          reference,
                                          alternative_specific,
-                                         data
+                                         data,
+                                         intercept
                                            //   ,
                                            // ratio
   );
@@ -195,7 +198,8 @@ RCPP_MODULE(discretemodule){
                               _["alternative_specific"] = CharacterVector::create( NA_STRING),
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
                               _["distribution"] = "a",
-                              _["freedom_degrees"] = 1.0),
+                              _["freedom_degrees"] = 1.0,
+                              _["intercept"] = "standard"),
                               "Discrete Choice Model");
 
 }

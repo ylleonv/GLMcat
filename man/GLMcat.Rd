@@ -26,7 +26,7 @@ GLMcat(
 
 \item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
-\item{proportional}{a character vector indicating the name of the variables with a proportional effect.}
+\item{proportional}{a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}
 
 \item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.}
 
@@ -34,7 +34,7 @@ GLMcat(
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
 
-\item{threshold}{restriction to impose on the thresholds, options are: standard or equidistant.}
+\item{threshold}{restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).}
 
 \item{beta_init}{optional beta initialization vector.}
 }

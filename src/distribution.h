@@ -31,7 +31,8 @@ public:
                           String Alternatives,
                           CharacterVector ref_cat,
                           CharacterVector var_alt_specific,
-                          DataFrame input_data
+                          DataFrame input_data,
+                          String intercept
                             //   ,
                             // String ratio
   );

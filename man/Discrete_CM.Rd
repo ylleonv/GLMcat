@@ -12,7 +12,8 @@ Discrete_CM(
   alternative_specific = NA_character_,
   data = c(1, NA, NaN, Inf, -Inf),
   distribution = "a",
-  freedom_degrees = 1
+  freedom_degrees = 1,
+  intercept = "standard"
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ Discrete_CM(
 \item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
 
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
+
+\item{intercept}{if "conditional" then the design will be equivalent to the conditional logit model}
 }
 \description{
 Discrete choice model: Requires data in long form.

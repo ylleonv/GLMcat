@@ -3,9 +3,9 @@
 * ubuntu 18.04.5 (on travis-ci), R 3.6.3
 * win-builder (devel)
 
-Hello, I hereby submit version 0.1.1 of GLMcat
+Hello, I hereby submit version 0.1.2 of GLMcat
  
- - The only modification was to remove the base package from Imports in the description file
+ - The only modification was to update the design matrix of the function DiscreteCM()
  
 There was 1 NOTE:
 installed size is 19.3Mb

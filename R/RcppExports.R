@@ -16,6 +16,7 @@
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
+#' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 #' @examples
 #' library(GLMcat)
 #' data(TravelChoice)
@@ -25,8 +26,8 @@
 #' distribution = "logistic")
 #' @note For these models it is not allowed to exclude the intercept.
 #' @export
-Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees) {
-    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees)
+Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees, intercept) {
+    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees, intercept)
 }
 
 #' Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
@@ -36,10 +37,10 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 #' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 #' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
-#' @param proportional a character vector indicating the name of the variables with a proportional effect.
+#' @param proportional a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-#' @param threshold restriction to impose on the thresholds, options are: standard or equidistant.
+#' @param threshold restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).
 #' @param beta_init optional beta initialization vector.
 #' @export
 #' @examples

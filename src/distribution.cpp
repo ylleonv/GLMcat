@@ -28,6 +28,10 @@ std::string distribution::concatenate(std::string x, std::string level)
 Environment base_base("package:base");
 Function my_transpose1 = base_base["t"];
 
+
+// Environment stats_env1("package:utils");
+// Function head1 = stats_env1["head"];
+
 DataFrame my_transpose(DataFrame dat_in){
   // Environment base_base("package:base");
   // Function my_transpose1 = base_base["t"];
@@ -143,6 +147,8 @@ List distribution::All_pre_data_or(Formula formula,
                                    std::string threshold,
                                    std::string ratio){
 
+  // print(proportional_effect);
+
   Environment base_env("package:base");
   Function my_asnumeric = base_env["as.numeric"];
   Function my_cbind = base_env["cbind"];
@@ -150,6 +156,8 @@ List distribution::All_pre_data_or(Formula formula,
   Function my_levels = base_env["levels"];
 
   List M_matrix = Model_Matrix_or(input_data, formula);
+
+
 
   if(categories_order.length() == 1){
     LogicalVector is_na_ref = is_na(categories_order);
@@ -179,6 +187,7 @@ List distribution::All_pre_data_or(Formula formula,
   NumericVector Num_res = my_asnumeric(a1);
   Design = my_cbind(Num_res, Design);
 
+  // Rcout << "is_na_ref1" << std::endl;
   // Now order dataset with respect to the repsonse variables in the given order
   DataFrame df_tans = my_transpose(Design);
   DataFrame df_tans_2 = Design ;
@@ -188,8 +197,13 @@ List distribution::All_pre_data_or(Formula formula,
   df_tans_2 = my_transpose(df_tans);
   CharacterVector Levels = Cat_ref_or_L["levels"];
   int N_cats = Levels.length();
+
+  // Rcout << "is_na_ref2" << std::endl;
+
   LogicalVector any_alternative_specific = !is_na(proportional_effect); // TRUE IF THERE ARE
   CharacterVector colnames_final_m = df_tans_2.names();
+
+  // Rcout << colnames_final_m << std::endl;
 
   NumericVector x(colnames_final_m.length());
   if (any_alternative_specific[0]) {
@@ -201,6 +215,8 @@ List distribution::All_pre_data_or(Formula formula,
     }
     colnames_final_m = colnames_final_m[x==0]; // Case where there no proportional effects
   }
+
+  // Rcout << "is_na_ref4" << std::endl;
 
   // Now extend
   // Y EXTEND
@@ -216,29 +232,82 @@ List distribution::All_pre_data_or(Formula formula,
   Eigen::MatrixXd Iden_Q1 = Eigen::MatrixXd::Identity(N_cats-1,N_cats-1);
   Eigen::MatrixXd X_EXT_COMPLETE;
   // Rcout << Pre_Design << std::endl;
+  // print(head1(Pre_Design));
 
   if (ratio == "cumulative"){
     if (threshold == "equidistant"){
-      if (!any_alternative_specific[0]) { // ninguna es proportional
-        Rcout << "propor_cum_equ" << std::endl;
+      // if (!any_alternative_specific[0]) { // ninguna es proportional
+        // Rcout << "propor_cum_equ" << std::endl;
+
         NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
         Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
         // Rcout << tJac2 << std::endl;
-        X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), tJac2).eval();
+        Eigen::MatrixXd X_EXT_COMPLETE_int = Eigen::kroneckerProduct(Pre_Design.block(0,1,Pre_Design.rows(),1), tJac2).eval();
+        Eigen::MatrixXd X_EXT_COMPLETE_res = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 2), Iden_Q1).eval();
+
+        Eigen::MatrixXd X_EXT_COMPLETE_1 = Eigen::MatrixXd::Zero(X_EXT_COMPLETE_int.rows(),
+                                                                 X_EXT_COMPLETE_int.cols()+X_EXT_COMPLETE_res.cols());
+
+        X_EXT_COMPLETE_1.block(0,0,X_EXT_COMPLETE_int.rows(),X_EXT_COMPLETE_int.cols()) = X_EXT_COMPLETE_int;
+        X_EXT_COMPLETE_1.block(0,X_EXT_COMPLETE_int.cols(),X_EXT_COMPLETE_res.rows(),X_EXT_COMPLETE_res.cols()) = X_EXT_COMPLETE_res;
+
+        // print(head1(X_EXT_COMPLETE_1));
+        X_EXT_COMPLETE = X_EXT_COMPLETE_1;
+
         colnames_final_m.erase(0);
         // Rcout << X_EXT_COMPLETE << std::endl;
+      // }
+    }else if (threshold == "symmetric"){ // caso symmetric
+
+      Eigen::MatrixXd Sim_int = Eigen::MatrixXd::Ones(N_cats-1,floor(N_cats/2)+1);
+      Eigen::MatrixXd Iden_sim = -Eigen::MatrixXd::Identity(floor(N_cats/2),floor(N_cats/2)).rowwise().reverse();
+      // Rcout << Iden_sim  << std::endl;
+
+      Eigen::MatrixXd Iden_sim1 = Eigen::MatrixXd::Identity(floor(N_cats/2),floor(N_cats/2));
+      // Rcout << Iden_sim1  << std::endl;
+
+      Sim_int.block(0,1,Iden_sim.rows(),Iden_sim.cols()) = Iden_sim;
+      Sim_int.block(N_cats-floor(N_cats/2)-1,1,Iden_sim1.rows(),Iden_sim1.cols()) = Iden_sim1;
+
+      if((N_cats % 2) == 0) { //for even numbers the row in the middle to zero execpt the intercept
+        Sim_int.block((N_cats/2) - 1 ,1,1,Sim_int.cols()-1) = Eigen::VectorXd::Zero(Sim_int.cols()-1);
       }
-    }else{ // caso symmetric
+
+      // Rcout << Sim_int  << std::endl;
+
+      Eigen::MatrixXd X_EXT_COMPLETE_int = Eigen::kroneckerProduct(Pre_Design.block(0,1,Pre_Design.rows(),1), Sim_int).eval();
+      Eigen::MatrixXd X_EXT_COMPLETE_res = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 2), Iden_Q1).eval();
+
+      Eigen::MatrixXd X_EXT_COMPLETE_1 = Eigen::MatrixXd::Zero(X_EXT_COMPLETE_int.rows(),
+                                                               X_EXT_COMPLETE_int.cols()+X_EXT_COMPLETE_res.cols());
+
+      X_EXT_COMPLETE_1.block(0,0,X_EXT_COMPLETE_int.rows(),X_EXT_COMPLETE_int.cols()) = X_EXT_COMPLETE_int;
+      X_EXT_COMPLETE_1.block(0,X_EXT_COMPLETE_int.cols(),X_EXT_COMPLETE_res.rows(),X_EXT_COMPLETE_res.cols()) = X_EXT_COMPLETE_res;
+
+      // print(head1(X_EXT_COMPLETE_1));
+      X_EXT_COMPLETE = X_EXT_COMPLETE_1;
+
+      colnames_final_m.erase(0);
+
+      // Rcout << Sim_int  << std::endl;
+      //
+      // X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
+      // colnames_final_m.erase(0);
+      // Rcout << X_EXT_COMPLETE  << std::endl;
+    }else{ //standard
       X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
       colnames_final_m.erase(0);
-      // Rcout << X_EXT_COMPLETE  << std::endl;
     }
   }else{ // caso not cum
     X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
     colnames_final_m.erase(0);
     // Rcout << X_EXT_COMPLETE  << std::endl;
   }
+  // print(head1(X_EXT_COMPLETE));
+
   Eigen::MatrixXd Design_Matrix;
+
+
 
   if (any_alternative_specific[0]) { // para las proporcionales
     // Rcout << "proportinal" << std::endl;
@@ -250,22 +319,23 @@ List distribution::All_pre_data_or(Formula formula,
     Eigen::MatrixXd X_EXT_PROPORTIONAL = Eigen::kroneckerProduct(Pre_DF_proportional, Ones).eval();
     // Rcout << X_EXT_PROPORTIONAL << std::endl;
     // TENGO QUE PONER EL IF ACA
-    if (ratio == "cumulative"){
-      if (threshold == "equidistant"){
-        NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
-        Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
-        // Rcout << tJac2 << std::endl;
-        X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), tJac2).eval();
-        // Rcout << X_EXT_COMPLETE << std::endl;
-        colnames_final_m.erase(0);
-      }
-    }
+    // if (ratio == "cumulative"){
+    //   if (threshold == "equidistant"){
+    //     NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
+    //     Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
+    //     // Rcout << tJac2 << std::endl;
+    //     X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), tJac2).eval();
+    //     // Rcout << X_EXT_COMPLETE << std::endl;
+    //     colnames_final_m.erase(0);
+    //   }
+    // }
     Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_PROPORTIONAL.cols());
     Design_Matrix.block(0,0,X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()) = X_EXT_COMPLETE;
     Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_PROPORTIONAL.cols()) = X_EXT_PROPORTIONAL;
   }else{
     Design_Matrix = X_EXT_COMPLETE;
   }
+  // print(head1(Design_Matrix));
   // Rcout << Design_Matrix << std::endl;
   // print(colnames_final_m);
   return List::create(
@@ -627,60 +697,34 @@ NumericMatrix Model_Matrix(DataFrame data, Formula formula) {
 }
 
 // // [[Rcpp::export]]
-List All_pre_data(Formula formula, DataFrame input_data, CharacterVector var_informatives,
-                  String choice, CharacterVector Ref_cat){
+List All_pre_data(Formula formula,
+                  DataFrame input_data,
+                  CharacterVector var_informatives,
+                  String choice,
+                  CharacterVector Ref_cat){
+
+  // print(formula_entry(formula)["formula_model"]);
+  // print(head1(Model_Matrix(input_data, formula_entry(formula)["formula_model"])));
 
   List Out_SM = Sort_DataFrame(
-    Model_Matrix(input_data,
-                 formula_entry(formula)["formula_model"]),
-                 input_data,
-                 var_informatives,
-                 choice,
-                 Ref_cat);
+    Model_Matrix(input_data, formula_entry(formula)["formula_model"]),
+    input_data,
+    var_informatives,
+    choice,
+    Ref_cat);
+
   SEXP MA1 = Out_SM["df_tans_2"];
   CharacterVector Levels = Out_SM["Levels"];
   DataFrame MA11 = Rcpp::as<DataFrame>(MA1);
   DataFrame data_output = my_AsNumericMatrix(MA11);
+
+  // print(head1(data_output));
 
   return List::create(
     _["data_output"] = data_output,
     _["Levels"] = Levels
   );
 }
-
-// Eigen::MatrixXd Extend_alt_specific1(DataFrame alt_specific, int N_cats, int N_ind,
-//                                      CharacterVector var_alt_specific, String ad_or_ref){
-//   // cat_index = 1;
-//
-//   Rcout << var_alt_specific << endl;
-//   Eigen::VectorXd Ones1 = Eigen::VectorXd::Ones(N_cats-1);
-//   Eigen::MatrixXd Iden_Q = Eigen::MatrixXd::Identity(N_cats,N_cats);
-//
-//   Eigen::MatrixXd Iden_Q1 = Eigen::MatrixXd::Identity(N_cats+1,N_cats+1);
-//   Eigen::MatrixXd Iden_Q11 =  Iden_Q1.block(1, 0, N_cats, N_cats);
-//
-//
-//   // Rcout << Iden_Q << endl;
-//   // Rcout << Iden_Q11 << endl;
-//
-//   if(ad_or_ref != "reference"){Iden_Q = Iden_Q - Iden_Q11;
-//     Iden_Q.conservativeResize(Iden_Q.rows() - 1, Iden_Q.cols());
-//   }else{
-//     Iden_Q.conservativeResize(Iden_Q.rows() - 1, Iden_Q.cols());
-//     Iden_Q.col(N_cats-1) = -Ones1;
-//   }
-//   NumericMatrix alt_specific_num = internal::convert_using_rfunction(alt_specific[var_alt_specific], "as.matrix");
-//   Eigen::Map<Eigen::MatrixXd> M_alt_specific = as<Eigen::Map<Eigen::MatrixXd> >(alt_specific_num);
-//   Eigen::MatrixXd Matrix_trans((N_cats-1)*N_ind,var_alt_specific.length());
-//   for(int indi = 1 ; indi <= N_ind ; indi++)
-//   {
-//     Eigen::MatrixXd Block_ind =  M_alt_specific.block((indi-1) * N_cats, 0, N_cats, var_alt_specific.length());
-//     Eigen::MatrixXd Block_RES = Block_ind.transpose() * Iden_Q.transpose();
-//     Matrix_trans.block((indi-1) * (N_cats-1), 0, N_cats-1, var_alt_specific.length()) = Block_RES.transpose();
-//   }
-//
-//   return Matrix_trans;
-// }
 
 Eigen::MatrixXd Extend_alt_specific(DataFrame alt_specific, int N_cats, int N_ind,
                                     CharacterVector var_alt_specific
@@ -713,7 +757,7 @@ Eigen::MatrixXd Extend_alt_specific(DataFrame alt_specific, int N_cats, int N_in
 // Para cada individuo, como sus ingresos, seran los mismos para todas las categorias
 Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_ind,
                                      CharacterVector var_alt_specific,  DataFrame Var_alt,
-                                     String ref_cat
+                                     String ref_cat, String intercept
                                        // , String ad_or_ref
 ){
 
@@ -740,7 +784,7 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
 
   Eigen::MatrixXd Matrix_trans((N_cats-1)*N_ind,(N_cats-1)*var_case_specific.length());
 
-  // Rcout<< (Matrix_trans) << endl;
+
 
   for(int indi = 1 ; indi <= N_ind ; indi++)
   {
@@ -758,6 +802,7 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
       }
     }
   }
+
   // Create vector relation between category and order in dataset
   CharacterVector ordered_cat = case_specific["alternatives"];
   String cat_1 = ordered_cat[0];
@@ -843,15 +888,33 @@ Eigen::MatrixXd Extend_case_specific(DataFrame case_specific, int N_cats, int N_
     }
   }
 
+
+
   Eigen::MatrixXd Matrix_trans1 = Matrix_trans.block(0,0,Matrix_trans.rows(), count_re_var);
+
+  // print(head1(Matrix_trans1));
+
+  // Aca esta la parte de lo que seria el diseno complete, asi que si quiero un solo intercepto eliminare las
+  // J-1 primeras filas y reemplazare por el vector original de 1
+
+  // String conditional = "conditional";
+  if (intercept == "conditional"){
+    Matrix_trans1 = Matrix_trans1.block(0, N_cats-2, Matrix_trans1.rows(), Matrix_trans1.cols() - (N_cats-2) );
+    Matrix_trans1.col(0) = M_case_specific.col(0);
+  }
+
+  // print(head1(Matrix_trans1));
+
   return Matrix_trans1;
 }
+
 
 Eigen::MatrixXd Extend_All_design(DataFrame Final_mat,
                                   DataFrame Var_alt,
                                   CharacterVector var_alt_specific,
                                   int N_ind, int N_cats,
-                                  String ref_cat
+                                  String ref_cat,
+                                  String intercept
                                     // , String ad_or_ref
 ){
 
@@ -859,9 +922,11 @@ Eigen::MatrixXd Extend_All_design(DataFrame Final_mat,
 
   CharacterVector var_case_specific = Var_Not_In(Final_mat, var_alt_specific);
 
-  Eigen::MatrixXd Ex_case_M = Extend_case_specific(Final_mat, N_cats, N_ind, var_alt_specific, Var_alt , ref_cat);
+  Eigen::MatrixXd Ex_case_M = Extend_case_specific(Final_mat, N_cats, N_ind, var_alt_specific, Var_alt , ref_cat, intercept);
   // Eigen::MatrixXd Ex_case_M = Extend_case_specific(Final_mat, N_cats, N_ind, var_alt_specific, Var_alt , ref_cat, ad_or_ref);
   Eigen::MatrixXd Design_Matrix;
+
+  // print(head1(Ex_case_M));
 
   if (any_alternative_specific[0]) {
     Eigen::MatrixXd Ex_alt_M = Extend_alt_specific(Final_mat, N_cats, N_ind, var_alt_specific);
@@ -899,10 +964,15 @@ List distribution::select_data_nested(Formula formula,
                                       String Alternatives,
                                       CharacterVector ref_cat,
                                       CharacterVector var_alt_specific,
-                                      DataFrame input_data
+                                      DataFrame input_data,
+                                      String intercept
                                         //   ,
                                         // String ad_or_ref
 ) {
+
+  Environment stats_env1("package:utils");
+  Function head = stats_env1["head"];
+
 
   List Formula_l = formula_entry(formula);
   // print(Formula_l);
@@ -910,9 +980,13 @@ List distribution::select_data_nested(Formula formula,
   String Response = Formula_l["Response"];
   DataFrame Var_spe_alt = Rcpp::as<DataFrame>(Var_spe_alt1);
 
-  CharacterVector var_informatives = CharacterVector::create("Alternatives", "Cat_ref_vec", "individuals");
+  CharacterVector var_informatives = CharacterVector::create("Alternatives",
+                                                             "Cat_ref_vec",
+                                                             "individuals");
   var_informatives[0] = Alternatives;
   var_informatives[2] = individuals;
+
+  // Rcout << var_informatives << std::endl;
 
   List Final_mat = All_pre_data(Formula_l["formula_model"],
                                 input_data,
@@ -928,6 +1002,7 @@ List distribution::select_data_nested(Formula formula,
 
   LogicalVector any_alternative_specific = !is_na(var_alt_specific);
   CharacterVector colnames_final_m = Var_spe_alt.names();
+
   if (any_alternative_specific[0]) {
     NumericVector x(colnames_final_m.length());
     for(int indi = 0 ; indi < var_alt_specific.length(); indi++){
@@ -942,22 +1017,32 @@ List distribution::select_data_nested(Formula formula,
   CharacterVector Names_design;
   Environment base_base("package:base");
   Function my_paste = base_base["paste"];
+
+
+
   for(int indi = 0 ; indi < new2.cols(); indi++){
     CharacterVector colnames = new2.names();
     CharacterVector var_1 = new2[indi];
     String var111 = var_1[0];
+    // print(var_1[0]);
     if(var_1[0] != ""){
       String var11 = colnames[indi];
       CharacterVector a1 = my_paste(var11, var111,  _["collapse"] = "");
       Names_design.push_back(a1[0]);
     }else{
+      // String conditional = "conditional";
+      if (intercept == "conditional" && indi == 0){
+        String var11 = colnames[indi];
+        CharacterVector a1 = my_paste(var11, var111,  _["collapse"] = "");
+        Names_design.push_back(a1[0]);
+      }else{
       for(int cats = 0 ; cats < Levels.length()-1; cats++){
         String var11 = colnames[indi];
         String var12 = Levels[cats];
         String var1 = my_paste(var11, var12,  _["collapse"] = "");
         Names_design.push_back(var1);
       }
-
+      }
     }
   }
 
@@ -970,16 +1055,24 @@ List distribution::select_data_nested(Formula formula,
   String ref_cat1 = ref_cat[ref_cat.length()-1];
   List Response_L = Extend_Response(Final_mat1);
   Eigen::MatrixXd Response_M = Response_L["Y_Ext"];
+//
+//   print(Var_spe_alt); // All variables including the intercept
+//   print(var_alt_specific); // JUst the specific for alternatives
 
   Eigen::MatrixXd Design_Matrix = Extend_All_design(Final_mat1,
                                                     Var_spe_alt,
                                                     var_alt_specific,
                                                     Response_M.rows(),
                                                     Response_L["N_cat"],
-                                                              ref_cat1
+                                                              ref_cat1,
+                                                              intercept
                                                       // , ad_or_ref
   );
 
+
+//
+//   print(head(Names_design));
+//   print(head(Design_Matrix));
 
   return List::create(
     _["Design_Matrix"] = Design_Matrix,

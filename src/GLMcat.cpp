@@ -15,10 +15,10 @@ using namespace Eigen;
 //' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
 //' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 //' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
-//' @param proportional a character vector indicating the name of the variables with a proportional effect.
+//' @param proportional a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
-//' @param threshold restriction to impose on the thresholds, options are: standard or equidistant.
+//' @param threshold restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).
 //' @param beta_init optional beta initialization vector.
 //' @export
 //' @examples
@@ -49,12 +49,14 @@ List GLMcat(Formula formula,
     Rcpp::stop("Unrecognized threshold restriction; for reference, adjacent and sequential ratio the only valid option is standard");
   }
 
-  if (!(threshold == "standard" || threshold == "equidistant" )){
+  if (!(threshold == "standard" || threshold == "equidistant" || threshold == "symmetric" )){
     Rcpp::stop("Unrecognized threshold restriction; options are: standard and equidistant");
   }
 
   class distribution dist1;
   const int N = data.nrows() ; // Number of observations
+  // Rcout << proportional << std::endl;
+
   List Full_M = dist1.All_pre_data_or(formula,
                                       data,
                                       categories_order,
@@ -304,20 +306,53 @@ List GLMcat(Formula formula,
   std::vector<std::string> text=as<std::vector<std::string> >(explanatory_complete);
   std::vector<std::string> level_text=as<std::vector<std::string> >(levs1);
 
+
+  // Rcout << explanatory_complete << std::endl;
+  // Rcout << proportional << std::endl;
+
   StringVector names;
-  if(threshold == "equidistant"){
+  if(threshold == "equidistant" || threshold == "symmetric"){
     // if(P_c>1){ // hay alguna complete
-    StringVector names1(2*P_c + P_p);
+    StringVector names1;
     int ind_name = 0;
-    for(int var = 0 ; var < explanatory_complete.size() ; var++){
-      names1[ind_name] = dist1.concatenate(text[var], level_text[0]);
-      names1[ind_name+1] = dist1.concatenate(text[var], "distance");
-      ind_name = ind_name + 2;
-    }
-    if(P_p>0){ // hay alguna proportional
-      for(int var = 0 ; var < P_p ; var++){
-        names1[ind_name] = proportional[var];
+    if(threshold == "equidistant"){
+      StringVector names2(2 + Q*(P_c-1) + P_p);
+      for(int var = 0 ; var < 1 ; var++){
+        names2[ind_name] = dist1.concatenate(text[var], level_text[0]);
+        names2[ind_name+1] = dist1.concatenate(text[var], "distance");
+        ind_name = ind_name + 2;
+        names1 = names2;
+      }}
+    else{ // symmetric
+      double cath = (Q+1)-((Q+1)/2);
+
+      StringVector names2(cath + Q*(P_c-1) + P_p);
+
+      names2[0] = "center";
+      ind_name = ind_name + 1;
+
+      for(int var = 1 ; var < cath ; var++){
+        names2[ind_name] = dist1.concatenate("a", level_text[ind_name]);
+        // names1[ind_name] = (text[0]);
         ind_name = ind_name + 1;
+      }
+      names1 = names2;
+    }
+
+    // print(names1);
+    if(P_c > 1){
+      for(int var = 1 ; var < explanatory_complete.size() ; var++){
+        for(int cat = 0 ; cat < Q ; cat++){
+          names1[ind_name] = dist1.concatenate(text[var], level_text[cat]);
+          ind_name = ind_name + 1;
+        }
+      }
+    }
+    // print(names1);
+    if(P_p > 0){
+      for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
+        names1[ind_name] = proportional[var_p];
+        ind_name = ind_name+1;
       }
     }
     names = names1;
@@ -337,6 +372,7 @@ List GLMcat(Formula formula,
     }
     names = names1;
   }
+
   // TO NAMED THE RESULT BETAS
   NumericMatrix coef = wrap(BETA);
   rownames(coef) = names;
