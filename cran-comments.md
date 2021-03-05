@@ -5,7 +5,7 @@
 
 Hello, I hereby submit version 0.2.0 of GLMcat
  
- - The only modification was to update the design matrix of the function DiscreteCM()
+ - The only modification was an update to the design matrix of the function DiscreteCM()
  
 There was 1 NOTE:
 installed size is 19.3Mb
@@ -13,4 +13,3 @@ installed size is 19.3Mb
      libs 18.9Mb
 
 It seems that this is a common note among packages using C++ through the Rcpp library.
-
