@@ -6,6 +6,8 @@
 Hello, I hereby submit version 0.2.0 of GLMcat
  
  - The only modification was an update to the design matrix of the function DiscreteCM()
+
+- I also fixed the bug detected by r-patched-solaris-x86 and the version of the package.
  
 There was 1 NOTE:
 installed size is 19.3Mb
