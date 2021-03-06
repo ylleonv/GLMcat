@@ -319,7 +319,7 @@ summary(cum_log_co)
 
 The function *GLMcat* has special features for the cumulative models. The option for the thresholds to be equidistant is a characteristic of interest for the family of cumulative models:
 
-*(Cumulative, Logistic, Complete-equidistant)*
+*(Cumulative, Logistic, Equidistant)*
 
 ```{r }
 cum_log_co_e <- GLMcat(
@@ -327,6 +327,7 @@ cum_log_co_e <- GLMcat(
   distribution = "logistic",
   ratio = "cumulative",
   data = DisturbedDreams,
+  proportional = "Age",
   threshold = "equidistant",
 )
 logLik(cum_log_co_e)
