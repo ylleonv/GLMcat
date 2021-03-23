@@ -8,6 +8,7 @@
 #include <boost/math/distributions/cauchy.hpp>
 #include <boost/math/distributions/extreme_value.hpp>
 #include <boost/math/distributions/students_t.hpp>
+#include <boost/math/distributions/laplace.hpp>
 
 
 using namespace boost::math;
@@ -1212,6 +1213,22 @@ double Gompertz::cdf_gompertz(const double& value) const
 { double _mu = 0.0;
   double _sigma = 1.0;
   return  1 - exp( - exp((value - _mu) / _sigma) ); }
+
+Laplace::Laplace(void) {
+  // Rcout << "Laplace is being created" << endl;
+}
+
+double Laplace::pdf_laplace(const double& value) const
+{
+  boost::math::laplace dist(0., 1.);
+  return boost::math::pdf(dist, value);
+}
+
+double Laplace::cdf_laplace(const double& value) const
+{ boost::math::laplace dist(0., 1.);
+  return boost::math::cdf(dist, value);
+}
+
 
 
 // RCPP_MODULE(exportmod){

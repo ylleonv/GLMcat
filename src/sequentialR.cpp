@@ -165,6 +165,32 @@ Eigen::MatrixXd SequentialR::inverse_derivative_student(const Eigen::VectorXd& e
   return M;
 }
 
+Eigen::VectorXd SequentialR::inverse_laplace(const Eigen::VectorXd& eta) const
+{
+  Eigen::VectorXd ordered_pi( eta.size() );
+  double product = 1;
+  for(int j=0; j<eta.size(); ++j)
+  {
+    ordered_pi[j] = product * Laplace::cdf_laplace( eta(j) );
+    product *= ( 1 - Laplace::cdf_laplace( eta(j) ) );
+  }
+  return in_open_corner(ordered_pi);
+}
+
+Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& eta) const
+{
+  Eigen::MatrixXd M = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  double product = 1.;
+  for (int j=0; j < eta.rows(); ++j)
+  {
+    M(j,j) = Laplace::pdf_laplace(eta(j)) * product;
+    for (int i=0; i<j; ++i)
+    { M(i,j) = - Laplace::pdf_laplace(eta(i))  * std::max(1e-10, std::min(Laplace::cdf_laplace(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-Laplace::cdf_laplace(eta(i)), 1-1e-6)); }
+    product *= std::max(1e-10, std::min( 1-Laplace::cdf_laplace(eta(j)), 1-1e-6));
+  }
+  return M;
+}
+
 
 // distribution dist_seq;
 //

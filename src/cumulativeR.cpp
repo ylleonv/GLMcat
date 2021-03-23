@@ -127,6 +127,25 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_gumbel(const Eigen::VectorXd& et
   return (F_1 * R);
 }
 
+Eigen::VectorXd CumulativeR::inverse_laplace(const Eigen::VectorXd& eta) const
+{
+  Eigen::VectorXd ordered_pi( eta.size() );
+  ordered_pi[0] = cdf_laplace( eta(0) );
+  for(int j=1; j<eta.size(); ++j)
+  { ordered_pi[j] = cdf_laplace( eta(j) ) -  cdf_laplace( eta(j-1) ); }
+  return in_open_corner(ordered_pi);
+}
+
+Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& eta) const
+{
+  Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
+  R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  for(int j=0; j<eta.rows(); ++j)
+  {F_1(j,j) =  pdf_laplace(eta(j));}
+  return (F_1 * R);
+}
+
 // // [[Rcpp::export("GLMcum")]]
 // List GLMcum(Formula formula,
 //             CharacterVector categories_order,

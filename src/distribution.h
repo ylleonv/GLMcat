@@ -101,5 +101,15 @@ public:
   Gompertz();
 };
 
+class Laplace : virtual public distribution{
+public:
+  virtual double cdf_laplace(const double& value) const;
+  virtual double pdf_laplace(const double& value) const;
+
+  Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
+
+  Laplace();
+};
+
 
 #endif

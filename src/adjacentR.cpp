@@ -159,7 +159,30 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_student(const Eigen::VectorXd& eta
 
 }
 
+Eigen::VectorXd AdjacentR::inverse_laplace(const Eigen::VectorXd& eta) const
+{
+  Eigen::VectorXd pi( eta.size() );
+  pi[eta.size()-1] = cdf_laplace( eta(eta.size()-1) ) / ( 1-cdf_laplace( eta(eta.size()-1) ) );
+  double norm = 1 + pi[eta.size()-1];
+  for(int j=(eta.size()-1); j>0; --j)
+  {
+    pi[j-1] = pi[j] * cdf_laplace( eta(j-1) ) / ( 1-cdf_laplace( eta(j-1) ) );
+    norm += pi[j-1];
+  }
+  return in_open_corner(pi/norm);
+}
 
+Eigen::MatrixXd AdjacentR::inverse_derivative_laplace(const Eigen::VectorXd& eta) const
+{
+  Eigen::VectorXd pi = AdjacentR::inverse_laplace(eta);
+  Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
+  Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
+  for(int j=0; j<pi.rows(); ++j)
+  { D(j,j) = pdf_laplace( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_laplace(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_laplace(eta(j)))) ); }
+
+  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
+
+}
 
 // distribution dist_adj;
 

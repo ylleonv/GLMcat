@@ -170,6 +170,36 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_student(const Eigen::VectorXd& et
   return FINAL;
 }
 
+Eigen::VectorXd ReferenceF::inverse_laplace(const Eigen::VectorXd& eta) const
+{
+  Eigen::VectorXd pi( eta.size() );
+  // Eigen::VectorXd pi_return1(eta.size());
+  Eigen::VectorXd pi_return(eta.size());
+  double norm1 = 1.;
+  for(int j=0; j<eta.size(); ++j)
+  {
+    pi[j] = cdf_laplace( eta(j) ) / ( 1-
+      std::max(1e-10, std::min(1-1e-6, cdf_laplace(eta(j))))
+    );
+    norm1 += pi[j];
+  }
+  pi_return = pi/norm1;
+  return pi_return;
+  // return pi/norm1;
+}
+
+Eigen::MatrixXd ReferenceF::inverse_derivative_laplace(const Eigen::VectorXd& eta2 ) const
+{
+  Eigen::VectorXd pi1 = ReferenceF::inverse_laplace(eta2);
+  Eigen::MatrixXd D1 = Eigen::MatrixXd::Zero(pi1.rows(),pi1.rows());
+  for(int j=0; j<eta2.rows(); ++j)
+  { D1(j,j) = pdf_laplace( eta2(j) ) /
+    ( std::max(1e-10, std::min(1-1e-6,cdf_laplace(eta2(j)))) *
+      std::max(1e-10, std::min(1-1e-6, 1-cdf_laplace(eta2(j)))) ); }
+
+  return D1 * ( Eigen::MatrixXd(pi1.asDiagonal()) - pi1 * pi1.transpose().eval() );
+}
+
 
 // RCPP_MODULE(referencemodule){
   // Rcpp::function("GLMref", &GLMref,

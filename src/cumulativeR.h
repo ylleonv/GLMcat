@@ -2,7 +2,7 @@
 #define CUMULATIVER_H_
 #include "distribution.h"
 
-class CumulativeR : virtual public distribution, Logistic, Normal, Cauchit, Student, Gumbel, Gompertz{
+class CumulativeR : virtual public distribution, Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
 public:
   CumulativeR();
 
@@ -20,6 +20,9 @@ public:
 
   virtual Eigen::VectorXd inverse_student(const Eigen::VectorXd& eta, const double& freedom_degrees) const;
   virtual Eigen::MatrixXd inverse_derivative_student(const Eigen::VectorXd& eta,const double& freedom_degrees) const ;
+
+  virtual Eigen::VectorXd inverse_laplace(const Eigen::VectorXd& eta) const;
+  virtual Eigen::MatrixXd inverse_derivative_laplace(const Eigen::VectorXd& eta) const ;
 
   virtual Eigen::VectorXd inverse_gumbel(const Eigen::VectorXd& eta) const;
   virtual Eigen::MatrixXd inverse_derivative_gumbel(const Eigen::VectorXd& eta) const ;

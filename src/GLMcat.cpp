@@ -141,6 +141,9 @@ List GLMcat(Formula formula,
         }else if(distribution == "gumbel"){
           pi = ref.inverse_gumbel(eta);
           D = ref.inverse_derivative_gumbel(eta);
+        }else if(distribution == "laplace"){
+          pi = ref.inverse_laplace(eta);
+          D = ref.inverse_derivative_laplace(eta);
         }else if(distribution == "student"){
           pi = ref.inverse_student(eta, freedom_degrees);
           D = ref.inverse_derivative_student(eta, freedom_degrees);
@@ -164,6 +167,9 @@ List GLMcat(Formula formula,
         }else if(distribution == "gumbel"){
           pi = adj.inverse_gumbel(eta);
           D = adj.inverse_derivative_gumbel(eta);
+        }else if(distribution == "laplace"){
+          pi = adj.inverse_laplace(eta);
+          D = adj.inverse_derivative_laplace(eta);
         }else if(distribution == "student"){
           pi = adj.inverse_student(eta, freedom_degrees);
           D = adj.inverse_derivative_student(eta, freedom_degrees);
@@ -187,6 +193,9 @@ List GLMcat(Formula formula,
         }else if(distribution == "gumbel"){
           pi = seq.inverse_gumbel(eta);
           D = seq.inverse_derivative_gumbel(eta);
+        }else if(distribution == "laplace"){
+          pi = seq.inverse_laplace(eta);
+          D = seq.inverse_derivative_laplace(eta);
         }else if(distribution == "student"){
           pi = seq.inverse_student(eta, freedom_degrees);
           D = seq.inverse_derivative_student(eta, freedom_degrees);
@@ -210,6 +219,9 @@ List GLMcat(Formula formula,
         }else if(distribution == "student"){
           pi = cum.inverse_student(eta,freedom_degrees);
           D = cum.inverse_derivative_student(eta,freedom_degrees);
+        }else if(distribution == "laplace"){
+          pi = cum.inverse_laplace(eta);
+          D = cum.inverse_derivative_laplace(eta);
         }else if(distribution == "gumbel"){
           pi = cum.inverse_gumbel(eta);
           D = cum.inverse_derivative_gumbel(eta);
