@@ -24,7 +24,7 @@ GLMcat(
 
 \item{ratio}{a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
-\item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.}
+\item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
 
 \item{proportional}{a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}
 

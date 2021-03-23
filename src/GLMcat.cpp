@@ -148,7 +148,7 @@ List GLMcat(Formula formula,
           pi = ref.inverse_student(eta, freedom_degrees);
           D = ref.inverse_derivative_student(eta, freedom_degrees);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else if(ratio == "adjacent"){
         AdjacentR adj;
@@ -174,7 +174,7 @@ List GLMcat(Formula formula,
           pi = adj.inverse_student(eta, freedom_degrees);
           D = adj.inverse_derivative_student(eta, freedom_degrees);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else if(ratio == "sequential"){
         SequentialR seq;
@@ -200,7 +200,7 @@ List GLMcat(Formula formula,
           pi = seq.inverse_student(eta, freedom_degrees);
           D = seq.inverse_derivative_student(eta, freedom_degrees);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else if(ratio == "cumulative"){
         CumulativeR cum;
@@ -226,7 +226,7 @@ List GLMcat(Formula formula,
           pi = cum.inverse_gumbel(eta);
           D = cum.inverse_derivative_gumbel(eta);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else{
         Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
@@ -512,7 +512,7 @@ NumericMatrix predict_glmcat(List model_object,
       }else if(distribution == "student"){
         pi = ref.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else if(ratio == "adjacent"){
       AdjacentR adj;
@@ -529,7 +529,7 @@ NumericMatrix predict_glmcat(List model_object,
       }else if(distribution == "student"){
         pi = adj.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else if(ratio == "sequential"){
       SequentialR seq;
@@ -547,7 +547,7 @@ NumericMatrix predict_glmcat(List model_object,
       }else if(distribution == "student"){
         pi = seq.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else if(ratio == "cumulative"){
       CumulativeR cum;
@@ -565,7 +565,7 @@ NumericMatrix predict_glmcat(List model_object,
       }else if(distribution == "gumbel"){
         pi = cum.inverse_gumbel(predict_glmcated_eta);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else{
       Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");

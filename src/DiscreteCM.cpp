@@ -110,9 +110,20 @@ List Discrete_CM(Formula formula,
       }else if(distribution == "cauchit"){
         pi = ref.inverse_cauchit(eta);
         D = ref.inverse_derivative_cauchit(eta);
+      }else if(distribution == "gompertz"){
+        pi = ref.inverse_gompertz(eta);
+        D = ref.inverse_derivative_gompertz(eta);
+      }else if(distribution == "gumbel"){
+        pi = ref.inverse_gumbel(eta);
+        D = ref.inverse_derivative_gumbel(eta);
+      }else if(distribution == "laplace"){
+        pi = ref.inverse_laplace(eta);
+        D = ref.inverse_derivative_laplace(eta);
       }else if(distribution == "student"){
         pi = ref.inverse_student(eta, freedom_degrees);
         D = ref.inverse_derivative_student(eta, freedom_degrees);
+      }else{
+        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, and student(df)");
       }
       // }else{
       //   AdjacentR adj;
