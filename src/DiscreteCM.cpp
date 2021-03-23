@@ -19,7 +19,7 @@ using namespace Eigen;
 //' @param reference a string indicating the reference category
 //' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 //' @param data a dataframe object in R, with the dependent variable as factor.
-//' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel.
+//' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
 //' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 //' @examples
