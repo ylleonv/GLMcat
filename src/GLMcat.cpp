@@ -106,6 +106,7 @@ List GLMcat(Formula formula,
   VectorXd Std_Error;
   double LogLik;
   MatrixXd pi_ma(N, Q);
+  MatrixXd D_ma(N, Q);
   MatrixXd F_i_final = MatrixXd::Zero(BETA.rows(), BETA.rows());
 
   // for (int iteration=1; iteration < 18; iteration++){
@@ -250,6 +251,7 @@ List GLMcat(Formula formula,
       // VectorXd pi_vec1(Map<VectorXd>(pi_mat1.data(), pi_mat1.cols()*pi_mat1.rows()));
 
       pi_ma.row(i) = pi.transpose();
+      D_ma.row(i) = D.transpose();
       // pi_ma.row(i) = pi_vec1;
       // pi_ma.row(i) = pi;
 
@@ -421,7 +423,8 @@ List GLMcat(Formula formula,
     // Named("pinv") = pinv,
     Named("cov_beta") = cov_beta,
     Rcpp::Named("df of the model") = df,
-    // Rcpp::Named("fitted") = pi_ma,
+    Rcpp::Named("fitted") = pi_ma,
+    Rcpp::Named("D_ma") = D_ma,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
     // Rcpp::Named("Y_init_vec") = Y_init_vec,
     // Rcpp::Named("dev_log") = dev_log,
