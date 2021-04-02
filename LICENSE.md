@@ -61,7 +61,7 @@ computers, but in those that do, we wish to avoid the special danger that patent
 applied to a free program could make it effectively proprietary. To prevent this, the
 GPL assures that patents cannot be used to render the program non-free.
 
-The precise terms and conditions for copying, distribution and modification follow.
+The precise terms and conditions for copying, cdf and modification follow.
 
 ## TERMS AND CONDITIONS
 
@@ -87,7 +87,7 @@ the Program.
 To “propagate” a work means to do anything with it that, without
 permission, would make you directly or secondarily liable for infringement under
 applicable copyright law, except executing it on a computer or modifying a private
-copy. Propagation includes copying, distribution (with or without modification),
+copy. Propagation includes copying, cdf (with or without modification),
 making available to the public, and in some countries other activities as well.
 
 To “convey” a work means any kind of propagation that enables other
@@ -210,7 +210,7 @@ Appropriate Legal Notices, your work need not make them do so.
 
 A compilation of a covered work with other separate and independent works, which are
 not by their nature extensions of the covered work, and which are not combined with
-it such as to form a larger program, in or on a volume of a storage or distribution
+it such as to form a larger program, in or on a volume of a storage or cdf
 medium, is called an “aggregate” if the compilation and its resulting
 copyright are not used to limit the access or legal rights of the compilation's users
 beyond what the individual works permit. Inclusion of a covered work in an aggregate
@@ -223,10 +223,10 @@ You may convey a covered work in object code form under the terms of sections 4 
 terms of this License, in one of these ways:
 
 * **a)** Convey the object code in, or embodied in, a physical product (including a
-physical distribution medium), accompanied by the Corresponding Source fixed on a
+physical cdf medium), accompanied by the Corresponding Source fixed on a
 durable physical medium customarily used for software interchange.
 * **b)** Convey the object code in, or embodied in, a physical product (including a
-physical distribution medium), accompanied by a written offer, valid for at least
+physical cdf medium), accompanied by a written offer, valid for at least
 three years and valid for as long as you offer spare parts or customer support for
 that product model, to give anyone who possesses the object code either **(1)** a copy of
 the Corresponding Source for all the software in the product that is covered by this

@@ -2,7 +2,7 @@
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppEigen)]]
 
-#include "distribution.h"
+#include "cdf.h"
 #include <boost/math/distributions/logistic.hpp>
 #include <boost/math/distributions/normal.hpp>
 #include <boost/math/distributions/cauchy.hpp>
@@ -15,11 +15,11 @@ using namespace boost::math;
 using namespace std;
 using namespace Rcpp ;
 
-distribution::distribution(void) {
-  // Rcout << "Distribution is being created" << endl;
+cdf::cdf(void) {
+  // Rcout << "cdf is being created" << endl;
 }
 
-std::string distribution::concatenate(std::string x, std::string level)
+std::string cdf::concatenate(std::string x, std::string level)
 {
   return (x + " " +level);
 }
@@ -141,7 +141,7 @@ List Cat_ref_order(CharacterVector categories_order, SEXP response_categories){
 
 
 
-List distribution::All_pre_data_or(Formula formula,
+List cdf::All_pre_data_or(Formula formula,
                                    DataFrame input_data,
                                    CharacterVector categories_order,
                                    CharacterVector proportional_effect,
@@ -349,7 +349,7 @@ List distribution::All_pre_data_or(Formula formula,
   );
 }
 
-List distribution::All_pre_data_NEWDATA(Formula formula,
+List cdf::All_pre_data_NEWDATA(Formula formula,
                                         DataFrame NEWDATA,
                                         CharacterVector categories_order,
                                         CharacterVector proportional_effect,
@@ -960,7 +960,7 @@ List Extend_Response(DataFrame Final_mat ){
   );
 }
 
-List distribution::select_data_nested(Formula formula,
+List cdf::select_data_nested(Formula formula,
                                       String individuals,
                                       String Alternatives,
                                       CharacterVector ref_cat,
@@ -1142,9 +1142,9 @@ Cauchit::Cauchit(void) {
 double Cauchit::cdf_cauchit(const double& value) const
 {
   double _location = 0.0;
-  double _scale =1.0;
+  double _scale = 1.0;
   boost::math::cauchy_distribution<> extreme_value(_location, _scale);
-  return cdf(extreme_value, value);
+  return boost::math::cdf(extreme_value, value);
 }
 double Cauchit::pdf_cauchit(const double& value) const
 {
@@ -1189,7 +1189,7 @@ double Gumbel::cdf_gumbel(const double& value) const
   double _location = 0.0;
   double _scale =1.0;
   boost::math::extreme_value_distribution<> extreme_value(_location, _scale);
-  return cdf(extreme_value, value);
+  return boost::math::cdf(extreme_value, value);
 }
 double Gumbel::pdf_gumbel(const double& value) const
 {
@@ -1233,18 +1233,18 @@ double Laplace::cdf_laplace(const double& value) const
 
 // RCPP_MODULE(exportmod){
 //   using namespace Rcpp ;
-//   class_<distribution>("distribution")
+//   class_<cdf>("cdf")
 //     .constructor()
 //   ;
 // }
 
 // RCPP_MODULE(exportmoddev){
 //   using namespace Rcpp ;
-//   class_<distribution>("distribution")
+//   class_<cdf>("cdf")
 //     .constructor()
 //   ;
 //   class_<Logistic>("Logistic")
-//     .derives<distribution>("distribution")
+//     .derives<cdf>("cdf")
 //     .constructor()
 //     .method( "InverseLinkCumulativeFunction", &Logistic::InverseLinkCumulativeFunction )
 //   ;

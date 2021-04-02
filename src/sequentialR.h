@@ -1,8 +1,8 @@
 #ifndef SEQUENTIALR_H_
 #define SEQUENTIALR_H_
-#include "distribution.h"
+#include "cdf.h"
 
-class SequentialR : virtual public distribution, Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
+class SequentialR : virtual public cdf, Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
 public:
   SequentialR();
 
@@ -30,7 +30,7 @@ public:
   // List GLMseq(std::string response,
   //             StringVector explanatory_complete,
   //             StringVector explanatory_proportional,
-  //             std::string distribution,
+  //             std::string cdf,
   //             SEXP categories_order,
   //             DataFrame dataframe);
 

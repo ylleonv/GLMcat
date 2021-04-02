@@ -1,8 +1,8 @@
 #ifndef CUMULATIVER_H_
 #define CUMULATIVER_H_
-#include "distribution.h"
+#include "cdf.h"
 
-class CumulativeR : virtual public distribution, Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
+class CumulativeR : virtual public cdf, Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
 public:
   CumulativeR();
 
@@ -31,7 +31,7 @@ public:
   // List GLMcum(std::string response,
   //             StringVector explanatory_complete,
   //             StringVector explanatory_proportional,
-  //             std::string distribution,
+  //             std::string cdf,
   //             SEXP categories_order,
   //             DataFrame dataframe,
   //             StringVector beta_t,

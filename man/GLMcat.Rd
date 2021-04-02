@@ -8,7 +8,7 @@ GLMcat(
   formula,
   data,
   ratio = "reference",
-  distribution = "logistic",
+  cdf = "logistic",
   proportional = NA_character_,
   categories_order = NA_character_,
   ref_category = NA_character_,
@@ -22,9 +22,9 @@ GLMcat(
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{ratio}{a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential. Default value is reference.}
+\item{ratio}{a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
-\item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
+\item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
 
 \item{proportional}{a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}
 
@@ -32,7 +32,7 @@ GLMcat(
 
 \item{ref_category}{a string indicating the reference category. Proper option for models with reference ratio.}
 
-\item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
+\item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student cdf.}
 
 \item{threshold}{restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).}
 
@@ -45,6 +45,6 @@ Family of models for categorical responses (reference, adjacent, sequential and 
 data(DisturbedDreams)
 ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
     ref_category = "Very.severe",
-    distribution = "logistic", ratio = "reference")
+    cdf = "logistic", ratio = "reference")
 
 }

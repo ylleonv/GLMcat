@@ -1,6 +1,6 @@
 #ifndef ADJACENTR_H_
 #define ADJACENTR_H_
-#include "distribution.h"
+#include "cdf.h"
 
 class AdjacentR : virtual public Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
 public:
@@ -31,7 +31,7 @@ public:
     // List GLMadj(std::string response,
   //             StringVector explanatory_complete,
   //             StringVector explanatory_proportional,
-  //             std::string distribution,
+  //             std::string cdf,
   //             SEXP categories_order,
   //             DataFrame dataframe);
 };

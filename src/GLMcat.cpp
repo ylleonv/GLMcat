@@ -1,4 +1,4 @@
-#include "distribution.h"
+#include "cdf.h"
 #include "reference.h"
 #include "adjacentR.h"
 #include "sequentialR.h"
@@ -11,33 +11,32 @@ using namespace Eigen;
 //' Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 //'
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
-//' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential. Default value is reference.
-//' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
+//' @param ratio a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.
+//' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
 //' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 //' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
 //' @param proportional a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
 //' @param data a dataframe object in R, with the dependent variable as factor.
-//' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
+//' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 //' @param threshold restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).
-//' @param beta_init optional beta initialization vector.
 //' @export
 //' @examples
 //' data(DisturbedDreams)
 //' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 //'     ref_category = "Very.severe",
-//'     distribution = "logistic", ratio = "reference")
+//'     cdf = "logistic", ratio = "reference")
 //'
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
             DataFrame data,
             std::string ratio,
-            std::string distribution,
+            std::string cdf,
             CharacterVector proportional,
             CharacterVector categories_order,
             CharacterVector ref_category,
             double freedom_degrees,
             std::string threshold,
-            NumericVector beta_init){
+            List control){
   // Eigen::VectorXd beta_init){
 
   LogicalVector is_na_ref1 = is_na(categories_order);
@@ -53,7 +52,7 @@ List GLMcat(Formula formula,
     Rcpp::stop("Unrecognized threshold restriction; options are: standard and equidistant");
   }
 
-  class distribution dist1;
+  class cdf dist1;
   const int N = data.nrows() ; // Number of observations
   // Rcout << proportional << std::endl;
 
@@ -83,6 +82,8 @@ List GLMcat(Formula formula,
   Eigen::VectorXd BETA3 = BETA2;
 
   Eigen::MatrixXd BETA = BETA2;
+  NumericVector beta_init = control["beta_init"];
+
   if(beta_init.length() >= 2 ){
     // BETA = beta_init;
     BETA = as<Eigen::Map<Eigen::VectorXd> >(beta_init);
@@ -111,8 +112,9 @@ List GLMcat(Formula formula,
 
   // for (int iteration=1; iteration < 18; iteration++){
   // while (check_tutz > 0.0001){
-  double epsilon = 0.0001 ;
-  while ((Stop_criteria>(epsilon / N)) & (iteration < 26)){
+  double epsilon = control["epsilon"] ;
+  int iterations_us = control["maxit"];
+  while ((Stop_criteria>(epsilon / N)) & (iteration < (iterations_us ))){
 
     MatrixXd Score_i = MatrixXd::Zero(BETA.rows(),1);
     MatrixXd F_i = MatrixXd::Zero(BETA.rows(), BETA.rows());
@@ -127,107 +129,107 @@ List GLMcat(Formula formula,
       VectorXd eta1 = eta;
       if(ratio == "reference"){
         ReferenceF ref;
-        if(distribution == "logistic"){
+        if(cdf == "logistic"){
           pi = ref.inverse_logistic(eta1);
           D = ref.inverse_derivative_logistic(eta1);
-        }else if(distribution == "normal"){
+        }else if(cdf == "normal"){
           pi = ref.inverse_normal(eta);
           D = ref.inverse_derivative_normal(eta);
-        }else if(distribution == "cauchit"){
+        }else if(cdf == "cauchit"){
           pi = ref.inverse_cauchit(eta);
           D = ref.inverse_derivative_cauchit(eta);
-        }else if(distribution == "gompertz"){
+        }else if(cdf == "gompertz"){
           pi = ref.inverse_gompertz(eta);
           D = ref.inverse_derivative_gompertz(eta);
-        }else if(distribution == "gumbel"){
+        }else if(cdf == "gumbel"){
           pi = ref.inverse_gumbel(eta);
           D = ref.inverse_derivative_gumbel(eta);
-        }else if(distribution == "laplace"){
+        }else if(cdf == "laplace"){
           pi = ref.inverse_laplace(eta);
           D = ref.inverse_derivative_laplace(eta);
-        }else if(distribution == "student"){
+        }else if(cdf == "student"){
           pi = ref.inverse_student(eta, freedom_degrees);
           D = ref.inverse_derivative_student(eta, freedom_degrees);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else if(ratio == "adjacent"){
         AdjacentR adj;
-        if(distribution == "logistic"){
+        if(cdf == "logistic"){
           pi = adj.inverse_logistic(eta);
           D = adj.inverse_derivative_logistic(eta);
-        }else if(distribution == "normal"){
+        }else if(cdf == "normal"){
           pi = adj.inverse_normal(eta);
           D = adj.inverse_derivative_normal(eta);
-        }else if(distribution == "cauchit"){
+        }else if(cdf == "cauchit"){
           pi = adj.inverse_cauchit(eta);
           D = adj.inverse_derivative_cauchit(eta);
-        }else if(distribution == "gompertz"){
+        }else if(cdf == "gompertz"){
           pi = adj.inverse_gompertz(eta);
           D = adj.inverse_derivative_gompertz(eta);
-        }else if(distribution == "gumbel"){
+        }else if(cdf == "gumbel"){
           pi = adj.inverse_gumbel(eta);
           D = adj.inverse_derivative_gumbel(eta);
-        }else if(distribution == "laplace"){
+        }else if(cdf == "laplace"){
           pi = adj.inverse_laplace(eta);
           D = adj.inverse_derivative_laplace(eta);
-        }else if(distribution == "student"){
+        }else if(cdf == "student"){
           pi = adj.inverse_student(eta, freedom_degrees);
           D = adj.inverse_derivative_student(eta, freedom_degrees);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else if(ratio == "sequential"){
         SequentialR seq;
-        if(distribution == "logistic"){
+        if(cdf == "logistic"){
           pi = seq.inverse_logistic(eta);
           D = seq.inverse_derivative_logistic(eta);
-        }else if(distribution == "normal"){
+        }else if(cdf == "normal"){
           pi = seq.inverse_normal(eta);
           D = seq.inverse_derivative_normal(eta);
-        }else if(distribution == "cauchit"){
+        }else if(cdf == "cauchit"){
           pi = seq.inverse_cauchit(eta);
           D = seq.inverse_derivative_cauchit(eta);
-        }else if(distribution == "gompertz"){
+        }else if(cdf == "gompertz"){
           pi = seq.inverse_gompertz(eta);
           D = seq.inverse_derivative_gompertz(eta);
-        }else if(distribution == "gumbel"){
+        }else if(cdf == "gumbel"){
           pi = seq.inverse_gumbel(eta);
           D = seq.inverse_derivative_gumbel(eta);
-        }else if(distribution == "laplace"){
+        }else if(cdf == "laplace"){
           pi = seq.inverse_laplace(eta);
           D = seq.inverse_derivative_laplace(eta);
-        }else if(distribution == "student"){
+        }else if(cdf == "student"){
           pi = seq.inverse_student(eta, freedom_degrees);
           D = seq.inverse_derivative_student(eta, freedom_degrees);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else if(ratio == "cumulative"){
         CumulativeR cum;
-        if(distribution == "logistic"){
+        if(cdf == "logistic"){
           pi = cum.inverse_logistic(eta);
           D = cum.inverse_derivative_logistic(eta);
-        }else if(distribution == "normal"){
+        }else if(cdf == "normal"){
           pi = cum.inverse_normal(eta);
           D = cum.inverse_derivative_normal(eta);
-        }else if(distribution == "cauchit"){
+        }else if(cdf == "cauchit"){
           pi = cum.inverse_cauchit(eta);
           D = cum.inverse_derivative_cauchit(eta);
-        }else if(distribution == "gompertz"){
+        }else if(cdf == "gompertz"){
           pi = cum.inverse_gompertz(eta);
           D = cum.inverse_derivative_gompertz(eta);
-        }else if(distribution == "student"){
+        }else if(cdf == "student"){
           pi = cum.inverse_student(eta,freedom_degrees);
           D = cum.inverse_derivative_student(eta,freedom_degrees);
-        }else if(distribution == "laplace"){
+        }else if(cdf == "laplace"){
           pi = cum.inverse_laplace(eta);
           D = cum.inverse_derivative_laplace(eta);
-        }else if(distribution == "gumbel"){
+        }else if(cdf == "gumbel"){
           pi = cum.inverse_gumbel(eta);
           D = cum.inverse_derivative_gumbel(eta);
         }else{
-          Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
         }
       }else{
         Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
@@ -439,7 +441,7 @@ List GLMcat(Formula formula,
     Named("proportional") = proportional,
     Named("N_cats") = N_cats,
     Named("nobs_glmcat") = N,
-    Named("distribution") = distribution,
+    Named("cdf") = cdf,
     Named("coverged") = true,
     Named("freedom_degrees") = freedom_degrees
   );
@@ -448,6 +450,7 @@ List GLMcat(Formula formula,
 
   return output_list;
 }
+
 
 
 //' GLMcat model predictions
@@ -462,7 +465,7 @@ List GLMcat(Formula formula,
 //' @examples
 //' data(DisturbedDreams)
 //' mod1 <- GLMcat(formula = Level ~ Age,
-//' data = DisturbedDreams, distribution = "logistic")
+//' data = DisturbedDreams, cdf = "logistic")
 //' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 // [[Rcpp::export("predict_glmcat")]]
 NumericMatrix predict_glmcat(List model_object,
@@ -470,7 +473,7 @@ NumericMatrix predict_glmcat(List model_object,
                              String type
 ){
 
-  class distribution dist1;
+  class cdf dist1;
   // Environment base_env("package:base");
   // Function my_rowSums = base_env["rowSums"];
   int N_cats = model_object["N_cats"];
@@ -488,7 +491,7 @@ NumericMatrix predict_glmcat(List model_object,
   Eigen::MatrixXd predict_glmcated_eta;
 
   std::string ratio = model_object["ratio"];
-  String distribution = model_object["distribution"];
+  String cdf = model_object["cdf"];
   double freedom_degrees = model_object["freedom_degrees"];
 
   Eigen::VectorXd pi;
@@ -502,73 +505,73 @@ NumericMatrix predict_glmcat(List model_object,
 
     if(ratio == "reference"){
       ReferenceF ref;
-      if(distribution == "logistic"){
+      if(cdf == "logistic"){
         pi = ref.inverse_logistic(predict_glmcated_eta);
-      }else if(distribution == "normal"){
+      }else if(cdf == "normal"){
         pi = ref.inverse_normal(predict_glmcated_eta);
-      }else if(distribution == "cauchit"){
+      }else if(cdf == "cauchit"){
         pi = ref.inverse_cauchit(predict_glmcated_eta);
-      }else if(distribution == "gompertz"){
+      }else if(cdf == "gompertz"){
         pi = ref.inverse_gompertz(predict_glmcated_eta);
-      }else if(distribution == "gumbel"){
+      }else if(cdf == "gumbel"){
         pi = ref.inverse_gumbel(predict_glmcated_eta);
-      }else if(distribution == "student"){
+      }else if(cdf == "student"){
         pi = ref.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else if(ratio == "adjacent"){
       AdjacentR adj;
-      if(distribution == "logistic"){
+      if(cdf == "logistic"){
         pi = adj.inverse_logistic(predict_glmcated_eta);
-      }else if(distribution == "normal"){
+      }else if(cdf == "normal"){
         pi = adj.inverse_normal(predict_glmcated_eta);
-      }else if(distribution == "cauchit"){
+      }else if(cdf == "cauchit"){
         pi = adj.inverse_cauchit(predict_glmcated_eta);
-      }else if(distribution == "gompertz"){
+      }else if(cdf == "gompertz"){
         pi = adj.inverse_gompertz(predict_glmcated_eta);
-      }else if(distribution == "gumbel"){
+      }else if(cdf == "gumbel"){
         pi = adj.inverse_gumbel(predict_glmcated_eta);
-      }else if(distribution == "student"){
+      }else if(cdf == "student"){
         pi = adj.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else if(ratio == "sequential"){
       SequentialR seq;
-      // Vector pi depends on selected distribution
-      if(distribution == "logistic"){
+      // Vector pi depends on selected cdf
+      if(cdf == "logistic"){
         pi = seq.inverse_logistic(predict_glmcated_eta);
-      }else if(distribution == "normal"){
+      }else if(cdf == "normal"){
         pi = seq.inverse_normal(predict_glmcated_eta);
-      }else if(distribution == "cauchit"){
+      }else if(cdf == "cauchit"){
         pi = seq.inverse_cauchit(predict_glmcated_eta);
-      }else if(distribution == "gompertz"){
+      }else if(cdf == "gompertz"){
         pi = seq.inverse_gompertz(predict_glmcated_eta);
-      }else if(distribution == "gumbel"){
+      }else if(cdf == "gumbel"){
         pi = seq.inverse_gumbel(predict_glmcated_eta);
-      }else if(distribution == "student"){
+      }else if(cdf == "student"){
         pi = seq.inverse_student(predict_glmcated_eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else if(ratio == "cumulative"){
       CumulativeR cum;
-      // Vector pi depends on selected distribution
-      if(distribution == "logistic"){
+      // Vector pi depends on selected cdf
+      if(cdf == "logistic"){
         pi = cum.inverse_logistic(predict_glmcated_eta);
-      }else if(distribution == "normal"){
+      }else if(cdf == "normal"){
         pi = cum.inverse_normal(predict_glmcated_eta);
-      }else if(distribution == "cauchit"){
+      }else if(cdf == "cauchit"){
         pi = cum.inverse_cauchit(predict_glmcated_eta);
-      }else if(distribution == "gompertz"){
+      }else if(cdf == "gompertz"){
         pi = cum.inverse_gompertz(predict_glmcated_eta);
-      }else if(distribution == "student"){
+      }else if(cdf == "student"){
         pi = cum.inverse_student(predict_glmcated_eta,freedom_degrees);
-      }else if(distribution == "gumbel"){
+      }else if(cdf == "gumbel"){
         pi = cum.inverse_gumbel(predict_glmcated_eta);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
     }else{
       Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
@@ -610,13 +613,14 @@ RCPP_MODULE(GLMcatmodule){
                  List::create(_["formula"],
                               _["data"],
                                _["ratio"] = "reference",
-                               _["distribution"] = "logistic",
+                               _["cdf"] = "logistic",
                                _["proportional"] = CharacterVector::create(NA_STRING),
                                _["categories_order"] = CharacterVector::create(NA_STRING),
                                _["ref_category"] = CharacterVector::create(NA_STRING),
                                _["freedom_degrees"] = R_NaN,
                                _["threshold"] = "standard",
-                               _["beta_init"] = NumericVector::create(NA_REAL)
+                               _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL))
+                               // _["beta_init"] = NumericVector::create(NA_REAL)
                                 // _["beta_init"] = R_NaN
                  ),
                  "GLMcat models");

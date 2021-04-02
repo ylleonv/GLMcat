@@ -1,6 +1,6 @@
 #ifndef REFERENCEF_H_
 #define REFERENCEF_H_
-#include "distribution.h"
+#include "cdf.h"
 
 class ReferenceF : public virtual Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
 public:
@@ -33,7 +33,7 @@ public:
   //                std::string individuals,
   //                StringVector explanatory_global,
   //                StringVector category_specific,
-  //                std::string distribution,
+  //                std::string cdf,
   //                StringVector initial_order,
   //                std::string reference_category,
   //                DataFrame dataframe,

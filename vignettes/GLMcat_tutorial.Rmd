@@ -7,7 +7,7 @@ author:
   - Catherine Trottier^[Université de Montpellier, catherine.trottier@umontpellier.fr]
 
 abstract: |
-  In statistical modeling, there is a wide variety of regression models for categorical responses. Yet, no software encapsulates all of these models in a standardized format. We introduce and illustrate the utility of GLMcat, the R package we developed to estimate generalized linear models implemented under the unified specification $(r, F, Z)$, where $r$ represents the ratio of probabilities (reference, cumulative, adjacent, or sequential), $F$ the cumulative distribution function for the linkage, and $Z$ the design matrix. We present the properties of the four families of models, which must be investigated when selecting the components $r$, $F$, and $Z$. The functions are user-friendly and fairly intuitive; offering the possibility to choose from a large range of models through a combination $(r, F, Z)$.
+  In statistical modeling, there is a wide variety of regression models for categorical responses. Yet, no software encapsulates all of these models in a standardized format. We introduce and illustrate the utility of GLMcat, the R package we developed to estimate generalized linear models implemented under the unified specification $(r, F, Z)$, where $r$ represents the ratio of probabilities (reference, cumulative, adjacent, or sequential), $F$ the cumulative cdf function for the linkage, and $Z$ the design matrix. We present the properties of the four families of models, which must be investigated when selecting the components $r$, $F$, and $Z$. The functions are user-friendly and fairly intuitive; offering the possibility to choose from a large range of models through a combination $(r, F, Z)$.
   
 output: rmarkdown::pdf_document
 bibliography: bibliography_vignette.bib
@@ -20,11 +20,11 @@ vignette: >
 
 ### Introduction to the *(r,F,Z)* methodology:
 
-A generalized linear model is characterized by three components: 1) the\textit{ random component} that defines the conditional distribution of the response variable $Y_i$ given the realization of the explanatory variables $\boldsymbol{x_i}$; 2) the \textit{systematic component} which is determined by the \textit{linear predictor} $\eta$  (that specifies the linear entry of the independent variables), and 3) the link function $g$  that relates the expected response and the linear predictor. 
+A generalized linear model is characterized by three components: 1) the\textit{ random component} that defines the conditional cdf of the response variable $Y_i$ given the realization of the explanatory variables $\boldsymbol{x_i}$; 2) the \textit{systematic component} which is determined by the \textit{linear predictor} $\eta$  (that specifies the linear entry of the independent variables), and 3) the link function $g$  that relates the expected response and the linear predictor. 
 
-The random component of a GLM for a categorical response with $J$ categories is the multinomial distribution with vector of probabilities $(\pi_1,...,\pi_{J})$ where $\sum \pi_r = 1$ . The linear predictor  $(\eta_1,...,\eta_{J-1})$ can be written as the product of the design matrix $Z$ and the unknown parameter vector $\beta$. The link function which characterizes this model is given by the equation  $g(\pi) = Z\beta$, with $J-1$ equations $g_j = \eta_j$. @peyhardi_new proposed to write the link function as\begin{equation}
+The random component of a GLM for a categorical response with $J$ categories is the multinomial cdf with vector of probabilities $(\pi_1,...,\pi_{J})$ where $\sum \pi_r = 1$ . The linear predictor  $(\eta_1,...,\eta_{J-1})$ can be written as the product of the design matrix $Z$ and the unknown parameter vector $\beta$. The link function which characterizes this model is given by the equation  $g(\pi) = Z\beta$, with $J-1$ equations $g_j = \eta_j$. @peyhardi_new proposed to write the link function as\begin{equation}
 g_j = F ^ {-1} \circ r_j \Leftrightarrow r_j = F(\eta_j) \quad \quad {j = 1,2,...,J-1}
-\end{equation}where $F$ is a cumulative distribution function and $r=(r_1,...,r_{J-1})$ is a transformation of the expected value vector. In the following, we will describe in more details the components *(r,F,Z)* and their modalities.
+\end{equation}where $F$ is a cumulative cdf function and $r=(r_1,...,r_{J-1})$ is a transformation of the expected value vector. In the following, we will describe in more details the components *(r,F,Z)* and their modalities.
 
 #### Ratio of probabilities *r*\
 
@@ -49,9 +49,9 @@ For the sequential ratio, each category $j$ is compared to its following categor
 The adjacent, cumulative and sequential ratios all rely on an ordering assumption among categories. 
 The reference ratio is devoted to nominal responses.
 
-####  Cumulative distribution function *F*\
+####  Cumulative cdf function *F*\
 
-The cumulative distribution functions (cdfs) available in `GLMcat` to fit the models are: *logistic*, *normal*, *Cauchy*, *Student (with any df)*, *Gompertz* and *Gumbel*. The *logistic* and *normal* cdfs are the symmetric distributions most commonly used to define link functions in generalized linear models. However, for specific scenarios, the use of other distributions may result in a more accurate fit. An example is presented by @peyhardi_travel, where the employment of the *Student* cdf leaded to a better fit for a modeling exercise on travel choice data. For the asymmetric case, the *Gumbel* and *Gompertz* cdfs are the most commonly used.
+The cumulative cdf functions (distributions) available in `GLMcat` to fit the models are: *logistic*, *normal*, *Cauchy*, *Student (with any df)*, *Gompertz* and *Gumbel*. The *logistic* and *normal* distributions are the symmetric distributions most commonly used to define link functions in generalized linear models. However, for specific scenarios, the use of other distributions may result in a more accurate fit. An example is presented by @peyhardi_travel, where the employment of the *Student* cdf leaded to a better fit for a modeling exercise on travel choice data. For the asymmetric case, the *Gumbel* and *Gompertz* distributions are the most commonly used.
 
 #### Design Matrix $Z$\
 
@@ -123,7 +123,7 @@ We will fit the model $(Reference, Logistic, Complete)$ to the `DisturbedDreams`
 ```{r }
 mod_ref_log_c <- GLMcat(
   formula = Level ~ Age, ratio = "reference",
-  distribution = "logistic", ref_category = "Very.severe",
+  cdf = "logistic", ref_category = "Very.severe",
   data = DisturbedDreams,
 )
 ```
@@ -185,7 +185,7 @@ Assume that we are interested in making the effect of the predictor variable pro
 
 ```{r }
 mod2 <- GLMcat(
-  formula = Level ~ Age, distribution = "logistic",
+  formula = Level ~ Age, cdf = "logistic",
   proportional = "Age", ref_category = "Very.severe",
   data = DisturbedDreams
 )
@@ -193,11 +193,11 @@ summary(mod2)
 logLik(mod2)
 ```
 
-Another variation of the reference model is obtained at changing the distribution function. Let's now fit the model *(Reference, Student (0.5), Complete)*:
+Another variation of the reference model is obtained at changing the cdf function. Let's now fit the model *(Reference, Student (0.5), Complete)*:
 ```{r }
 mod3 <- GLMcat(
   formula = Level ~ Age, ref_category = "Very.severe",
-  data = DisturbedDreams, distribution = "student", freedom_degrees = 0.5
+  data = DisturbedDreams, cdf = "student", freedom_degrees = 0.5
 )
 summary(mod3)
 logLik(mod3)
@@ -211,7 +211,7 @@ The equivalence between $(Adjacent, Logistic, Complete)$ and $(Reference, Logist
 logLik(mod_ref_log_c) # recall (ref,logit,com)
 mod_adj_log_c <- GLMcat(
   formula = Level ~ Age, ratio = "adjacent",
-  data = DisturbedDreams, distribution = "logistic"
+  data = DisturbedDreams, cdf = "logistic"
 )
 logLik(mod_adj_log_c)
 summary(mod_adj_log_c)
@@ -238,7 +238,7 @@ $(Adjacent, Cauchy, Complete)$
 ```{r }
 mod_adj_cau_c <- GLMcat(
   formula = Level ~ Age,
-  ratio = "adjacent", distribution = "cauchit",
+  ratio = "adjacent", cdf = "cauchit",
   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
   data = DisturbedDreams
 )
@@ -249,7 +249,7 @@ summary(mod_adj_cau_c)
 ```{r }
 mod_adj_cau_c_rev <- GLMcat(
   formula = Level ~ Age,
-  ratio = "adjacent", distribution = "cauchit",
+  ratio = "adjacent", cdf = "cauchit",
   categories_order = c("Very.severe", "Severe.2", "Severe.1", "Not.severe"),
   data = DisturbedDreams
 )
@@ -257,14 +257,14 @@ logLik(mod_adj_cau_c_rev)
 summary(mod_adj_cau_c_rev)
 ```
 
-The LogLikelihoods of the last two models are the same, this is because the *Cauchy* distribution is symmetric; for non symmetric distributions this is not longer true. Note that if the Gumbel distribution is used with the reverse order, then, its LogLikelihood is equal to the model using *Gompertz* as the distribution, this is because the *Gumbel* distribution is the symmetric of the *Gompertz* distribution. Otherwise, the parameter estimations are reversed:
+The LogLikelihoods of the last two models are the same, this is because the *Cauchy* cdf is symmetric; for non symmetric distributions this is not longer true. Note that if the Gumbel cdf is used with the reverse order, then, its LogLikelihood is equal to the model using *Gompertz* as the cdf, this is because the *Gumbel* cdf is the symmetric of the *Gompertz* cdf. Otherwise, the parameter estimations are reversed:
 
 *(Adjacent, Gumbel, Proportional)*
 
 ```{r }
 adj_gumbel_p <- GLMcat(
   formula = Level ~ Age,
-  ratio = "adjacent", distribution = "gumbel",
+  ratio = "adjacent", cdf = "gumbel",
   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
   proportional = c("(Intercept)", "Age"),
   data = DisturbedDreams
@@ -278,7 +278,7 @@ summary(adj_gumbel_p)
 ```{r }
 adj_gompertz_rev <- GLMcat(
   formula = Level ~ Age,
-  ratio = "adjacent", distribution = "gompertz",
+  ratio = "adjacent", cdf = "gompertz",
   categories_order = c("Very.severe", "Severe.2", "Severe.1", "Not.severe"),
   proportional = c("(Intercept)", "Age"),
   data = DisturbedDreams
@@ -295,7 +295,7 @@ The sequential ratio, which assumes a binary process at each transition, higher 
 ```{r }
 seq_probit_c <- GLMcat(
   formula = Level ~ Age,
-  ratio = "sequential", distribution = "normal",
+  ratio = "sequential", cdf = "normal",
   data = DisturbedDreams
 )
 logLik(seq_probit_c)
@@ -309,7 +309,7 @@ summary(seq_probit_c)
 ```{r }
 cum_log_co <- GLMcat(
   formula = Level ~ Age,
-  distribution = "logistic",
+  cdf = "logistic",
   ratio = "cumulative",
   data = DisturbedDreams
 )
@@ -324,7 +324,7 @@ The function *GLMcat* has special features for the cumulative models. The option
 ```{r }
 cum_log_co_e <- GLMcat(
   formula = Level ~ Age,
-  distribution = "logistic",
+  cdf = "logistic",
   ratio = "cumulative",
   data = DisturbedDreams,
   proportional = "Age",
@@ -339,7 +339,7 @@ If we have a preliminary idea of the coefficients of the model, we can specify a
 ```{r }
 cum_log_c <- GLMcat(
   formula = Level ~ Age,
-  distribution = "student", freedom_degrees = 0.8,
+  cdf = "student", freedom_degrees = 0.8,
   ratio = "cumulative",
   data = DisturbedDreams,
   beta_init = coef(cum_log_co),
@@ -353,7 +353,7 @@ The equivalence between the $(Cumulative, Gompertz, Proportional)$ and $(Sequent
 ```{r }
 cum_gom_p <- GLMcat(
   formula = Level ~ Age,
-  distribution = "gompertz",
+  cdf = "gompertz",
   ratio = "cumulative",
   data = DisturbedDreams,
   proportional = "Age"
@@ -363,7 +363,7 @@ summary(cum_gom_p)
 
 seq_gom_p <- GLMcat(
   formula = Level ~ Age,
-  distribution = "gompertz",
+  cdf = "gompertz",
   ratio = "sequential",
   data = DisturbedDreams,
   proportional = "Age"

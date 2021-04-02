@@ -1,11 +1,11 @@
-#ifndef DISTRIBUTION_H
-#define DISTRIBUTION_H
+#ifndef cdf_H
+#define cdf_H
 
 #include <RcppEigen.h>
 using namespace std;
 using namespace Rcpp;
 
-class distribution{
+class cdf{
 public:
   double _epsilon_0 = 1e-10;
   double _epsilon_1 = 1e-6;
@@ -37,10 +37,10 @@ public:
                             // String ratio
   );
 
-  distribution();
+  cdf();
 };
 
-class Logistic : virtual public distribution{
+class Logistic : virtual public cdf{
 public:
   virtual Eigen::VectorXd in_open_corner(const Eigen::VectorXd& p) const;
   virtual double cdf_logit(const double& value) const;
@@ -51,7 +51,7 @@ public:
   Logistic();
 };
 
-class Normal : virtual public distribution{
+class Normal : virtual public cdf{
 public:
   virtual double cdf_normal(const double& value) const;
   virtual double pdf_normal(const double& value) const;
@@ -61,7 +61,7 @@ public:
   Normal();
 };
 
-class Cauchit : virtual public distribution{
+class Cauchit : virtual public cdf{
 public:
   virtual double cdf_cauchit(const double& value) const;
   virtual double pdf_cauchit(const double& value) const;
@@ -71,7 +71,7 @@ public:
   Cauchit();
 };
 
-class Student :  virtual public distribution{
+class Student :  virtual public cdf{
 public:
   virtual double cdf_student(const double& value, const double& freedom_degrees) const;
   virtual double pdf_student(const double& value, const double& freedom_degrees) const;
@@ -81,7 +81,7 @@ public:
   Student();
 };
 
-class Gumbel :  virtual public distribution{
+class Gumbel :  virtual public cdf{
 public:
   virtual double cdf_gumbel(const double& value) const;
   virtual double pdf_gumbel(const double& value) const;
@@ -91,7 +91,7 @@ public:
   Gumbel();
 };
 
-class Gompertz : virtual public distribution{
+class Gompertz : virtual public cdf{
 public:
   virtual double cdf_gompertz(const double& value) const;
   virtual double pdf_gompertz(const double& value) const;
@@ -101,7 +101,7 @@ public:
   Gompertz();
 };
 
-class Laplace : virtual public distribution{
+class Laplace : virtual public cdf{
 public:
   virtual double cdf_laplace(const double& value) const;
   virtual double pdf_laplace(const double& value) const;

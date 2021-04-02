@@ -21,7 +21,7 @@ data(DisturbedDreams)
 mod1 <- GLMcat(
   formula = Level ~ Age,
   ref_category = "Very.severe",
-  data = DisturbedDreams, distribution = "logistic"
+  data = DisturbedDreams, cdf = "logistic"
 )
 coef(mod1)
 }

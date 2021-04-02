@@ -1,4 +1,4 @@
-#include "distribution.h"
+#include "cdf.h"
 #include "sequentialR.h"
 using namespace std;
 using namespace Rcpp ;
@@ -6,7 +6,7 @@ using namespace Rcpp ;
 // [[Rcpp::depends(RcppEigen)]]
 
 SequentialR::SequentialR(void) {
-  distribution dist;
+  cdf dist;
 }
 
 Eigen::VectorXd SequentialR::inverse_logistic(const Eigen::VectorXd& eta) const
@@ -192,14 +192,14 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
 }
 
 
-// distribution dist_seq;
+// cdf dist_seq;
 //
 // // [[Rcpp::export]]
 // List GLMseq(Formula formula,
 //             CharacterVector categories_order,
 //             CharacterVector proportional,
 //             DataFrame data,
-//             std::string distribution,
+//             std::string cdf,
 //             double freedom_degrees){
 //
 //   const int N = data.nrows() ; // Number of observations
@@ -261,17 +261,17 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //       eta = X_M_i * BETA;
 //
 //       SequentialR seq;
-//       // Vector pi depends on selected distribution
-//       if(distribution == "logistic"){
+//       // Vector pi depends on selected cdf
+//       if(cdf == "logistic"){
 //         pi = seq.inverse_logistic(eta);
 //         D = seq.inverse_derivative_logistic(eta);
-//       }else if(distribution == "normal"){
+//       }else if(cdf == "normal"){
 //         pi = seq.inverse_normal(eta);
 //         D = seq.inverse_derivative_normal(eta);
-//       }else if(distribution == "cauchit"){
+//       }else if(cdf == "cauchit"){
 //         pi = seq.inverse_cauchit(eta);
 //         D = seq.inverse_derivative_cauchit(eta);
-//       }else if(distribution == "gompertz"){
+//       }else if(cdf == "gompertz"){
 //         pi = seq.inverse_gompertz(eta);
 //         D = seq.inverse_derivative_gompertz(eta);
 //       }
@@ -390,7 +390,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //                               _["categories_order"] = CharacterVector::create( "A", NA_STRING),
 //                               _["proportional"] = CharacterVector::create(NA_STRING),
 //                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
-//                               _["distribution"] = "a",
+//                               _["cdf"] = "a",
 //                               _["freedom_degrees"] = 1.0),
 //                               "Sequential model");
 //   Rcpp::class_<SequentialR>("SequentialR")

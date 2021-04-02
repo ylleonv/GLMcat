@@ -21,6 +21,6 @@ GLMcat model predictions
 \examples{
 data(DisturbedDreams)
 mod1 <- GLMcat(formula = Level ~ Age,
-data = DisturbedDreams, distribution = "logistic")
+data = DisturbedDreams, cdf = "logistic")
 predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 }

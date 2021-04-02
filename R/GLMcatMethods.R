@@ -47,7 +47,7 @@ summary.glmcat <- function(object, ...) {
 #' mod1 <- GLMcat(
 #'   formula = Level ~ Age,
 #'   ref_category = "Very.severe",
-#'   data = DisturbedDreams, distribution = "logistic"
+#'   data = DisturbedDreams, cdf = "logistic"
 #' )
 #' coef(mod1)
 coef.glmcat <- function(object, na.rm = FALSE, ...) {
@@ -71,7 +71,7 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #' mod1 <- GLMcat(
 #'   formula = Level ~ Age,
 #'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#'   data = DisturbedDreams, distribution = "logistic"
+#'   data = DisturbedDreams, cdf = "logistic"
 #' )
 #' nobs_glmcat(mod1)
 nobs_glmcat <- function(object, ...) {
@@ -89,7 +89,7 @@ nobs_glmcat <- function(object, ...) {
 #' mod1 <- GLMcat(
 #'   formula = Level ~ Age,
 #'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#'   data = DisturbedDreams, distribution = "logistic"
+#'   data = DisturbedDreams, cdf = "logistic"
 #' )
 #' logLik(mod1)
 logLik.glmcat <- function(object, ...) {
@@ -97,4 +97,16 @@ logLik.glmcat <- function(object, ...) {
     df = object$df, nobs_glmcat = object$nobs_glmcat,
     class = "logLik"
   )
+}
+
+
+#' control glmcat models
+#' @description control LogLikelihood for GLMcat models.
+#' @rdname control
+#' @param maxit iterations
+#' @param ...	other arguments.
+#' @export
+control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
+  return(list("maxit" = maxit, "epsilon" = epsilon, "beta_init" = beta_init))
+  # return(maxit)
 }

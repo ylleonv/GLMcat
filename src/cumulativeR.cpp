@@ -1,4 +1,4 @@
-#include "distribution.h"
+#include "cdf.h"
 #include "cumulativeR.h"
 
 using namespace std;
@@ -9,7 +9,7 @@ using namespace Eigen;
 // [[Rcpp::depends(RcppEigen)]]
 
 CumulativeR::CumulativeR(void) {
-  distribution dist;
+  cdf dist;
 }
 
 Eigen::VectorXd CumulativeR::inverse_logistic(const Eigen::VectorXd& eta) const
@@ -151,7 +151,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //             CharacterVector categories_order,
 //             CharacterVector proportional,
 //             DataFrame data,
-//             std::string distribution,
+//             std::string cdf,
 //             double freedom_degrees,
 //             Eigen::VectorXd beta_init,
 //             std::string threshold){
@@ -160,7 +160,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //     Rcpp::stop("Unrecognized threshold restriction; options are: standard and equidistant");
 //   }
 //
-//   class distribution dist_cum;
+//   class cdf dist_cum;
 //
 //   std::string ratio = "cumulative";
 //
@@ -232,27 +232,27 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //
 //       CumulativeR cum;
 //
-//       // Vector pi depends on selected distribution
-//       if(distribution == "logistic"){
+//       // Vector pi depends on selected cdf
+//       if(cdf == "logistic"){
 //         pi = cum.inverse_logistic(eta);
 //         D = cum.inverse_derivative_logistic(eta);
-//       }else if(distribution == "normal"){
+//       }else if(cdf == "normal"){
 //         pi = cum.inverse_normal(eta);
 //         D = cum.inverse_derivative_normal(eta);
-//       }else if(distribution == "cauchit"){
+//       }else if(cdf == "cauchit"){
 //         pi = cum.inverse_cauchit(eta);
 //         D = cum.inverse_derivative_cauchit(eta);
-//       }else if(distribution == "gompertz"){
+//       }else if(cdf == "gompertz"){
 //         pi = cum.inverse_gompertz(eta);
 //         D = cum.inverse_derivative_gompertz(eta);
-//       }else if(distribution == "student"){
+//       }else if(cdf == "student"){
 //         pi = cum.inverse_student(eta,freedom_degrees);
 //         D = cum.inverse_derivative_student(eta,freedom_degrees);
-//       }else if(distribution == "gumbel"){
+//       }else if(cdf == "gumbel"){
 //         pi = cum.inverse_gumbel(eta);
 //         D = cum.inverse_derivative_gumbel(eta);
 //       }else{
-//         Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+//         Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
 //       }
 //
 //       Cov_i = Eigen::MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
@@ -409,7 +409,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //     Named("proportional") = proportional,
 //     Named("N_cats") = N_cats,
 //     Named("nobs_glmcat") = N,
-//     Named("distribution") = distribution,
+//     Named("cdf") = cdf,
 //     Named("freedom_degrees") = freedom_degrees
 //   );
 //
@@ -423,7 +423,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //                               _["categories_order"] = CharacterVector::create(NA_STRING),
 //                               _["proportional"] = CharacterVector::create(NA_STRING),
 //                               _["data"],
-//                                _["distribution"] = "logistic",
+//                                _["cdf"] = "logistic",
 //                                _["freedom_degrees"] = 1.0,
 //                                _["beta_init"] = NumericVector::create(1),
 //                                _["threshold"] = "standard"

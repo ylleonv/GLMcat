@@ -1,4 +1,4 @@
-#include "distribution.h"
+#include "cdf.h"
 #include "reference.h"
 
 using namespace std;
@@ -10,7 +10,7 @@ using namespace Eigen;
 
 // [[Rcpp::depends(RcppEigen)]]
 ReferenceF::ReferenceF(void) {
-  distribution dist;
+  cdf dist;
 }
 
 Eigen::VectorXd ReferenceF::inverse_logistic(const Eigen::VectorXd& eta) const
@@ -207,7 +207,7 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_laplace(const Eigen::VectorXd& et
   //                             _["categories_order"],
   //                             _["proportional"] = CharacterVector::create(NA_STRING),
   //                             _["data"],
-  //                             _["distribution"] = "logistic",
+  //                             _["cdf"] = "logistic",
   //                             _["freedom_degrees"] = 1),
   //                             "Reference model");
 
@@ -218,7 +218,7 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_laplace(const Eigen::VectorXd& et
   //                             _["reference"] = R_NaN,
   //                             _["alternative_specific"] = CharacterVector::create( NA_STRING),
   //                             _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
-  //                             _["distribution"] = "a",
+  //                             _["cdf"] = "a",
   //                             _["freedom_degrees"] = 1.0,
   //                             _["ratio"] = "reference"),
   //                             "Discrete Choice Model");

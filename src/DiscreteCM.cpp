@@ -1,4 +1,4 @@
-#include "distribution.h"
+#include "cdf.h"
 #include "reference.h"
 #include "adjacentR.h"
 
@@ -19,8 +19,8 @@ using namespace Eigen;
 //' @param reference a string indicating the reference category
 //' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 //' @param data a dataframe object in R, with the dependent variable as factor.
-//' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
-//' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
+//' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
+//' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 //' @examples
 //' library(GLMcat)
@@ -28,7 +28,7 @@ using namespace Eigen;
 //' Discrete_CM(formula = choice ~ hinc + gc + invt,
 //' case_id = "indv",alternatives = "mode",reference = "air",
 //' data = TravelChoice,  alternative_specific = c("gc", "invt"),
-//' distribution = "logistic")
+//' cdf = "logistic")
 //' @note For these models it is not allowed to exclude the intercept.
 //' @export
 // [[Rcpp::export("Discrete_CM")]]
@@ -38,12 +38,12 @@ List Discrete_CM(Formula formula,
                  CharacterVector reference,
                  CharacterVector alternative_specific,
                  DataFrame data,
-                 std::string distribution,
+                 std::string cdf,
                  double freedom_degrees,
                  String intercept
 ){
 
-  class distribution dist1;
+  class cdf dist1;
 
   List Full_M = dist1.select_data_nested(formula,
                                          case_id,
@@ -101,42 +101,42 @@ List Discrete_CM(Formula formula,
 
       // if(ratio == "reference"){
       ReferenceF ref;
-      if(distribution == "logistic"){
+      if(cdf == "logistic"){
         pi = ref.inverse_logistic(eta);
         D = ref.inverse_derivative_logistic(eta);
-      }else if(distribution == "normal"){
+      }else if(cdf == "normal"){
         pi = ref.inverse_normal(eta);
         D = ref.inverse_derivative_normal(eta);
-      }else if(distribution == "cauchit"){
+      }else if(cdf == "cauchit"){
         pi = ref.inverse_cauchit(eta);
         D = ref.inverse_derivative_cauchit(eta);
-      }else if(distribution == "gompertz"){
+      }else if(cdf == "gompertz"){
         pi = ref.inverse_gompertz(eta);
         D = ref.inverse_derivative_gompertz(eta);
-      }else if(distribution == "gumbel"){
+      }else if(cdf == "gumbel"){
         pi = ref.inverse_gumbel(eta);
         D = ref.inverse_derivative_gumbel(eta);
-      }else if(distribution == "laplace"){
+      }else if(cdf == "laplace"){
         pi = ref.inverse_laplace(eta);
         D = ref.inverse_derivative_laplace(eta);
-      }else if(distribution == "student"){
+      }else if(cdf == "student"){
         pi = ref.inverse_student(eta, freedom_degrees);
         D = ref.inverse_derivative_student(eta, freedom_degrees);
       }else{
-        Rcpp::stop("Unrecognized distribution; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, and student(df)");
+        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, and student(df)");
       }
       // }else{
       //   AdjacentR adj;
-      //   if(distribution == "logistic"){
+      //   if(cdf == "logistic"){
       //     pi = adj.inverse_logistic(eta);
       //     D = adj.inverse_derivative_logistic(eta);
-      //   }else if(distribution == "normal"){
+      //   }else if(cdf == "normal"){
       //     pi = adj.inverse_normal(eta);
       //     D = adj.inverse_derivative_normal(eta);
-      //   }else if(distribution == "cauchit"){
+      //   }else if(cdf == "cauchit"){
       //     pi = adj.inverse_cauchit(eta);
       //     D = adj.inverse_derivative_cauchit(eta);
-      //   }else if(distribution == "student"){
+      //   }else if(cdf == "student"){
       //     pi = adj.inverse_student(eta, freedom_degrees);
       //     D = adj.inverse_derivative_student(eta, freedom_degrees);
       //   }
@@ -208,7 +208,7 @@ RCPP_MODULE(discretemodule){
                               _["reference"] = R_NaN,
                               _["alternative_specific"] = CharacterVector::create( NA_STRING),
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
-                              _["distribution"] = "a",
+                              _["cdf"] = "a",
                               _["freedom_degrees"] = 1.0,
                               _["intercept"] = "standard"),
                               "Discrete Choice Model");

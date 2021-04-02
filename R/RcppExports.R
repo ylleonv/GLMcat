@@ -14,8 +14,8 @@
 #' @param reference a string indicating the reference category
 #' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 #' @param data a dataframe object in R, with the dependent variable as factor.
-#' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
-#' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
+#' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
+#' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 #' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 #' @examples
 #' library(GLMcat)
@@ -23,34 +23,33 @@
 #' Discrete_CM(formula = choice ~ hinc + gc + invt,
 #' case_id = "indv",alternatives = "mode",reference = "air",
 #' data = TravelChoice,  alternative_specific = c("gc", "invt"),
-#' distribution = "logistic")
+#' cdf = "logistic")
 #' @note For these models it is not allowed to exclude the intercept.
 #' @export
-Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees, intercept) {
-    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees, intercept)
+Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, cdf, freedom_degrees, intercept) {
+    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, cdf, freedom_degrees, intercept)
 }
 
 #' Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 #'
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
-#' @param ratio a string indicating the F distribution, options are: reference, adjacent, cumulative and sequential. Default value is reference.
-#' @param distribution a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
+#' @param ratio a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.
+#' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
 #' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 #' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
 #' @param proportional a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
 #' @param data a dataframe object in R, with the dependent variable as factor.
-#' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student distribution.
+#' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 #' @param threshold restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).
-#' @param beta_init optional beta initialization vector.
 #' @export
 #' @examples
 #' data(DisturbedDreams)
 #' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 #'     ref_category = "Very.severe",
-#'     distribution = "logistic", ratio = "reference")
+#'     cdf = "logistic", ratio = "reference")
 #'
-GLMcat <- function(formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init) {
-    .Call(`_GLMcat_GLMcat`, formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init)
+GLMcat <- function(formula, data, ratio, cdf, proportional, categories_order, ref_category, freedom_degrees, threshold, control) {
+    .Call(`_GLMcat_GLMcat`, formula, data, ratio, cdf, proportional, categories_order, ref_category, freedom_degrees, threshold, control)
 }
 
 #' GLMcat model predictions
@@ -65,7 +64,7 @@ GLMcat <- function(formula, data, ratio, distribution, proportional, categories_
 #' @examples
 #' data(DisturbedDreams)
 #' mod1 <- GLMcat(formula = Level ~ Age,
-#' data = DisturbedDreams, distribution = "logistic")
+#' data = DisturbedDreams, cdf = "logistic")
 #' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 predict_glmcat <- function(model_object, data, type) {
     .Call(`_GLMcat_predict_glmcat`, model_object, data, type)

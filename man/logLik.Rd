@@ -19,7 +19,7 @@ data(DisturbedDreams)
 mod1 <- GLMcat(
   formula = Level ~ Age,
   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-  data = DisturbedDreams, distribution = "logistic"
+  data = DisturbedDreams, cdf = "logistic"
 )
 logLik(mod1)
 }

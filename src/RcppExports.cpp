@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // Discrete_CM
-List Discrete_CM(Formula formula, String case_id, String alternatives, CharacterVector reference, CharacterVector alternative_specific, DataFrame data, std::string distribution, double freedom_degrees, String intercept);
-RcppExport SEXP _GLMcat_Discrete_CM(SEXP formulaSEXP, SEXP case_idSEXP, SEXP alternativesSEXP, SEXP referenceSEXP, SEXP alternative_specificSEXP, SEXP dataSEXP, SEXP distributionSEXP, SEXP freedom_degreesSEXP, SEXP interceptSEXP) {
+List Discrete_CM(Formula formula, String case_id, String alternatives, CharacterVector reference, CharacterVector alternative_specific, DataFrame data, std::string cdf, double freedom_degrees, String intercept);
+RcppExport SEXP _GLMcat_Discrete_CM(SEXP formulaSEXP, SEXP case_idSEXP, SEXP alternativesSEXP, SEXP referenceSEXP, SEXP alternative_specificSEXP, SEXP dataSEXP, SEXP cdfSEXP, SEXP freedom_degreesSEXP, SEXP interceptSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,30 +18,30 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< CharacterVector >::type reference(referenceSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type alternative_specific(alternative_specificSEXP);
     Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< std::string >::type distribution(distributionSEXP);
+    Rcpp::traits::input_parameter< std::string >::type cdf(cdfSEXP);
     Rcpp::traits::input_parameter< double >::type freedom_degrees(freedom_degreesSEXP);
     Rcpp::traits::input_parameter< String >::type intercept(interceptSEXP);
-    rcpp_result_gen = Rcpp::wrap(Discrete_CM(formula, case_id, alternatives, reference, alternative_specific, data, distribution, freedom_degrees, intercept));
+    rcpp_result_gen = Rcpp::wrap(Discrete_CM(formula, case_id, alternatives, reference, alternative_specific, data, cdf, freedom_degrees, intercept));
     return rcpp_result_gen;
 END_RCPP
 }
 // GLMcat
-List GLMcat(Formula formula, DataFrame data, std::string ratio, std::string distribution, CharacterVector proportional, CharacterVector categories_order, CharacterVector ref_category, double freedom_degrees, std::string threshold, NumericVector beta_init);
-RcppExport SEXP _GLMcat_GLMcat(SEXP formulaSEXP, SEXP dataSEXP, SEXP ratioSEXP, SEXP distributionSEXP, SEXP proportionalSEXP, SEXP categories_orderSEXP, SEXP ref_categorySEXP, SEXP freedom_degreesSEXP, SEXP thresholdSEXP, SEXP beta_initSEXP) {
+List GLMcat(Formula formula, DataFrame data, std::string ratio, std::string cdf, CharacterVector proportional, CharacterVector categories_order, CharacterVector ref_category, double freedom_degrees, std::string threshold, List control);
+RcppExport SEXP _GLMcat_GLMcat(SEXP formulaSEXP, SEXP dataSEXP, SEXP ratioSEXP, SEXP cdfSEXP, SEXP proportionalSEXP, SEXP categories_orderSEXP, SEXP ref_categorySEXP, SEXP freedom_degreesSEXP, SEXP thresholdSEXP, SEXP controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Formula >::type formula(formulaSEXP);
     Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
     Rcpp::traits::input_parameter< std::string >::type ratio(ratioSEXP);
-    Rcpp::traits::input_parameter< std::string >::type distribution(distributionSEXP);
+    Rcpp::traits::input_parameter< std::string >::type cdf(cdfSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type proportional(proportionalSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type categories_order(categories_orderSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type ref_category(ref_categorySEXP);
     Rcpp::traits::input_parameter< double >::type freedom_degrees(freedom_degreesSEXP);
     Rcpp::traits::input_parameter< std::string >::type threshold(thresholdSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta_init(beta_initSEXP);
-    rcpp_result_gen = Rcpp::wrap(GLMcat(formula, data, ratio, distribution, proportional, categories_order, ref_category, freedom_degrees, threshold, beta_init));
+    Rcpp::traits::input_parameter< List >::type control(controlSEXP);
+    rcpp_result_gen = Rcpp::wrap(GLMcat(formula, data, ratio, cdf, proportional, categories_order, ref_category, freedom_degrees, threshold, control));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -11,7 +11,7 @@ Discrete_CM(
   reference = NaN,
   alternative_specific = NA_character_,
   data = c(1, NA, NaN, Inf, -Inf),
-  distribution = "a",
+  cdf = "a",
   freedom_degrees = 1,
   intercept = "standard"
 )
@@ -29,9 +29,9 @@ Discrete_CM(
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{distribution}{a string indicating the F distribution, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
+\item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
 
-\item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student distribution.}
+\item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student cdf.}
 
 \item{intercept}{if "conditional" then the design will be equivalent to the conditional logit model}
 }
@@ -52,5 +52,5 @@ data(TravelChoice)
 Discrete_CM(formula = choice ~ hinc + gc + invt,
 case_id = "indv",alternatives = "mode",reference = "air",
 data = TravelChoice,  alternative_specific = c("gc", "invt"),
-distribution = "logistic")
+cdf = "logistic")
 }
