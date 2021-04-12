@@ -88,6 +88,8 @@ List Discrete_CM(Formula formula,
   Eigen::VectorXd Std_Error;
 
   double epsilon = 0.0001 ;
+  double qp , s0 = 1;
+
   // for (int iteration=1; iteration < 18; iteration++){
   // while ( (iteration < (9 )) ){
   while ((Stop_criteria >( epsilon / N) )& (iteration < (9 )) ){
@@ -95,7 +97,7 @@ List Discrete_CM(Formula formula,
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
 
-    double qp , s0 = 1;
+
     if((normalization != 1) & (cdf != "logistic")){
       class Logistic logistic;
       class Student stu;
@@ -108,7 +110,7 @@ List Discrete_CM(Formula formula,
       // output_list_dis["normalized_coefficients"] = BETA_3;
       // output_list_dis.push_back(BETA_3);
     }
-    Rcout << s0 ;
+    // Rcout << s0 ;
 
     for (int i=0; i < N/K; i++){
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
@@ -218,7 +220,8 @@ List Discrete_CM(Formula formula,
     Named("LogLikelihood") = LogLikIter(LogLikIter.rows() - 1),
     Named("LogLikIter") =  LogLikIter,
     Named("X_M_i") =  X_M_i,
-    Named("stderr") =  Std_Error
+    Named("stderr") =  Std_Error,
+    Named("normalization_s0") =  s0
   );
 
 

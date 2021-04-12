@@ -7,6 +7,8 @@
 summary.glmcat <- function(object, ...) {
   coef <- object$coefficients
   se <- object$stderr
+  s0 <- object$normalization_s0
+
   tval <- coef / se
 
   object$coefficients <- cbind(
@@ -15,9 +17,24 @@ summary.glmcat <- function(object, ...) {
     "z value" = tval,
     "Pr(>|z|)" = 2 * pnorm(-abs(tval))
   )
+
   colnames(object$coefficients) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
   sum_ma <- object$coefficients
   printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
+
+  if(s0 !=1 ){
+    print("Normalized coefficients")
+    object$coefficients <- cbind(
+      "Estimate" = coef * s0,
+      "Std. Error" = se * s0,
+      "z value" = tval,
+      "Pr(>|z|)" = 2 * pnorm(-abs(tval))
+    )
+    colnames(object$coefficients) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+    printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
+  }
+
+
   # cf src/stats/R/lm.R and case with no weights and an intercept
   # f <- object$fitted.values
   # r <- object$residuals
