@@ -45,6 +45,7 @@ public:
   virtual Eigen::VectorXd in_open_corner(const Eigen::VectorXd& p) const;
   virtual double cdf_logit(const double& value) const;
   virtual double pdf_logit(const double& value) const;
+  virtual double qdf_logit(const double& value) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 
@@ -75,6 +76,7 @@ class Student :  virtual public cdf{
 public:
   virtual double cdf_student(const double& value, const double& freedom_degrees) const;
   virtual double pdf_student(const double& value, const double& freedom_degrees) const;
+  virtual double qdf_student(const double& value, const double& freedom_degrees) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 

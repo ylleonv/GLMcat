@@ -40,7 +40,8 @@ List Discrete_CM(Formula formula,
                  DataFrame data,
                  std::string cdf,
                  double freedom_degrees,
-                 String intercept
+                 String intercept,
+                 double normalization
 ){
 
   class cdf dist1;
@@ -88,16 +89,34 @@ List Discrete_CM(Formula formula,
 
   double epsilon = 0.0001 ;
   // for (int iteration=1; iteration < 18; iteration++){
-  while (Stop_criteria >( epsilon / N)){
+  // while ( (iteration < (9 )) ){
+  while ((Stop_criteria >( epsilon / N) )& (iteration < (9 )) ){
     Eigen::MatrixXd Score_i = Eigen::MatrixXd::Zero(BETA.rows(),1);
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
 
+    double qp , s0 = 1;
+    if((normalization != 1) & (cdf != "logistic")){
+      class Logistic logistic;
+      class Student stu;
+      qp = logistic.qdf_logit(normalization);
+      s0 = qp / (stu.qdf_student(normalization, freedom_degrees)-
+        stu.qdf_student(0.5, freedom_degrees));
+      // print(s0);
+      // NumericMatrix BETA_3 = BETA_2 * (s0);
+      // Rcout << s0 ;
+      // output_list_dis["normalized_coefficients"] = BETA_3;
+      // output_list_dis.push_back(BETA_3);
+    }
+    Rcout << s0 ;
 
     for (int i=0; i < N/K; i++){
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
       Y_M_i = Y_init.row(i);
+      // BETA = BETA / s0;
       eta = X_M_i * BETA;
+
+      // eta = eta/s0;
 
       // if(ratio == "reference"){
       ReferenceF ref;
@@ -144,9 +163,12 @@ List Discrete_CM(Formula formula,
 
       Cov_i = Eigen::MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
       W_in = D * Cov_i.inverse();
-      Score_i_2 = X_M_i.transpose() * W_in * (Y_M_i - pi);
+      // Rcout << (W_in) << std::endl;
+      Score_i_2 = X_M_i.transpose() * W_in  * (Y_M_i - pi);
+      // Score_i_2 = X_M_i.transpose() * D * (Y_M_i - pi);
       Score_i = Score_i + Score_i_2;
       F_i_2 = X_M_i.transpose() * (W_in) * (D.transpose() * X_M_i);
+      // F_i_2 = X_M_i.transpose() * (D * Cov_i) * (D.transpose() * X_M_i);
       F_i = F_i + F_i_2;
       LogLik = LogLik + (Y_M_i.transpose().eval()*Eigen::VectorXd(pi.array().log())) + ( (1 - Y_M_i.sum()) * std::log(1 - pi.sum()) );
     }
@@ -161,6 +183,9 @@ List Discrete_CM(Formula formula,
     Stop_criteria = (abs(LogLikIter(iteration+1) - LogLikIter(iteration))) / (epsilon + (abs(LogLikIter(iteration+1)))) ;
     Eigen::VectorXd beta_old = BETA;
     BETA = BETA + (F_i.inverse() * Score_i);
+
+    // BETA = (BETA * s0) + (F_i.inverse() * Score_i);
+    // BETA = BETA * s0;
 
     iteration = iteration + 1;
     // Rcout << "BETA" << std::endl;
@@ -196,6 +221,21 @@ List Discrete_CM(Formula formula,
     Named("stderr") =  Std_Error
   );
 
+
+  if((normalization != 1) & (cdf != "logistic")){
+    double qp , s0;
+    // BETA_3 = BETA_2;
+    class Logistic logistic;
+    class Student stu;
+    qp = logistic.qdf_logit(normalization);
+    s0 = qp / (stu.qdf_student(normalization, freedom_degrees)-
+      stu.qdf_student(0.5, freedom_degrees));
+    NumericMatrix BETA_3 = BETA_2 * (s0);
+    // Rcout << BETA_3 ;
+    output_list_dis["normalized_coefficients"] = BETA_3;
+    // output_list_dis.push_back(BETA_3);
+  }
+
   output_list_dis.attr("class") = "glmcat";
   return output_list_dis;
 }
@@ -210,7 +250,9 @@ RCPP_MODULE(discretemodule){
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
                               _["cdf"] = "a",
                               _["freedom_degrees"] = 1.0,
-                              _["intercept"] = "standard"),
-                              "Discrete Choice Model");
+                              _["intercept"] = "standard",
+                              _["normalization"] = 1.0
+                 ),
+                 "Discrete Choice Model");
 
 }

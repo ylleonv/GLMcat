@@ -110,3 +110,16 @@ control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   return(list("maxit" = maxit, "epsilon" = epsilon, "beta_init" = beta_init))
   # return(maxit)
 }
+
+#' normalization glmcat models
+#' @description normalization of coefficients for GLMcat models.
+#' @rdname normalization
+#' @param p percentile
+#' @param cdf cdf
+#' @param degrees_freedom cdf
+#' @export
+normalization.glmcat <- function(p = 0.95, cdf = "logistic", degrees_freedom = 7) {
+  # print(list("p" = p, "cdf" = cdf, "degrees_freedom" = degrees_freedom))
+  return(list("p" = p, "cdf" = cdf, "degrees_freedom" = degrees_freedom))
+  # return(maxit)
+}

@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // Discrete_CM
-List Discrete_CM(Formula formula, String case_id, String alternatives, CharacterVector reference, CharacterVector alternative_specific, DataFrame data, std::string cdf, double freedom_degrees, String intercept);
-RcppExport SEXP _GLMcat_Discrete_CM(SEXP formulaSEXP, SEXP case_idSEXP, SEXP alternativesSEXP, SEXP referenceSEXP, SEXP alternative_specificSEXP, SEXP dataSEXP, SEXP cdfSEXP, SEXP freedom_degreesSEXP, SEXP interceptSEXP) {
+List Discrete_CM(Formula formula, String case_id, String alternatives, CharacterVector reference, CharacterVector alternative_specific, DataFrame data, std::string cdf, double freedom_degrees, String intercept, double normalization);
+RcppExport SEXP _GLMcat_Discrete_CM(SEXP formulaSEXP, SEXP case_idSEXP, SEXP alternativesSEXP, SEXP referenceSEXP, SEXP alternative_specificSEXP, SEXP dataSEXP, SEXP cdfSEXP, SEXP freedom_degreesSEXP, SEXP interceptSEXP, SEXP normalizationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type cdf(cdfSEXP);
     Rcpp::traits::input_parameter< double >::type freedom_degrees(freedom_degreesSEXP);
     Rcpp::traits::input_parameter< String >::type intercept(interceptSEXP);
-    rcpp_result_gen = Rcpp::wrap(Discrete_CM(formula, case_id, alternatives, reference, alternative_specific, data, cdf, freedom_degrees, intercept));
+    Rcpp::traits::input_parameter< double >::type normalization(normalizationSEXP);
+    rcpp_result_gen = Rcpp::wrap(Discrete_CM(formula, case_id, alternatives, reference, alternative_specific, data, cdf, freedom_degrees, intercept, normalization));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -75,7 +76,7 @@ RcppExport SEXP _rcpp_module_boot_discretemodule();
 RcppExport SEXP _rcpp_module_boot_GLMcatmodule();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_GLMcat_Discrete_CM", (DL_FUNC) &_GLMcat_Discrete_CM, 9},
+    {"_GLMcat_Discrete_CM", (DL_FUNC) &_GLMcat_Discrete_CM, 10},
     {"_GLMcat_GLMcat", (DL_FUNC) &_GLMcat_GLMcat, 10},
     {"_GLMcat_predict_glmcat", (DL_FUNC) &_GLMcat_predict_glmcat, 3},
     {"_GLMcat_Cat_ref1", (DL_FUNC) &_GLMcat_Cat_ref1, 2},

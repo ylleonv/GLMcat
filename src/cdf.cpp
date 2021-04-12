@@ -142,11 +142,11 @@ List Cat_ref_order(CharacterVector categories_order, SEXP response_categories){
 
 
 List cdf::All_pre_data_or(Formula formula,
-                                   DataFrame input_data,
-                                   CharacterVector categories_order,
-                                   CharacterVector proportional_effect,
-                                   std::string threshold,
-                                   std::string ratio){
+                          DataFrame input_data,
+                          CharacterVector categories_order,
+                          CharacterVector proportional_effect,
+                          std::string threshold,
+                          std::string ratio){
 
   // print(proportional_effect);
 
@@ -238,25 +238,25 @@ List cdf::All_pre_data_or(Formula formula,
   if (ratio == "cumulative"){
     if (threshold == "equidistant"){
       // if (!any_alternative_specific[0]) { // ninguna es proportional
-        // Rcout << "propor_cum_equ" << std::endl;
+      // Rcout << "propor_cum_equ" << std::endl;
 
-        NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
-        Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
-        // Rcout << tJac2 << std::endl;
-        Eigen::MatrixXd X_EXT_COMPLETE_int = Eigen::kroneckerProduct(Pre_Design.block(0,1,Pre_Design.rows(),1), tJac2).eval();
-        Eigen::MatrixXd X_EXT_COMPLETE_res = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 2), Iden_Q1).eval();
+      NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
+      Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
+      // Rcout << tJac2 << std::endl;
+      Eigen::MatrixXd X_EXT_COMPLETE_int = Eigen::kroneckerProduct(Pre_Design.block(0,1,Pre_Design.rows(),1), tJac2).eval();
+      Eigen::MatrixXd X_EXT_COMPLETE_res = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 2), Iden_Q1).eval();
 
-        Eigen::MatrixXd X_EXT_COMPLETE_1 = Eigen::MatrixXd::Zero(X_EXT_COMPLETE_int.rows(),
-                                                                 X_EXT_COMPLETE_int.cols()+X_EXT_COMPLETE_res.cols());
+      Eigen::MatrixXd X_EXT_COMPLETE_1 = Eigen::MatrixXd::Zero(X_EXT_COMPLETE_int.rows(),
+                                                               X_EXT_COMPLETE_int.cols()+X_EXT_COMPLETE_res.cols());
 
-        X_EXT_COMPLETE_1.block(0,0,X_EXT_COMPLETE_int.rows(),X_EXT_COMPLETE_int.cols()) = X_EXT_COMPLETE_int;
-        X_EXT_COMPLETE_1.block(0,X_EXT_COMPLETE_int.cols(),X_EXT_COMPLETE_res.rows(),X_EXT_COMPLETE_res.cols()) = X_EXT_COMPLETE_res;
+      X_EXT_COMPLETE_1.block(0,0,X_EXT_COMPLETE_int.rows(),X_EXT_COMPLETE_int.cols()) = X_EXT_COMPLETE_int;
+      X_EXT_COMPLETE_1.block(0,X_EXT_COMPLETE_int.cols(),X_EXT_COMPLETE_res.rows(),X_EXT_COMPLETE_res.cols()) = X_EXT_COMPLETE_res;
 
-        // print(head1(X_EXT_COMPLETE_1));
-        X_EXT_COMPLETE = X_EXT_COMPLETE_1;
+      // print(head1(X_EXT_COMPLETE_1));
+      X_EXT_COMPLETE = X_EXT_COMPLETE_1;
 
-        colnames_final_m.erase(0);
-        // Rcout << X_EXT_COMPLETE << std::endl;
+      colnames_final_m.erase(0);
+      // Rcout << X_EXT_COMPLETE << std::endl;
       // }
     }else if (threshold == "symmetric"){ // caso symmetric
 
@@ -350,10 +350,10 @@ List cdf::All_pre_data_or(Formula formula,
 }
 
 List cdf::All_pre_data_NEWDATA(Formula formula,
-                                        DataFrame NEWDATA,
-                                        CharacterVector categories_order,
-                                        CharacterVector proportional_effect,
-                                        int N_cats){
+                               DataFrame NEWDATA,
+                               CharacterVector categories_order,
+                               CharacterVector proportional_effect,
+                               int N_cats){
 
   Environment base_env("package:base");
   Function my_asnumeric = base_env["as.numeric"];
@@ -961,14 +961,14 @@ List Extend_Response(DataFrame Final_mat ){
 }
 
 List cdf::select_data_nested(Formula formula,
-                                      String individuals,
-                                      String Alternatives,
-                                      CharacterVector ref_cat,
-                                      CharacterVector var_alt_specific,
-                                      DataFrame input_data,
-                                      String intercept
-                                        //   ,
-                                        // String ad_or_ref
+                             String individuals,
+                             String Alternatives,
+                             CharacterVector ref_cat,
+                             CharacterVector var_alt_specific,
+                             DataFrame input_data,
+                             String intercept
+                               //   ,
+                               // String ad_or_ref
 ) {
 
   Environment stats_env1("package:utils");
@@ -1037,12 +1037,12 @@ List cdf::select_data_nested(Formula formula,
         CharacterVector a1 = my_paste(var11, var111,  _["collapse"] = "");
         Names_design.push_back(a1[0]);
       }else{
-      for(int cats = 0 ; cats < Levels.length()-1; cats++){
-        String var11 = colnames[indi];
-        String var12 = Levels[cats];
-        String var1 = my_paste(var11, var12,  _["collapse"] = "");
-        Names_design.push_back(var1);
-      }
+        for(int cats = 0 ; cats < Levels.length()-1; cats++){
+          String var11 = colnames[indi];
+          String var12 = Levels[cats];
+          String var1 = my_paste(var11, var12,  _["collapse"] = "");
+          Names_design.push_back(var1);
+        }
       }
     }
   }
@@ -1056,9 +1056,9 @@ List cdf::select_data_nested(Formula formula,
   String ref_cat1 = ref_cat[ref_cat.length()-1];
   List Response_L = Extend_Response(Final_mat1);
   Eigen::MatrixXd Response_M = Response_L["Y_Ext"];
-//
-//   print(Var_spe_alt); // All variables including the intercept
-//   print(var_alt_specific); // JUst the specific for alternatives
+  //
+  //   print(Var_spe_alt); // All variables including the intercept
+  //   print(var_alt_specific); // JUst the specific for alternatives
 
   Eigen::MatrixXd Design_Matrix = Extend_All_design(Final_mat1,
                                                     Var_spe_alt,
@@ -1071,9 +1071,9 @@ List cdf::select_data_nested(Formula formula,
   );
 
 
-//
-//   print(head(Names_design));
-//   print(head(Design_Matrix));
+  //
+  //   print(head(Names_design));
+  //   print(head(Design_Matrix));
 
   return List::create(
     _["Design_Matrix"] = Design_Matrix,
@@ -1109,6 +1109,12 @@ double Logistic::pdf_logit(const double& value) const
   boost::math::logistic dist(0., 1.);
   return boost::math::pdf(dist, value);
 }
+double Logistic::qdf_logit(const double& value) const
+{
+  boost::math::logistic dist(0., 1.);
+  return boost::math::quantile(dist, value);
+}
+
 Eigen::VectorXd Logistic::InverseLinkQuantileFunction(Eigen::VectorXd vector ){
   boost::math::logistic dist(0., 1.);
   for (int i = 0; i<=vector.size()-1; i++)
@@ -1178,8 +1184,29 @@ double Student::cdf_student(const double& value, const double& freedom_degrees) 
   {return z; }
 }
 
+// double Student::cdf_student(const double& value, const double& freedom_degrees) const
+// {
+//   boost::math::students_t_distribution<> student(freedom_degrees);
+//   return boost::math::cdf(student,value);
+// }
+//
+// double Student::pdf_student(const double& value, const double& freedom_degrees) const
+// {
+//   boost::math::students_t_distribution<> student(freedom_degrees);
+//   return boost::math::pdf(student,value);
+// }
+
+double Student::qdf_student(const double& value, const double& freedom_degrees) const
+{
+  boost::math::students_t_distribution<> student(freedom_degrees);
+  return boost::math::quantile(student,value);
+}
+
 double Student::pdf_student(const double& value, const double& freedom_degrees) const
-{ return pow( freedom_degrees/(freedom_degrees + pow(value, 2)) , (1+freedom_degrees) * 0.5 ) / ( pow(freedom_degrees,0.5) * boost::math::beta(freedom_degrees*0.5, 0.5) ); }
+{ return pow( freedom_degrees/(freedom_degrees + pow(value, 2)) ,
+              (1+freedom_degrees) * 0.5 ) / ( pow(freedom_degrees,0.5) *
+                boost::math::beta(freedom_degrees*0.5, 0.5) ); }
+
 
 Gumbel::Gumbel(void) {
   // Rcout << "Gumbel is being created" << endl;
