@@ -92,7 +92,7 @@ List Discrete_CM(Formula formula,
 
   // for (int iteration=1; iteration < 18; iteration++){
   // while ( (iteration < (9 )) ){
-  while ((Stop_criteria >( epsilon / N) )& (iteration < (9 )) ){
+  while ((Stop_criteria >( epsilon / N) ) & (iteration < ( 25 )) ){
     Eigen::MatrixXd Score_i = Eigen::MatrixXd::Zero(BETA.rows(),1);
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;

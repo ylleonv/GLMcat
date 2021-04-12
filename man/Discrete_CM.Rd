@@ -13,7 +13,8 @@ Discrete_CM(
   data = c(1, NA, NaN, Inf, -Inf),
   cdf = "a",
   freedom_degrees = 1,
-  intercept = "standard"
+  intercept = "standard",
+  normalization = 1
 )
 }
 \arguments{

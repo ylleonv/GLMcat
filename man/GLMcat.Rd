@@ -14,7 +14,7 @@ GLMcat(
   ref_category = NA_character_,
   freedom_degrees = NaN,
   threshold = "standard",
-  beta_init = NA_real_
+  control = list(maxit = 25L, epsilon = 1e-07, beta_init = NA_real_)
 )
 }
 \arguments{
@@ -35,8 +35,6 @@ GLMcat(
 \item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student cdf.}
 
 \item{threshold}{restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).}
-
-\item{beta_init}{optional beta initialization vector.}
 }
 \description{
 Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
