@@ -9,7 +9,9 @@ control.glmcat(maxit = 25, epsilon = 1e-06, beta_init = NA)
 \arguments{
 \item{maxit}{iterations}
 
-\item{...}{other arguments.}
+\item{epsilon}{epsilon}
+
+\item{beta_init}{starting vector to Fisher's Scoring Algorithm}
 }
 \description{
 control LogLikelihood for GLMcat models.

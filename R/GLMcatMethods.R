@@ -121,7 +121,8 @@ logLik.glmcat <- function(object, ...) {
 #' @description control LogLikelihood for GLMcat models.
 #' @rdname control
 #' @param maxit iterations
-#' @param ...	other arguments.
+#' @param epsilon epsilon
+#' @param beta_init starting vector to Fisher's Scoring Algorithm
 #' @export
 control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   return(list("maxit" = maxit, "epsilon" = epsilon, "beta_init" = beta_init))

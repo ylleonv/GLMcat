@@ -26,7 +26,7 @@ using namespace Eigen;
 //' library(GLMcat)
 //' data(TravelChoice)
 //' Discrete_CM(formula = choice ~ hinc + gc + invt,
-//' case_id = "indv",alternatives = "mode",reference = "air",
+//' case_id = "indv",alternatives = "mode", reference = "air",
 //' data = TravelChoice,  alternative_specific = c("gc", "invt"),
 //' cdf = "logistic")
 //' @note For these models it is not allowed to exclude the intercept.
@@ -42,6 +42,8 @@ List Discrete_CM(Formula formula,
                  String intercept,
                  double normalization
 ){
+
+
 
 
   std::string cdf_1 = cdf[0];
@@ -275,9 +277,10 @@ RCPP_MODULE(discretemodule){
                               _["reference"] = R_NaN,
                               _["alternative_specific"] = CharacterVector::create( NA_STRING),
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
-                              _["cdf"] = List::create(_["cdf"] = "logistic", _["df"] = 0, _["mu"] = 0),
-                                _["intercept"] = "standard",
-                                _["normalization"] = 1.0
+                              _["cdf"] = R_NaN,
+                              // _["cdf"] = List::create(_["cdf"] = "logistic", _["df"] = 0, _["mu"] = 0),
+                              _["intercept"] = "standard",
+                              _["normalization"] = 1.0
                  ),
                  "Discrete Choice Model");
 

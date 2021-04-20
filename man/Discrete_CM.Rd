@@ -11,7 +11,7 @@ Discrete_CM(
   reference = NaN,
   alternative_specific = NA_character_,
   data = c(1, NA, NaN, Inf, -Inf),
-  cdf = list(cdf = "logistic", df = 0L, mu = 0L),
+  cdf = NaN,
   intercept = "standard",
   normalization = 1
 )
@@ -50,7 +50,7 @@ For these models it is not allowed to exclude the intercept.
 library(GLMcat)
 data(TravelChoice)
 Discrete_CM(formula = choice ~ hinc + gc + invt,
-case_id = "indv",alternatives = "mode",reference = "air",
+case_id = "indv",alternatives = "mode", reference = "air",
 data = TravelChoice,  alternative_specific = c("gc", "invt"),
 cdf = "logistic")
 }

@@ -8,7 +8,7 @@ GLMcat(
   formula,
   data,
   ratio = "reference",
-  cdf = list(cdf = "logistic", df = 7L, mu = 0L),
+  cdf = NaN,
   parallel = NA_character_,
   categories_order = NA_character_,
   ref_category = NA_character_,

@@ -11,7 +11,10 @@
 #' @export coef.glmcat
 #' @export nobs_glmcat
 #' @export logLik.glmcat
-#' @export predict_glmcat
+#' @export normalization.glmcat
+#' @export student.glmcat
+#' @export noncentralt.glmcat
+#' @export control.glmcat
 # #' @export ReferenceF
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
