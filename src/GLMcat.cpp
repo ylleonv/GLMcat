@@ -15,10 +15,11 @@ using namespace Eigen;
 //' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
 //' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 //' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
-//' @param proportional a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
+//' @param parallel a character vector indicating the name of the variables with a parallel effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
 //' @param data a dataframe object in R, with the dependent variable as factor.
-//' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 //' @param threshold restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).
+//' @param control blabla
+//' @param normalization blabla2
 //' @export
 //' @examples
 //' data(DisturbedDreams)
@@ -30,14 +31,24 @@ using namespace Eigen;
 List GLMcat(Formula formula,
             DataFrame data,
             std::string ratio,
-            std::string cdf,
-            CharacterVector proportional,
+            List cdf,
+            CharacterVector parallel,
             CharacterVector categories_order,
             CharacterVector ref_category,
-            double freedom_degrees,
             std::string threshold,
-            List control){
-  // Eigen::VectorXd beta_init){
+            List control,
+            double normalization){
+
+  std::string cdf_1 = cdf[0];
+  double freedom_degrees = 1;
+  double mu = 0;
+  if(cdf.size() == 2){
+    freedom_degrees = cdf[1];
+  }
+  if(cdf.size() == 3){
+    freedom_degrees = cdf[1];
+    mu = cdf[2];
+  }
 
   LogicalVector is_na_ref1 = is_na(categories_order);
   if(is_na_ref1[0]){ // categories order is not given
@@ -54,12 +65,12 @@ List GLMcat(Formula formula,
 
   class cdf dist1;
   const int N = data.nrows() ; // Number of observations
-  // Rcout << proportional << std::endl;
+  // Rcout << parallel << std::endl;
 
   List Full_M = dist1.All_pre_data_or(formula,
                                       data,
                                       categories_order,
-                                      proportional,
+                                      parallel,
                                       threshold,
                                       ratio);
 
@@ -72,7 +83,7 @@ List GLMcat(Formula formula,
 
   int P_c = explanatory_complete.length();
   int P_p = 0;
-  if(proportional[0] != "NA"){P_p = proportional.length();}
+  if(parallel[0] != "NA"){P_p = parallel.length();}
 
   int Q = Y_init.cols();
   int K = Q + 1;
@@ -114,6 +125,8 @@ List GLMcat(Formula formula,
   // while (check_tutz > 0.0001){
   double epsilon = control["epsilon"] ;
   int iterations_us = control["maxit"];
+  double qp , s0 = 1;
+
   while ((Stop_criteria>(epsilon / N)) & (iteration < (iterations_us ))){
 
     MatrixXd Score_i = MatrixXd::Zero(BETA.rows(),1);
@@ -129,111 +142,122 @@ List GLMcat(Formula formula,
       VectorXd eta1 = eta;
       if(ratio == "reference"){
         ReferenceF ref;
-        if(cdf == "logistic"){
+        if(cdf_1 == "logistic"){
           pi = ref.inverse_logistic(eta1);
           D = ref.inverse_derivative_logistic(eta1);
-        }else if(cdf == "normal"){
+        }else if(cdf_1 == "normal"){
           pi = ref.inverse_normal(eta);
           D = ref.inverse_derivative_normal(eta);
-        }else if(cdf == "cauchit"){
+        }else if(cdf_1 == "cauchit"){
           pi = ref.inverse_cauchit(eta);
           D = ref.inverse_derivative_cauchit(eta);
-        }else if(cdf == "gompertz"){
+        }else if(cdf_1 == "gompertz"){
           pi = ref.inverse_gompertz(eta);
           D = ref.inverse_derivative_gompertz(eta);
-        }else if(cdf == "gumbel"){
+        }else if(cdf_1 == "gumbel"){
           pi = ref.inverse_gumbel(eta);
           D = ref.inverse_derivative_gumbel(eta);
-        }else if(cdf == "laplace"){
+        }else if(cdf_1 == "laplace"){
           pi = ref.inverse_laplace(eta);
           D = ref.inverse_derivative_laplace(eta);
-        }else if(cdf == "student"){
+        }else if(cdf_1 == "student"){
           pi = ref.inverse_student(eta, freedom_degrees);
           D = ref.inverse_derivative_student(eta, freedom_degrees);
+        }else if(cdf_1 == "noncentralt"){
+          pi = ref.inverse_noncentralt(eta, freedom_degrees, mu);
+          D = ref.inverse_derivative_noncentralt(eta, freedom_degrees, mu);
         }else{
-          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf_1; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, student(df), and noncentral(df,mu)");
         }
       }else if(ratio == "adjacent"){
         AdjacentR adj;
-        if(cdf == "logistic"){
+        if(cdf_1 == "logistic"){
           pi = adj.inverse_logistic(eta);
           D = adj.inverse_derivative_logistic(eta);
-        }else if(cdf == "normal"){
+        }else if(cdf_1 == "normal"){
           pi = adj.inverse_normal(eta);
           D = adj.inverse_derivative_normal(eta);
-        }else if(cdf == "cauchit"){
+        }else if(cdf_1 == "cauchit"){
           pi = adj.inverse_cauchit(eta);
           D = adj.inverse_derivative_cauchit(eta);
-        }else if(cdf == "gompertz"){
+        }else if(cdf_1 == "gompertz"){
           pi = adj.inverse_gompertz(eta);
           D = adj.inverse_derivative_gompertz(eta);
-        }else if(cdf == "gumbel"){
+        }else if(cdf_1 == "gumbel"){
           pi = adj.inverse_gumbel(eta);
           D = adj.inverse_derivative_gumbel(eta);
-        }else if(cdf == "laplace"){
+        }else if(cdf_1 == "laplace"){
           pi = adj.inverse_laplace(eta);
           D = adj.inverse_derivative_laplace(eta);
-        }else if(cdf == "student"){
+        }else if(cdf_1 == "student"){
           pi = adj.inverse_student(eta, freedom_degrees);
           D = adj.inverse_derivative_student(eta, freedom_degrees);
+        }else if(cdf_1 == "noncentralt"){
+          pi = adj.inverse_noncentralt(eta, freedom_degrees, mu);
+          D = adj.inverse_derivative_noncentralt(eta, freedom_degrees, mu);
         }else{
-          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf_1; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, student(df), and noncentral(df,mu)");
         }
       }else if(ratio == "sequential"){
         SequentialR seq;
-        if(cdf == "logistic"){
+        if(cdf_1 == "logistic"){
           pi = seq.inverse_logistic(eta);
           D = seq.inverse_derivative_logistic(eta);
-        }else if(cdf == "normal"){
+        }else if(cdf_1 == "normal"){
           pi = seq.inverse_normal(eta);
           D = seq.inverse_derivative_normal(eta);
-        }else if(cdf == "cauchit"){
+        }else if(cdf_1 == "cauchit"){
           pi = seq.inverse_cauchit(eta);
           D = seq.inverse_derivative_cauchit(eta);
-        }else if(cdf == "gompertz"){
+        }else if(cdf_1 == "gompertz"){
           pi = seq.inverse_gompertz(eta);
           D = seq.inverse_derivative_gompertz(eta);
-        }else if(cdf == "gumbel"){
+        }else if(cdf_1 == "gumbel"){
           pi = seq.inverse_gumbel(eta);
           D = seq.inverse_derivative_gumbel(eta);
-        }else if(cdf == "laplace"){
+        }else if(cdf_1 == "laplace"){
           pi = seq.inverse_laplace(eta);
           D = seq.inverse_derivative_laplace(eta);
-        }else if(cdf == "student"){
+        }else if(cdf_1 == "student"){
           pi = seq.inverse_student(eta, freedom_degrees);
           D = seq.inverse_derivative_student(eta, freedom_degrees);
+        }else if(cdf_1 == "noncentralt"){
+          pi = seq.inverse_noncentralt(eta, freedom_degrees, mu);
+          D = seq.inverse_derivative_noncentralt(eta, freedom_degrees, mu);
         }else{
-          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf_1; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, student(df), and noncentral(df,mu)");
         }
       }else if(ratio == "cumulative"){
         CumulativeR cum;
-        if(cdf == "logistic"){
+        if(cdf_1 == "logistic"){
           pi = cum.inverse_logistic(eta);
           D = cum.inverse_derivative_logistic(eta);
-        }else if(cdf == "normal"){
+        }else if(cdf_1 == "normal"){
           pi = cum.inverse_normal(eta);
           D = cum.inverse_derivative_normal(eta);
-        }else if(cdf == "cauchit"){
+        }else if(cdf_1 == "cauchit"){
           pi = cum.inverse_cauchit(eta);
           D = cum.inverse_derivative_cauchit(eta);
-        }else if(cdf == "gompertz"){
+        }else if(cdf_1 == "gompertz"){
           pi = cum.inverse_gompertz(eta);
           D = cum.inverse_derivative_gompertz(eta);
-        }else if(cdf == "student"){
+        }else if(cdf_1 == "student"){
           pi = cum.inverse_student(eta,freedom_degrees);
           D = cum.inverse_derivative_student(eta,freedom_degrees);
-        }else if(cdf == "laplace"){
+        }else if(cdf_1 == "laplace"){
           pi = cum.inverse_laplace(eta);
           D = cum.inverse_derivative_laplace(eta);
-        }else if(cdf == "gumbel"){
+        }else if(cdf_1 == "gumbel"){
           pi = cum.inverse_gumbel(eta);
           D = cum.inverse_derivative_gumbel(eta);
+        }else if(cdf_1 == "noncentralt"){
+          pi = cum.inverse_noncentralt(eta, freedom_degrees, mu);
+          D = cum.inverse_derivative_noncentralt(eta, freedom_degrees, mu);
         }else{
-          Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
+          Rcpp::stop("Unrecognized cdf_1; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, student(df), and noncentral(df,mu)");
         }
-      }else{
-        Rcpp::stop("Unrecognized radio; options are: reference, adjacent, cumulative and sequential");
       }
+
 
       Cov_i = MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
 
@@ -322,9 +346,8 @@ List GLMcat(Formula formula,
   std::vector<std::string> text=as<std::vector<std::string> >(explanatory_complete);
   std::vector<std::string> level_text=as<std::vector<std::string> >(levs1);
 
-
   // Rcout << explanatory_complete << std::endl;
-  // Rcout << proportional << std::endl;
+  // Rcout << parallel << std::endl;
 
   StringVector names;
   if(threshold == "equidistant" || threshold == "symmetric"){
@@ -366,8 +389,8 @@ List GLMcat(Formula formula,
     }
     // print(names1);
     if(P_p > 0){
-      for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-        names1[ind_name] = proportional[var_p];
+      for(int var_p = 0 ; var_p < parallel.size() ; var_p++){
+        names1[ind_name] = parallel[var_p];
         ind_name = ind_name+1;
       }
     }
@@ -382,8 +405,8 @@ List GLMcat(Formula formula,
       }
     }
     if(P_p > 0){
-      for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-        names1[(Q*P_c) + var_p] = proportional[var_p];
+      for(int var_p = 0 ; var_p < parallel.size() ; var_p++){
+        names1[(Q*P_c) + var_p] = parallel[var_p];
       }
     }
     names = names1;
@@ -426,24 +449,25 @@ List GLMcat(Formula formula,
     Named("cov_beta") = cov_beta,
     Rcpp::Named("df of the model") = df,
     Rcpp::Named("fitted") = pi_ma,
-    Rcpp::Named("D_ma") = D_ma,
+    // Rcpp::Named("D_ma") = D_ma,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
     // Rcpp::Named("Y_init_vec") = Y_init_vec,
     // Rcpp::Named("dev_log") = dev_log,
     Rcpp::Named("deviance") = deviance,
     // Rcpp::Named("residuals") = residuals,
     Named("LogLikelihood") = LogLik,
-    // Named("freedom_degrees") = freedom_degrees,
+    Named("mu_noncentralt") = mu,
     // Named("Y_init") = Y_init,
     // Named("LogLikIter") = LogLikIter,
     Named("formula") = formula,
     Named("categories_order") = categories_order,
-    Named("proportional") = proportional,
+    Named("parallel") = parallel,
     Named("N_cats") = N_cats,
     Named("nobs_glmcat") = N,
-    Named("cdf") = cdf,
-    Named("coverged") = true,
-    Named("freedom_degrees") = freedom_degrees
+    Named("cdf") = cdf_1,
+    // Named("coverged") = true,
+    Named("freedom_degrees") = freedom_degrees,
+    Named("normalization_s0") =  s0
   );
 
   output_list.attr("class") = "glmcat";
@@ -484,7 +508,7 @@ NumericMatrix predict_glmcat(List model_object,
   List newdataList = dist1.All_pre_data_NEWDATA(model_object["formula"],
                                                 data,
                                                 model_object["categories_order"],
-                                                            model_object["proportional"],
+                                                            model_object["parallel"],
                                                                         N_cats);
 
   Eigen::MatrixXd Design_Matrix = newdataList["Design_Matrix"];
@@ -493,6 +517,7 @@ NumericMatrix predict_glmcat(List model_object,
   std::string ratio = model_object["ratio"];
   String cdf = model_object["cdf"];
   double freedom_degrees = model_object["freedom_degrees"];
+  double mu = model_object["mu_noncentralt"];
 
   Eigen::VectorXd pi;
   int N = data.rows();
@@ -517,6 +542,10 @@ NumericMatrix predict_glmcat(List model_object,
         pi = ref.inverse_gumbel(predict_glmcated_eta);
       }else if(cdf == "student"){
         pi = ref.inverse_student(predict_glmcated_eta, freedom_degrees);
+      }else if(cdf == "laplace"){
+        pi = ref.inverse_laplace(predict_glmcated_eta);
+      }else if(cdf == "noncentralt"){
+        pi = ref.inverse_noncentralt(predict_glmcated_eta, freedom_degrees, mu);
       }else{
         Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
@@ -534,6 +563,10 @@ NumericMatrix predict_glmcat(List model_object,
         pi = adj.inverse_gumbel(predict_glmcated_eta);
       }else if(cdf == "student"){
         pi = adj.inverse_student(predict_glmcated_eta, freedom_degrees);
+      }else if(cdf == "laplace"){
+        pi = adj.inverse_laplace(predict_glmcated_eta);
+      }else if(cdf == "noncentralt"){
+        pi = adj.inverse_noncentralt(predict_glmcated_eta, freedom_degrees, mu);
       }else{
         Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
@@ -552,6 +585,10 @@ NumericMatrix predict_glmcat(List model_object,
         pi = seq.inverse_gumbel(predict_glmcated_eta);
       }else if(cdf == "student"){
         pi = seq.inverse_student(predict_glmcated_eta, freedom_degrees);
+      }else if(cdf == "laplace"){
+        pi = seq.inverse_laplace(predict_glmcated_eta);
+      }else if(cdf == "noncentralt"){
+        pi = seq.inverse_noncentralt(predict_glmcated_eta, freedom_degrees, mu);
       }else{
         Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
@@ -570,6 +607,10 @@ NumericMatrix predict_glmcat(List model_object,
         pi = cum.inverse_student(predict_glmcated_eta,freedom_degrees);
       }else if(cdf == "gumbel"){
         pi = cum.inverse_gumbel(predict_glmcated_eta);
+      }else if(cdf == "laplace"){
+        pi = cum.inverse_laplace(predict_glmcated_eta);
+      }else if(cdf == "noncentralt"){
+        pi = cum.inverse_noncentralt(predict_glmcated_eta, freedom_degrees, mu);
       }else{
         Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace and student(df)");
       }
@@ -613,17 +654,16 @@ RCPP_MODULE(GLMcatmodule){
                  List::create(_["formula"],
                               _["data"],
                                _["ratio"] = "reference",
-                               _["cdf"] = "logistic",
-                               _["proportional"] = CharacterVector::create(NA_STRING),
+                               _["cdf"] = List::create(_["cdf"] = "logistic", _["df"] = 7, _["mu"] = 0),
+                               _["parallel"] = CharacterVector::create(NA_STRING),
                                _["categories_order"] = CharacterVector::create(NA_STRING),
                                _["ref_category"] = CharacterVector::create(NA_STRING),
-                               _["freedom_degrees"] = R_NaN,
                                _["threshold"] = "standard",
-                               _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL))
-                               // _["beta_init"] = NumericVector::create(NA_REAL)
-                                // _["beta_init"] = R_NaN
+                               _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
+                               _["normalization"] = 1.0
                  ),
                  "GLMcat models");
+
   Rcpp::function("predict_glmcat", &predict_glmcat,
                  List::create(_["model_object"] = R_NaN,
                               _["data"],

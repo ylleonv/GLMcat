@@ -8,13 +8,13 @@ GLMcat(
   formula,
   data,
   ratio = "reference",
-  cdf = "logistic",
-  proportional = NA_character_,
+  cdf = list(cdf = "logistic", df = 7L, mu = 0L),
+  parallel = NA_character_,
   categories_order = NA_character_,
   ref_category = NA_character_,
-  freedom_degrees = NaN,
   threshold = "standard",
-  control = list(maxit = 25L, epsilon = 1e-07, beta_init = NA_real_)
+  control = list(maxit = 25L, epsilon = 1e-07, beta_init = NA_real_),
+  normalization = 1
 )
 }
 \arguments{
@@ -26,15 +26,17 @@ GLMcat(
 
 \item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
 
-\item{proportional}{a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}
+\item{parallel}{a character vector indicating the name of the variables with a parallel effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}
 
 \item{categories_order}{a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.}
 
 \item{ref_category}{a string indicating the reference category. Proper option for models with reference ratio.}
 
-\item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student cdf.}
-
 \item{threshold}{restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).}
+
+\item{control}{blabla}
+
+\item{normalization}{blabla2}
 }
 \description{
 Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)

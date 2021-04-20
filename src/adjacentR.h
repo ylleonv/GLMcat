@@ -2,7 +2,7 @@
 #define ADJACENTR_H_
 #include "cdf.h"
 
-class AdjacentR : virtual public Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace{
+class AdjacentR : virtual public Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace, Noncentralt {
 public:
 
   AdjacentR();
@@ -28,9 +28,12 @@ public:
   virtual Eigen::VectorXd inverse_student(const Eigen::VectorXd& eta, const double& freedom_degrees) const;
   virtual Eigen::MatrixXd inverse_derivative_student(const Eigen::VectorXd& eta, const double& freedom_degrees) const ;
 
+  virtual Eigen::VectorXd inverse_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const;
+  virtual Eigen::MatrixXd inverse_derivative_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const ;
+
     // List GLMadj(std::string response,
   //             StringVector explanatory_complete,
-  //             StringVector explanatory_proportional,
+  //             StringVector explanatory_parallel,
   //             std::string cdf,
   //             SEXP categories_order,
   //             DataFrame dataframe);

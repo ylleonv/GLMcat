@@ -97,8 +97,7 @@ mod_2 <- Discrete_CM(
   reference = "bus",
   alternative_specific = c("gc", "ttme"),
   data = TravelChoice,
-  cdf = "student",
-  freedom_degrees = 30
+  cdf = student.glmcat(df = 30)
 )
 logLik(mod_2)
 ```
@@ -111,8 +110,7 @@ mod_3 <- Discrete_CM(
   reference = "car",
   alternative_specific = c("gc", "ttme"),
   data = TravelChoice,
-  cdf = "student",
-  freedom_degrees = 0.2
+  cdf = student.glmcat(df = 0.2)
 )
 logLik(mod_3)
 ```
@@ -125,8 +123,7 @@ mod_4 <- Discrete_CM(
   reference = "train",
   alternative_specific = c("gc", "ttme"),
   data = TravelChoice,
-  cdf = "student",
-  freedom_degrees = 1.35
+  cdf = student.glmcat(df = 1.35)
 )
 logLik(mod_4)
 ```

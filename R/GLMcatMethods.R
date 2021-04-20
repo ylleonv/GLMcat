@@ -140,3 +140,22 @@ normalization.glmcat <- function(p = 0.95, cdf = "logistic", degrees_freedom = 7
   return(list("p" = p, "cdf" = cdf, "degrees_freedom" = degrees_freedom))
   # return(maxit)
 }
+
+#' student glmcat models
+#' @description Student distribution
+#' @rdname student
+#' @param df degrees_freedom
+#' @export
+student.glmcat <- function(df = 7) {
+  return(list("cdf" = "student", "df" = df))
+}
+
+#' Noncentral t cdf for glmcat models
+#' @description Noncentral t cdf
+#' @rdname noncentralt
+#' @param df degrees_freedom
+#' @param mu non centrality parameter
+#' @export
+noncentralt.glmcat <- function(df = 7, mu = 0) {
+  return(list("cdf" = "noncentralt", "df" = df, "mu" = mu))
+}

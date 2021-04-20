@@ -75,7 +75,7 @@ Z_p=
 & \ddots  & & \vdots  \\
 &  & 1 &  x^t
 \end{array} \right)_{(J- 1) \times (J -1 + p)}
-\end{equation} The first case $(Z_c)$ is named by @peyhardi_new as the \textit{complete} design, whereas the second $(Z_p)$ as the \textit{proportional} design. These two matrices are sufficient to define all the classical models. A third option is to consider both kind of effects, complete and proportional, this in known as \textit{partial proportional design}
+\end{equation} The first case $(Z_c)$ is named by @peyhardi_new as the \textit{complete} design, whereas the second $(Z_p)$ as the \textit{parallel} design. These two matrices are sufficient to define all the classical models. A third option is to consider both kind of effects, complete and parallel, this in known as \textit{partial parallel design}
 \begin{equation}
 Z=\left( \begin{array}{ccccccc}
 1 &  &  & x_k^t &  & & x_l^t  \\ 
@@ -94,8 +94,8 @@ this restriction implies that only two parameters ($\alpha_1$, the first thresho
 All the classical models for categorical response data, can be written as an *(r,F,Z)* triplet, as examples:
 
 * The multinomimal model $\equiv$  $(Reference, Logistic, Complete)$\
-* The odds proportional logit model $\equiv$  $(Cumulative, Logistic, Proportional)$\
-* The proportional hazard model $\equiv$  $(Sequential, Gompertz, Proportional)$\
+* The odds parallel logit model $\equiv$  $(Cumulative, Logistic, parallel)$\
+* The parallel hazard model $\equiv$  $(Sequential, Gompertz, parallel)$\
 * The continuation ratio logit model $\equiv$  $(Sequential, Logistic, Complete)$\
 * The adjacent logit model $\equiv$  $(Adjacent, Logistic, Complete)$\
 
@@ -181,12 +181,12 @@ Age <- c(5, 9.5, 15)
 predict_glmcat(mod_ref_log_c, data = Age, type = "prob")
 ```
 
-Assume that we are interested in making the effect of the predictor variable proportional, to that end, we type the name of the predictor variable as the input for the parameter `proportional`. The model to fit corresponds to the triplet *(Reference, Logistic, Proportional)*:
+Assume that we are interested in making the effect of the predictor variable parallel, to that end, we type the name of the predictor variable as the input for the parameter `parallel`. The model to fit corresponds to the triplet *(Reference, Logistic, parallel)*:
 
 ```{r }
 mod2 <- GLMcat(
   formula = Level ~ Age, cdf = "logistic",
-  proportional = "Age", ref_category = "Very.severe",
+  parallel = "Age", ref_category = "Very.severe",
   data = DisturbedDreams
 )
 summary(mod2)
@@ -197,7 +197,7 @@ Another variation of the reference model is obtained at changing the cdf functio
 ```{r }
 mod3 <- GLMcat(
   formula = Level ~ Age, ref_category = "Very.severe",
-  data = DisturbedDreams, cdf = "student", freedom_degrees = 0.5
+  data = DisturbedDreams, cdf = student.glmcat(df = 0.5)
 )
 summary(mod3)
 logLik(mod3)
@@ -259,28 +259,28 @@ summary(mod_adj_cau_c_rev)
 
 The LogLikelihoods of the last two models are the same, this is because the *Cauchy* cdf is symmetric; for non symmetric distributions this is not longer true. Note that if the Gumbel cdf is used with the reverse order, then, its LogLikelihood is equal to the model using *Gompertz* as the cdf, this is because the *Gumbel* cdf is the symmetric of the *Gompertz* cdf. Otherwise, the parameter estimations are reversed:
 
-*(Adjacent, Gumbel, Proportional)*
+*(Adjacent, Gumbel, parallel)*
 
 ```{r }
 adj_gumbel_p <- GLMcat(
   formula = Level ~ Age,
   ratio = "adjacent", cdf = "gumbel",
   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-  proportional = c("(Intercept)", "Age"),
+  parallel = c("(Intercept)", "Age"),
   data = DisturbedDreams
 )
 logLik(adj_gumbel_p)
 summary(adj_gumbel_p)
 ```
 
-*(Adjacent, Gompertz, Proportional)*
+*(Adjacent, Gompertz, parallel)*
 
 ```{r }
 adj_gompertz_rev <- GLMcat(
   formula = Level ~ Age,
   ratio = "adjacent", cdf = "gompertz",
   categories_order = c("Very.severe", "Severe.2", "Severe.1", "Not.severe"),
-  proportional = c("(Intercept)", "Age"),
+  parallel = c("(Intercept)", "Age"),
   data = DisturbedDreams
 )
 logLik(adj_gompertz_rev)
@@ -327,7 +327,7 @@ cum_log_co_e <- GLMcat(
   cdf = "logistic",
   ratio = "cumulative",
   data = DisturbedDreams,
-  proportional = "Age",
+  parallel = "Age",
   threshold = "equidistant",
 )
 logLik(cum_log_co_e)
@@ -339,16 +339,16 @@ If we have a preliminary idea of the coefficients of the model, we can specify a
 ```{r }
 cum_log_c <- GLMcat(
   formula = Level ~ Age,
-  cdf = "student", freedom_degrees = 0.8,
+  cdf = student.glmcat(df = 0.8),
   ratio = "cumulative",
   data = DisturbedDreams,
-  beta_init = coef(cum_log_co),
+  control = control.glmcat(beta_init = coef(cum_log_co))
 )
 logLik(cum_log_c)
 summary(cum_log_c)
 ```
 
-The equivalence between the $(Cumulative, Gompertz, Proportional)$ and $(Sequential, Gompertz, Proportional)$ models has been demonstrated by @laara_matthes and it is hereby tested using the functions:
+The equivalence between the $(Cumulative, Gompertz, parallel)$ and $(Sequential, Gompertz, parallel)$ models has been demonstrated by @laara_matthes and it is hereby tested using the functions:
 
 ```{r }
 cum_gom_p <- GLMcat(
@@ -356,7 +356,7 @@ cum_gom_p <- GLMcat(
   cdf = "gompertz",
   ratio = "cumulative",
   data = DisturbedDreams,
-  proportional = "Age"
+  parallel = "Age"
 )
 logLik(cum_gom_p)
 summary(cum_gom_p)
@@ -366,7 +366,7 @@ seq_gom_p <- GLMcat(
   cdf = "gompertz",
   ratio = "sequential",
   data = DisturbedDreams,
-  proportional = "Age"
+  parallel = "Age"
 )
 logLik(seq_gom_p)
 summary(seq_gom_p)

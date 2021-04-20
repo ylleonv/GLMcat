@@ -15,14 +15,14 @@ public:
   List All_pre_data_or(Formula formula,
                        DataFrame input_data,
                        CharacterVector categories_order,
-                       CharacterVector proportional_effect,
+                       CharacterVector parallel_effect,
                        std::string threshold = "NA",
                        std::string ratio = "non_cum");
 
   List All_pre_data_NEWDATA(Formula formula,
                             DataFrame NEWDATA,
                             CharacterVector categories_order,
-                            CharacterVector proportional_effect,
+                            CharacterVector parallel_effect,
                             int N_cats
   );
 
@@ -56,6 +56,7 @@ class Normal : virtual public cdf{
 public:
   virtual double cdf_normal(const double& value) const;
   virtual double pdf_normal(const double& value) const;
+  virtual double qdf_normal(const double& value) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 
@@ -66,6 +67,7 @@ class Cauchit : virtual public cdf{
 public:
   virtual double cdf_cauchit(const double& value) const;
   virtual double pdf_cauchit(const double& value) const;
+  virtual double qdf_cauchit(const double& value) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 
@@ -83,10 +85,21 @@ public:
   Student();
 };
 
+
+class Noncentralt :  virtual public cdf{
+public:
+  virtual double cdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const;
+  virtual double pdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const;
+  virtual double qdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const;
+
+  Noncentralt();
+};
+
 class Gumbel :  virtual public cdf{
 public:
   virtual double cdf_gumbel(const double& value) const;
   virtual double pdf_gumbel(const double& value) const;
+  virtual double qdf_gumbel(const double& value) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 
@@ -97,6 +110,7 @@ class Gompertz : virtual public cdf{
 public:
   virtual double cdf_gompertz(const double& value) const;
   virtual double pdf_gompertz(const double& value) const;
+  virtual double qdf_gompertz(const double& value) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 
@@ -107,6 +121,7 @@ class Laplace : virtual public cdf{
 public:
   virtual double cdf_laplace(const double& value) const;
   virtual double pdf_laplace(const double& value) const;
+  virtual double qdf_laplace(const double& value) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 

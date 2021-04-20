@@ -1,6 +1,6 @@
 #include "cdf.h"
 #include "reference.h"
-#include "adjacentR.h"
+// #include "adjacentR.h"
 
 using namespace std;
 using namespace Rcpp ;
@@ -20,8 +20,8 @@ using namespace Eigen;
 //' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
-//' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
+//' @param normalization blabla
 //' @examples
 //' library(GLMcat)
 //' data(TravelChoice)
@@ -38,11 +38,22 @@ List Discrete_CM(Formula formula,
                  CharacterVector reference,
                  CharacterVector alternative_specific,
                  DataFrame data,
-                 std::string cdf,
-                 double freedom_degrees,
+                 List cdf,
                  String intercept,
                  double normalization
 ){
+
+
+  std::string cdf_1 = cdf[0];
+  double freedom_degrees = 1;
+  double mu = 0;
+  if(cdf.size() == 2){
+    freedom_degrees = cdf[1];
+  }
+  if(cdf.size() == 3){
+    freedom_degrees = cdf[1];
+    mu = cdf[2];
+  }
 
   class cdf dist1;
 
@@ -97,21 +108,6 @@ List Discrete_CM(Formula formula,
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
 
-
-    if((normalization != 1) & (cdf != "logistic")){
-      class Logistic logistic;
-      class Student stu;
-      qp = logistic.qdf_logit(normalization);
-      s0 = qp / (stu.qdf_student(normalization, freedom_degrees)-
-        stu.qdf_student(0.5, freedom_degrees));
-      // print(s0);
-      // NumericMatrix BETA_3 = BETA_2 * (s0);
-      // Rcout << s0 ;
-      // output_list_dis["normalized_coefficients"] = BETA_3;
-      // output_list_dis.push_back(BETA_3);
-    }
-    // Rcout << s0 ;
-
     for (int i=0; i < N/K; i++){
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
       Y_M_i = Y_init.row(i);
@@ -122,42 +118,45 @@ List Discrete_CM(Formula formula,
 
       // if(ratio == "reference"){
       ReferenceF ref;
-      if(cdf == "logistic"){
+      if(cdf_1 == "logistic"){
         pi = ref.inverse_logistic(eta);
         D = ref.inverse_derivative_logistic(eta);
-      }else if(cdf == "normal"){
+      }else if(cdf_1 == "normal"){
         pi = ref.inverse_normal(eta);
         D = ref.inverse_derivative_normal(eta);
-      }else if(cdf == "cauchit"){
+      }else if(cdf_1 == "cauchit"){
         pi = ref.inverse_cauchit(eta);
         D = ref.inverse_derivative_cauchit(eta);
-      }else if(cdf == "gompertz"){
+      }else if(cdf_1 == "gompertz"){
         pi = ref.inverse_gompertz(eta);
         D = ref.inverse_derivative_gompertz(eta);
-      }else if(cdf == "gumbel"){
+      }else if(cdf_1 == "gumbel"){
         pi = ref.inverse_gumbel(eta);
         D = ref.inverse_derivative_gumbel(eta);
-      }else if(cdf == "laplace"){
+      }else if(cdf_1 == "laplace"){
         pi = ref.inverse_laplace(eta);
         D = ref.inverse_derivative_laplace(eta);
-      }else if(cdf == "student"){
+      }else if(cdf_1 == "student"){
         pi = ref.inverse_student(eta, freedom_degrees);
         D = ref.inverse_derivative_student(eta, freedom_degrees);
+      }else if(cdf_1 == "noncentralt"){
+        pi = ref.inverse_noncentralt(eta, freedom_degrees, mu);
+        D = ref.inverse_derivative_noncentralt(eta, freedom_degrees, mu);
       }else{
-        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, and student(df)");
+        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, student(df), and noncentral(df,mu)");
       }
       // }else{
       //   AdjacentR adj;
-      //   if(cdf == "logistic"){
+      //   if(cdf_1 == "logistic"){
       //     pi = adj.inverse_logistic(eta);
       //     D = adj.inverse_derivative_logistic(eta);
-      //   }else if(cdf == "normal"){
+      //   }else if(cdf_1 == "normal"){
       //     pi = adj.inverse_normal(eta);
       //     D = adj.inverse_derivative_normal(eta);
-      //   }else if(cdf == "cauchit"){
+      //   }else if(cdf_1 == "cauchit"){
       //     pi = adj.inverse_cauchit(eta);
       //     D = adj.inverse_derivative_cauchit(eta);
-      //   }else if(cdf == "student"){
+      //   }else if(cdf_1 == "student"){
       //     pi = adj.inverse_student(eta, freedom_degrees);
       //     D = adj.inverse_derivative_student(eta, freedom_degrees);
       //   }
@@ -225,14 +224,39 @@ List Discrete_CM(Formula formula,
   );
 
 
-  if((normalization != 1) & (cdf != "logistic")){
+  if((normalization != 1) & (cdf_1 != "logistic")){
     double qp , s0;
     // BETA_3 = BETA_2;
     class Logistic logistic;
-    class Student stu;
+    // class Student stu;
+
     qp = logistic.qdf_logit(normalization);
-    s0 = qp / (stu.qdf_student(normalization, freedom_degrees)-
-      stu.qdf_student(0.5, freedom_degrees));
+
+    if(cdf_1 == "normal"){
+      class Normal norm;
+      s0 = qp / (norm.qdf_normal(normalization)-norm.qdf_normal(0.5));
+    }else if(cdf_1 == "cauchit"){
+      class Cauchit cauchit;
+      s0 = qp / (cauchit.qdf_cauchit(normalization)- cauchit.qdf_cauchit(0.5));
+    }else if(cdf_1 == "gompertz"){
+      class Gompertz gompertz;
+      s0 = qp / (gompertz.qdf_gompertz(normalization)-gompertz.qdf_gompertz(0.5));
+    }else if(cdf_1 == "gumbel"){
+      class Gumbel gumbel;
+      s0 = qp / (gumbel.qdf_gumbel(normalization)-gumbel.qdf_gumbel(0.5));
+    }else if(cdf_1 == "laplace"){
+      class Laplace laplace;
+      s0 = qp / (laplace.qdf_laplace(normalization)-laplace.qdf_laplace(0.5));
+    }else if(cdf_1 == "student"){
+      class Student stu;
+      s0 = qp / (stu.qdf_student(normalization, freedom_degrees)- stu.qdf_student(0.5, freedom_degrees));
+    }else if(cdf_1 == "noncentralt"){
+      class Noncentralt noncentralt;
+      s0 = qp / (noncentralt.qdf_non_central_t(normalization, freedom_degrees, mu)- noncentralt.qdf_non_central_t(0.5, freedom_degrees, mu));
+    }
+
+    // s0 = qp / (stu.qdf_student(normalization, freedom_degrees)-
+    // stu.qdf_student(0.5, freedom_degrees));
     NumericMatrix BETA_3 = BETA_2 * (s0);
     // Rcout << BETA_3 ;
     output_list_dis["normalized_coefficients"] = BETA_3;
@@ -251,10 +275,9 @@ RCPP_MODULE(discretemodule){
                               _["reference"] = R_NaN,
                               _["alternative_specific"] = CharacterVector::create( NA_STRING),
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
-                              _["cdf"] = "a",
-                              _["freedom_degrees"] = 1.0,
-                              _["intercept"] = "standard",
-                              _["normalization"] = 1.0
+                              _["cdf"] = List::create(_["cdf"] = "logistic", _["df"] = 0, _["mu"] = 0),
+                                _["intercept"] = "standard",
+                                _["normalization"] = 1.0
                  ),
                  "Discrete Choice Model");
 

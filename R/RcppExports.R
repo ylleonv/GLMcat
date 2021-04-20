@@ -15,8 +15,8 @@
 #' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 #' @param data a dataframe object in R, with the dependent variable as factor.
 #' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
-#' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 #' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
+#' @param normalization blabla
 #' @examples
 #' library(GLMcat)
 #' data(TravelChoice)
@@ -26,8 +26,8 @@
 #' cdf = "logistic")
 #' @note For these models it is not allowed to exclude the intercept.
 #' @export
-Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, cdf, freedom_degrees, intercept, normalization) {
-    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, cdf, freedom_degrees, intercept, normalization)
+Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization) {
+    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization)
 }
 
 #' Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
@@ -37,10 +37,11 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
 #' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 #' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
-#' @param proportional a character vector indicating the name of the variables with a proportional effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
+#' @param parallel a character vector indicating the name of the variables with a parallel effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
 #' @param data a dataframe object in R, with the dependent variable as factor.
-#' @param freedom_degrees an optional scalar to indicate the degrees of freedom for the Student cdf.
 #' @param threshold restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).
+#' @param control blabla
+#' @param normalization blabla2
 #' @export
 #' @examples
 #' data(DisturbedDreams)
@@ -48,8 +49,8 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #'     ref_category = "Very.severe",
 #'     cdf = "logistic", ratio = "reference")
 #'
-GLMcat <- function(formula, data, ratio, cdf, proportional, categories_order, ref_category, freedom_degrees, threshold, control) {
-    .Call(`_GLMcat_GLMcat`, formula, data, ratio, cdf, proportional, categories_order, ref_category, freedom_degrees, threshold, control)
+GLMcat <- function(formula, data, ratio, cdf, parallel, categories_order, ref_category, threshold, control, normalization) {
+    .Call(`_GLMcat_GLMcat`, formula, data, ratio, cdf, parallel, categories_order, ref_category, threshold, control, normalization)
 }
 
 #' GLMcat model predictions

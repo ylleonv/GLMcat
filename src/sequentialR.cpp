@@ -191,13 +191,38 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
   return M;
 }
 
+Eigen::VectorXd SequentialR::inverse_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees,const double& mu) const
+{
+  Eigen::VectorXd ordered_pi( eta.size() );
+  double product = 1;
+  for(int j=0; j<eta.size(); ++j)
+  {
+    ordered_pi[j] = product * cdf_non_central_t( eta(j) ,freedom_degrees,mu);
+    product *= ( 1 - cdf_non_central_t( eta(j) ,freedom_degrees,mu) );
+  }
+  return in_open_corner(ordered_pi);
+}
+
+Eigen::MatrixXd SequentialR::inverse_derivative_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees,const double& mu) const
+{
+  Eigen::MatrixXd M = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  double product = 1.;
+  for (int j=0; j < eta.rows(); ++j)
+  {
+    M(j,j) = pdf_non_central_t(eta(j),freedom_degrees,mu) * product;
+    for (int i=0; i<j; ++i)
+    { M(i,j) = - pdf_non_central_t(eta(i),freedom_degrees,mu)  * std::max(1e-10, std::min(cdf_non_central_t(eta(j),freedom_degrees,mu), 1-1e-6)) * product / std::max(1e-10, std::min( 1-cdf_non_central_t(eta(i),freedom_degrees,mu), 1-1e-6)); }
+    product *= std::max(1e-10, std::min( 1-cdf_non_central_t(eta(j),freedom_degrees,mu), 1-1e-6));
+  }
+  return M;
+}
 
 // cdf dist_seq;
 //
 // // [[Rcpp::export]]
 // List GLMseq(Formula formula,
 //             CharacterVector categories_order,
-//             CharacterVector proportional,
+//             CharacterVector parallel,
 //             DataFrame data,
 //             std::string cdf,
 //             double freedom_degrees){
@@ -205,7 +230,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //   const int N = data.nrows() ; // Number of observations
 //
 //   List Full_M = dist_seq.All_pre_data_or(formula, data,
-//                                       categories_order, proportional);
+//                                       categories_order, parallel);
 //
 //   Eigen::MatrixXd Y_init = Full_M["Response_EXT"];
 //   Eigen::MatrixXd X_EXT = Full_M["Design_Matrix"];
@@ -214,7 +239,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //
 //   int P_c = explanatory_complete.length();
 //   int P_p = 0;
-//   if(proportional[0] != "NA"){P_p = proportional.length();}
+//   if(parallel[0] != "NA"){P_p = parallel.length();}
 //   int P =  P_c +  P_p ; // Number of explanatory variables without intercept
 //
 //   int Q = Y_init.cols();
@@ -317,8 +342,8 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //     }
 //   }
 //   if(P_p > 0){
-//     for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-//       names[(Q*P_c) + var_p] = proportional[var_p];
+//     for(int var_p = 0 ; var_p < parallel.size() ; var_p++){
+//       names[(Q*P_c) + var_p] = parallel[var_p];
 //     }
 //   }
 //
@@ -388,7 +413,7 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //   Rcpp::function("GLMseq", &GLMseq,
 //                  List::create(_["formula"] = R_NaN,
 //                               _["categories_order"] = CharacterVector::create( "A", NA_STRING),
-//                               _["proportional"] = CharacterVector::create(NA_STRING),
+//                               _["parallel"] = CharacterVector::create(NA_STRING),
 //                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
 //                               _["cdf"] = "a",
 //                               _["freedom_degrees"] = 1.0),

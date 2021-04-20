@@ -184,12 +184,37 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_laplace(const Eigen::VectorXd& eta
 
 }
 
+Eigen::VectorXd AdjacentR::inverse_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const
+{
+  Eigen::VectorXd pi( eta.size() );
+  pi[eta.size()-1] = cdf_non_central_t( eta(eta.size()-1),freedom_degrees , mu) / ( 1-cdf_non_central_t( eta(eta.size()-1),freedom_degrees , mu) );
+  double norm = 1 + pi[eta.size()-1];
+  for(int j=(eta.size()-1); j>0; --j)
+  {
+    pi[j-1] = pi[j] * cdf_non_central_t( eta(j-1) ,freedom_degrees, mu) / ( 1-cdf_non_central_t( eta(j-1),freedom_degrees , mu) );
+    norm += pi[j-1];
+  }
+  return in_open_corner(pi/norm);
+}
+
+Eigen::MatrixXd AdjacentR::inverse_derivative_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const
+{
+  Eigen::VectorXd pi = AdjacentR::inverse_noncentralt(eta, freedom_degrees, mu);
+  Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
+  Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
+  for(int j=0; j<pi.rows(); ++j)
+  { D(j,j) = pdf_non_central_t( eta(j) ,freedom_degrees, mu) /( std::max(1e-10, std::min(1-1e-6, pdf_non_central_t(eta(j),freedom_degrees, mu))) * std::max(1e-10, std::min(1-1e-6, 1-pdf_non_central_t(eta(j),freedom_degrees, mu))) ); }
+
+  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
+
+}
+
 // cdf dist_adj;
 
 // // [[Rcpp::export(".GLMadj")]]
 // List GLMadj(Formula formula,
 //             CharacterVector categories_order,
-//             CharacterVector proportional,
+//             CharacterVector parallel,
 //             DataFrame data,
 //             std::string cdf,
 //             double freedom_degrees){
@@ -197,7 +222,7 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_laplace(const Eigen::VectorXd& eta
 //   const int N = data.nrows() ; // Number of observations
 //
 //   List Full_M = dist_adj.All_pre_data_or(formula, data,
-//                                       categories_order, proportional);
+//                                       categories_order, parallel);
 //
 //   Eigen::MatrixXd Y_init = Full_M["Response_EXT"];
 //   Eigen::MatrixXd X_EXT = Full_M["Design_Matrix"];
@@ -206,7 +231,7 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_laplace(const Eigen::VectorXd& eta
 //
 //   int P_c = explanatory_complete.length();
 //   int P_p = 0;
-//   if(proportional[0] != "NA"){P_p = proportional.length();}
+//   if(parallel[0] != "NA"){P_p = parallel.length();}
 //   // int P =  P_c +  P_p ; // Number of explanatory variables without intercept
 //
 //   int Q = Y_init.cols();
@@ -313,8 +338,8 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_laplace(const Eigen::VectorXd& eta
 //     }
 //   }
 //   if(P_p > 0){
-//     for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-//       names[(Q*P_c) + var_p] = proportional[var_p];
+//     for(int var_p = 0 ; var_p < parallel.size() ; var_p++){
+//       names[(Q*P_c) + var_p] = parallel[var_p];
 //     }
 //   }
 //   // TO NAMED THE RESULT BETAS
@@ -384,7 +409,7 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_laplace(const Eigen::VectorXd& eta
 //   Rcpp::function("GLMadj", &GLMadj,
 //                  List::create(_["formula"] = R_NaN,
 //                               _["categories_order"] = CharacterVector::create( "A", NA_STRING),
-//                               _["proportional"] = CharacterVector::create(NA_STRING),
+//                               _["parallel"] = CharacterVector::create(NA_STRING),
 //                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
 //                               _["cdf"] = "a",
 //                               _["freedom_degrees"] = 1.0),

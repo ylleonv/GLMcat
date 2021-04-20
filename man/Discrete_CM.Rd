@@ -11,8 +11,7 @@ Discrete_CM(
   reference = NaN,
   alternative_specific = NA_character_,
   data = c(1, NA, NaN, Inf, -Inf),
-  cdf = "a",
-  freedom_degrees = 1,
+  cdf = list(cdf = "logistic", df = 0L, mu = 0L),
   intercept = "standard",
   normalization = 1
 )
@@ -32,9 +31,9 @@ Discrete_CM(
 
 \item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
 
-\item{freedom_degrees}{an optional scalar to indicate the degrees of freedom for the Student cdf.}
-
 \item{intercept}{if "conditional" then the design will be equivalent to the conditional logit model}
+
+\item{normalization}{blabla}
 }
 \description{
 Discrete choice model: Requires data in long form.

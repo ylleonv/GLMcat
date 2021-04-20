@@ -146,10 +146,29 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
   return (F_1 * R);
 }
 
+Eigen::VectorXd CumulativeR::inverse_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const
+{
+  Eigen::VectorXd ordered_pi( eta.size() );
+  ordered_pi[0] = cdf_non_central_t( eta(0) , freedom_degrees, mu);
+  for(int j=1; j<eta.size(); ++j)
+  { ordered_pi[j] = cdf_non_central_t( eta(j) , freedom_degrees , mu) - cdf_non_central_t( eta(j-1) , freedom_degrees , mu); }
+  return in_open_corner(ordered_pi);
+}
+
+Eigen::MatrixXd CumulativeR::inverse_derivative_noncentralt(const Eigen::VectorXd& eta,const double& freedom_degrees, const double& mu) const
+{
+  Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
+  R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
+  Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+  for(int j=0; j<eta.rows(); ++j)
+  { F_1(j,j) = pdf_non_central_t( eta(j) , freedom_degrees, mu); }
+  return (F_1 * R);
+}
+
 // // [[Rcpp::export("GLMcum")]]
 // List GLMcum(Formula formula,
 //             CharacterVector categories_order,
-//             CharacterVector proportional,
+//             CharacterVector parallel,
 //             DataFrame data,
 //             std::string cdf,
 //             double freedom_degrees,
@@ -167,7 +186,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //   const int N = data.nrows() ; // Number of observations
 //   List Full_M = dist_cum.All_pre_data_or(formula, data,
 //                                          categories_order,
-//                                          proportional,
+//                                          parallel,
 //                                          threshold, ratio);
 //
 //   Eigen::MatrixXd Y_init = Full_M["Response_EXT"];
@@ -179,7 +198,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //
 //   int P_c = explanatory_complete.length();
 //   int P_p = 0;
-//   if(proportional[0] != "NA"){P_p = proportional.length();}
+//   if(parallel[0] != "NA"){P_p = parallel.length();}
 //   // if(threshold == "equidistant"){P_p = P_p + 2;}
 //
 //   int Q = Y_init.cols();
@@ -313,7 +332,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //     }
 //     if(P_p>0){ // hay alguna proporcional
 //       for(int var = 0 ; var < P_p ; var++){
-//         names1[ind_name] = proportional[var];
+//         names1[ind_name] = parallel[var];
 //         ind_name = ind_name + 1;
 //       }
 //     }
@@ -328,8 +347,8 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //       }
 //     }
 //     if(P_p > 0){
-//       for(int var_p = 0 ; var_p < proportional.size() ; var_p++){
-//         names1[(Q*P_c) + var_p] = proportional[var_p];
+//       for(int var_p = 0 ; var_p < parallel.size() ; var_p++){
+//         names1[(Q*P_c) + var_p] = parallel[var_p];
 //       }
 //     }
 //     names = names1;
@@ -406,7 +425,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //     // Named("LogLikIter") = LogLikIter,
 //     Named("formula") = formula,
 //     Named("categories_order") = categories_order,
-//     Named("proportional") = proportional,
+//     Named("parallel") = parallel,
 //     Named("N_cats") = N_cats,
 //     Named("nobs_glmcat") = N,
 //     Named("cdf") = cdf,
@@ -421,7 +440,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_laplace(const Eigen::VectorXd& e
 //   Rcpp::function("GLMcum", &GLMcum,
 //                  List::create(_["formula"],
 //                               _["categories_order"] = CharacterVector::create(NA_STRING),
-//                               _["proportional"] = CharacterVector::create(NA_STRING),
+//                               _["parallel"] = CharacterVector::create(NA_STRING),
 //                               _["data"],
 //                                _["cdf"] = "logistic",
 //                                _["freedom_degrees"] = 1.0,

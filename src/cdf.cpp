@@ -9,6 +9,7 @@
 #include <boost/math/distributions/extreme_value.hpp>
 #include <boost/math/distributions/students_t.hpp>
 #include <boost/math/distributions/laplace.hpp>
+#include <boost/math/distributions/non_central_t.hpp>
 
 
 using namespace boost::math;
@@ -68,11 +69,47 @@ NumericMatrix to_dummy1(NumericVector A, CharacterVector levels)
 
 List Model_Matrix_or(DataFrame data, Formula formula) {
   Environment stats_env("package:stats");
+  Environment base_env("package:base");
   Function model_frame = stats_env["model.frame"];
   Function model_matrix = stats_env["model.matrix"];
+  Function n_levels = base_env["nlevels"];
+  Function is_factor = base_env["is.factor"];
+  Function as_numeric = base_env["as.numeric"];
+  Function sapply_f = base_env["sapply"];
+  Function lapply_f = base_env["lapply"];
+  Function names_f = base_env["names"];
   DataFrame df_new1 = model_frame(Rcpp::_["formula"] = formula, _["data"] = data);
   SEXP Response = df_new1[0];
-  NumericMatrix df_new = model_matrix(df_new1, _["data"] = data);
+
+
+  CharacterVector factor_var = names_f(sapply_f(df_new1, is_factor));
+  // Rcout << factor_var << std::endl;
+  DataFrame a1 = df_new1[factor_var];
+  // print(a1);
+  List n_levels_1 = lapply_f(a1, n_levels);
+  // print(n_levels_1);
+  LogicalVector out(n_levels_1.length());
+
+  int a5;
+
+  CharacterVector fac1;
+
+  for(int i = 0; i <n_levels_1.length(); ++i){
+    a5 = n_levels_1[i];
+    if( a5 == 2 ){
+      fac1.push_back(factor_var[i]);
+    };
+  }
+
+  DataFrame a2 = df_new1[fac1];
+  // print(a2);
+
+  a2 = sapply_f(a2, as_numeric);
+  a1[fac1] = a2;
+
+  // print(a1);
+
+  NumericMatrix df_new = model_matrix(a1, _["data"] = a1);
   return List::create(
     Named("df_new") = df_new,
     Named("Response") = Response
@@ -144,11 +181,11 @@ List Cat_ref_order(CharacterVector categories_order, SEXP response_categories){
 List cdf::All_pre_data_or(Formula formula,
                           DataFrame input_data,
                           CharacterVector categories_order,
-                          CharacterVector proportional_effect,
+                          CharacterVector parallel_effect,
                           std::string threshold,
                           std::string ratio){
 
-  // print(proportional_effect);
+  // print(parallel_effect);
 
   Environment base_env("package:base");
   Function my_asnumeric = base_env["as.numeric"];
@@ -201,7 +238,7 @@ List cdf::All_pre_data_or(Formula formula,
 
   // Rcout << "is_na_ref2" << std::endl;
 
-  LogicalVector any_alternative_specific = !is_na(proportional_effect); // TRUE IF THERE ARE
+  LogicalVector any_alternative_specific = !is_na(parallel_effect); // TRUE IF THERE ARE
   CharacterVector colnames_final_m = df_tans_2.names();
 
   // Rcout << colnames_final_m << std::endl;
@@ -209,12 +246,12 @@ List cdf::All_pre_data_or(Formula formula,
   NumericVector x(colnames_final_m.length());
   if (any_alternative_specific[0]) {
     // x(colnames_final_m.length());
-    for(int indi = 0 ; indi < proportional_effect.length(); indi++){
-      String var_1 = proportional_effect[indi];
+    for(int indi = 0 ; indi < parallel_effect.length(); indi++){
+      String var_1 = parallel_effect[indi];
       int indi_var = df_tans_2.findName(var_1);
       x[indi_var] = indi_var;
     }
-    colnames_final_m = colnames_final_m[x==0]; // Case where there no proportional effects
+    colnames_final_m = colnames_final_m[x==0]; // Case where there no parallel effects
   }
 
   // Rcout << "is_na_ref4" << std::endl;
@@ -237,7 +274,7 @@ List cdf::All_pre_data_or(Formula formula,
 
   if (ratio == "cumulative"){
     if (threshold == "equidistant"){
-      // if (!any_alternative_specific[0]) { // ninguna es proportional
+      // if (!any_alternative_specific[0]) { // ninguna es parallel
       // Rcout << "propor_cum_equ" << std::endl;
 
       NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
@@ -312,13 +349,13 @@ List cdf::All_pre_data_or(Formula formula,
 
   if (any_alternative_specific[0]) { // para las proporcionales
     // Rcout << "proportinal" << std::endl;
-    DataFrame DF_proportional_effect = df_tans_2[proportional_effect];
-    NumericMatrix Pre_DF_proportional1 = internal::convert_using_rfunction(DF_proportional_effect, "as.matrix");
-    Eigen::Map<Eigen::MatrixXd> Pre_DF_proportional2 = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_proportional1);
-    Eigen::MatrixXd Pre_DF_proportional = Pre_DF_proportional2;
+    DataFrame DF_parallel_effect = df_tans_2[parallel_effect];
+    NumericMatrix Pre_DF_parallel1 = internal::convert_using_rfunction(DF_parallel_effect, "as.matrix");
+    Eigen::Map<Eigen::MatrixXd> Pre_DF_parallel2 = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_parallel1);
+    Eigen::MatrixXd Pre_DF_parallel = Pre_DF_parallel2;
     Eigen::VectorXd Ones = Eigen::VectorXd::Ones(N_cats-1);
-    Eigen::MatrixXd X_EXT_PROPORTIONAL = Eigen::kroneckerProduct(Pre_DF_proportional, Ones).eval();
-    // Rcout << X_EXT_PROPORTIONAL << std::endl;
+    Eigen::MatrixXd X_EXT_parallel = Eigen::kroneckerProduct(Pre_DF_parallel, Ones).eval();
+    // Rcout << X_EXT_parallel << std::endl;
     // TENGO QUE PONER EL IF ACA
     // if (ratio == "cumulative"){
     //   if (threshold == "equidistant"){
@@ -330,9 +367,9 @@ List cdf::All_pre_data_or(Formula formula,
     //     colnames_final_m.erase(0);
     //   }
     // }
-    Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_PROPORTIONAL.cols());
+    Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_parallel.cols());
     Design_Matrix.block(0,0,X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()) = X_EXT_COMPLETE;
-    Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_PROPORTIONAL.cols()) = X_EXT_PROPORTIONAL;
+    Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_parallel.cols()) = X_EXT_parallel;
   }else{
     Design_Matrix = X_EXT_COMPLETE;
   }
@@ -352,7 +389,7 @@ List cdf::All_pre_data_or(Formula formula,
 List cdf::All_pre_data_NEWDATA(Formula formula,
                                DataFrame NEWDATA,
                                CharacterVector categories_order,
-                               CharacterVector proportional_effect,
+                               CharacterVector parallel_effect,
                                int N_cats){
 
   Environment base_env("package:base");
@@ -382,19 +419,19 @@ List cdf::All_pre_data_NEWDATA(Formula formula,
   // CharacterVector Levels = Cat_ref_or_L["levels"];
   // int N_cats = Levels.length();
 
-  LogicalVector any_alternative_specific = !is_na(proportional_effect); // TRUE IF THERE ARE
+  LogicalVector any_alternative_specific = !is_na(parallel_effect); // TRUE IF THERE ARE
   CharacterVector colnames_final_m = df_tans_2.names();
 
 
   NumericVector x(colnames_final_m.length());
   if (any_alternative_specific[0]) {
     // x(colnames_final_m.length());
-    for(int indi = 0 ; indi < proportional_effect.length(); indi++){
-      String var_1 = proportional_effect[indi];
+    for(int indi = 0 ; indi < parallel_effect.length(); indi++){
+      String var_1 = parallel_effect[indi];
       int indi_var = df_tans_2.findName(var_1);
       x[indi_var] = indi_var;
     }
-    colnames_final_m = colnames_final_m[x==0]; // Case where there no proportional effects
+    colnames_final_m = colnames_final_m[x==0]; // Case where there no parallel effects
   }
 
 
@@ -427,14 +464,14 @@ List cdf::All_pre_data_NEWDATA(Formula formula,
 
     // PONER ESA PARTE ACA
 
-    DataFrame DF_proportional_effect = df_tans_2[proportional_effect];
-    NumericMatrix Pre_DF_proportional1 = internal::convert_using_rfunction(DF_proportional_effect, "as.matrix");
-    Eigen::Map<Eigen::MatrixXd> Pre_DF_proportional2 = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_proportional1);
+    DataFrame DF_parallel_effect = df_tans_2[parallel_effect];
+    NumericMatrix Pre_DF_parallel1 = internal::convert_using_rfunction(DF_parallel_effect, "as.matrix");
+    Eigen::Map<Eigen::MatrixXd> Pre_DF_parallel2 = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_parallel1);
 
-    Eigen::MatrixXd Pre_DF_proportional = Pre_DF_proportional2;
+    Eigen::MatrixXd Pre_DF_parallel = Pre_DF_parallel2;
 
     Eigen::VectorXd Ones = Eigen::VectorXd::Ones(N_cats-1);
-    Eigen::MatrixXd X_EXT_PROPORTIONAL = Eigen::kroneckerProduct(Pre_DF_proportional, Ones).eval();
+    Eigen::MatrixXd X_EXT_parallel = Eigen::kroneckerProduct(Pre_DF_parallel, Ones).eval();
 
     // TENGO QUE PONER EL IF ACA
     //
@@ -443,14 +480,14 @@ List cdf::All_pre_data_NEWDATA(Formula formula,
     //   Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
     //   Eigen::VectorXd Ones1 = Eigen::VectorXd::Ones(Response_EXT.rows());
     //   Eigen::MatrixXd Threshold_M = Eigen::kroneckerProduct(Ones1, tJac2).eval();
-    //   X_EXT_PROPORTIONAL.conservativeResize(X_EXT_PROPORTIONAL.rows(),X_EXT_PROPORTIONAL.cols()+2);
-    //   X_EXT_PROPORTIONAL.block(0,X_EXT_PROPORTIONAL.cols()-2, X_EXT_PROPORTIONAL.rows(),2) = Threshold_M;
+    //   X_EXT_parallel.conservativeResize(X_EXT_parallel.rows(),X_EXT_parallel.cols()+2);
+    //   X_EXT_parallel.block(0,X_EXT_parallel.cols()-2, X_EXT_parallel.rows(),2) = Threshold_M;
     // }
 
 
-    Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_PROPORTIONAL.cols());
+    Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_parallel.cols());
     Design_Matrix.block(0,0,X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()) = X_EXT_COMPLETE;
-    Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_PROPORTIONAL.cols()) = X_EXT_PROPORTIONAL;
+    Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_parallel.cols()) = X_EXT_parallel;
 
   }else{Design_Matrix = X_EXT_COMPLETE;}
 
@@ -472,15 +509,15 @@ List cdf::All_pre_data_NEWDATA(Formula formula,
   //
   // if (any_alternative_specific[0]) {
   //
-  //   DataFrame DF_proportional_effect = df_tans_2[proportional_effect];
-  //   NumericMatrix Pre_DF_proportional1 = internal::convert_using_rfunction(DF_proportional_effect, "as.matrix");
-  //   Eigen::Map<Eigen::MatrixXd> Pre_DF_proportional = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_proportional1);
+  //   DataFrame DF_parallel_effect = df_tans_2[parallel_effect];
+  //   NumericMatrix Pre_DF_parallel1 = internal::convert_using_rfunction(DF_parallel_effect, "as.matrix");
+  //   Eigen::Map<Eigen::MatrixXd> Pre_DF_parallel = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_parallel1);
   //   Eigen::VectorXd Ones = Eigen::VectorXd::Ones(N_cats-1);
-  //   Eigen::MatrixXd X_EXT_PROPORTIONAL = Eigen::kroneckerProduct(Pre_DF_proportional, Ones).eval();
+  //   Eigen::MatrixXd X_EXT_parallel = Eigen::kroneckerProduct(Pre_DF_parallel, Ones).eval();
   //
-  //   Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_PROPORTIONAL.cols());
+  //   Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_parallel.cols());
   //   Design_Matrix.block(0,0,X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()) = X_EXT_COMPLETE;
-  //   Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_PROPORTIONAL.cols()) = X_EXT_PROPORTIONAL;
+  //   Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_parallel.cols()) = X_EXT_parallel;
   //
   // }else{Design_Matrix = X_EXT_COMPLETE;}
 
@@ -1135,6 +1172,11 @@ double Normal::pdf_normal(const double& value) const
   boost::math::normal norm;
   return boost::math::pdf(norm, value);
 }
+double Normal::qdf_normal(const double& value) const
+{
+  boost::math::normal norm;
+  return boost::math::quantile(norm, value);
+}
 Eigen::VectorXd Normal::InverseLinkQuantileFunction(Eigen::VectorXd vector ){
   boost::math::normal norm;
   for (int i = 0; i<=vector.rows()-1; i++)
@@ -1158,6 +1200,13 @@ double Cauchit::pdf_cauchit(const double& value) const
   double _scale =1.0;
   boost::math::cauchy_distribution<> extreme_value(_location, _scale);
   return pdf(extreme_value, value);
+}
+double Cauchit::qdf_cauchit(const double& value) const
+{
+  double _location = 0.0;
+  double _scale =1.0;
+  boost::math::cauchy_distribution<> extreme_value(_location, _scale);
+  return quantile(extreme_value, value);
 }
 Eigen::VectorXd Cauchit::InverseLinkQuantileFunction(Eigen::VectorXd vector ){
   double _location = 0.0;
@@ -1225,6 +1274,13 @@ double Gumbel::pdf_gumbel(const double& value) const
   boost::math::extreme_value_distribution<> extreme_value(_location, _scale);
   return pdf(extreme_value, value);
 }
+double Gumbel::qdf_gumbel(const double& value) const
+{
+  double _location = 0.0;
+  double _scale =1.0;
+  boost::math::extreme_value_distribution<> extreme_value(_location, _scale);
+  return quantile(extreme_value, value);
+}
 
 Gompertz::Gompertz(void) {
   // Rcout << "Gompertz is being created" << endl;
@@ -1241,6 +1297,11 @@ double Gompertz::cdf_gompertz(const double& value) const
   double _sigma = 1.0;
   return  1 - exp( - exp((value - _mu) / _sigma) ); }
 
+double Gompertz::qdf_gompertz(const double& value) const
+{ double _mu = 0.0;
+  double _sigma = 1.0;
+  return  _mu + _sigma * log( -log(1-value)); }
+
 Laplace::Laplace(void) {
   // Rcout << "Laplace is being created" << endl;
 }
@@ -1256,6 +1317,30 @@ double Laplace::cdf_laplace(const double& value) const
   return boost::math::cdf(dist, value);
 }
 
+double Laplace::qdf_laplace(const double& value) const
+{ boost::math::laplace dist(0., 1.);
+  return boost::math::quantile(dist, value);
+}
+
+Noncentralt::Noncentralt(void) {
+  // Rcout << "Laplace is being created" << endl;
+}
+
+double Noncentralt::pdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const
+{
+  boost::math::non_central_t dist(freedom_degrees, non_centrality);
+  return boost::math::pdf(dist, value);
+}
+
+double Noncentralt::cdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const
+{ boost::math::non_central_t dist(freedom_degrees, non_centrality);
+  return boost::math::cdf(dist, value);
+}
+
+double Noncentralt::qdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const
+{ boost::math::non_central_t dist(freedom_degrees, non_centrality);
+  return boost::math::quantile(dist, value);
+}
 
 
 // RCPP_MODULE(exportmod){
