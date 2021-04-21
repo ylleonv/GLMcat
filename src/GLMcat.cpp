@@ -8,8 +8,9 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
-//' Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
-//'
+//' @description Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
+//' @title GLMcat
+//' @rdname GLMcat
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
 //' @param ratio a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.
 //' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
@@ -26,7 +27,6 @@ using namespace Eigen;
 //' ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
 //'     ref_category = "Very.severe",
 //'     cdf = "logistic", ratio = "reference")
-//'
 // [[Rcpp::export("GLMcat")]]
 List GLMcat(Formula formula,
             DataFrame data,
@@ -477,14 +477,14 @@ List GLMcat(Formula formula,
 
 
 
-//' GLMcat model predictions
-//'
+//' @description GLMcat model predictions
 //' @param model_object a GLMcat model
 //' @param data a data frame with the predictor variables used in the GLMcat model.
 //' @param type The type of prediction to obtain. \code{"prob"} gives probabilities,
 //' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
 //' the linear predictor.
-//' @rdname predict_glmcat
+//' @rdname predict
+//' @title predict.glmcat
 //' @export
 //' @examples
 //' data(DisturbedDreams)
@@ -660,8 +660,8 @@ RCPP_MODULE(GLMcatmodule){
                                _["categories_order"] = CharacterVector::create(NA_STRING),
                                _["ref_category"] = CharacterVector::create(NA_STRING),
                                _["threshold"] = "standard",
-                               _["control"] = R_NaN,
-                               // _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
+                               // _["control"] = R_NaN,
+                               _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
                                _["normalization"] = 1.0
                  ),
                  "GLMcat models");

@@ -124,7 +124,7 @@ We will fit the model $(Reference, Logistic, Complete)$ to the `DisturbedDreams`
 mod_ref_log_c <- GLMcat(
   formula = Level ~ Age, ratio = "reference",
   cdf = "logistic", ref_category = "Very.severe",
-  data = DisturbedDreams,
+  data = DisturbedDreams
 )
 ```
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{predict_glmcat}
 \alias{predict_glmcat}
-\title{GLMcat model predictions}
+\title{predict.glmcat}
 \usage{
 predict_glmcat(model_object = NaN, data, type = "prob")
 }

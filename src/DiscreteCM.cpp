@@ -24,11 +24,11 @@ using namespace Eigen;
 //' @param normalization blabla
 //' @examples
 //' library(GLMcat)
-//' data(TravelChoice)
-//' Discrete_CM(formula = choice ~ hinc + gc + invt,
-//' case_id = "indv",alternatives = "mode", reference = "air",
-//' data = TravelChoice,  alternative_specific = c("gc", "invt"),
-//' cdf = "logistic")
+// ' data(TravelChoice)
+// ' Discrete_CM(formula = choice ~ hinc + gc + invt,
+// ' case_id = "indv",alternatives = "mode", reference = "air",
+// ' data = TravelChoice,  alternative_specific = c("gc", "invt"),
+// ' cdf = "logistic")
 //' @note For these models it is not allowed to exclude the intercept.
 //' @export
 // [[Rcpp::export("Discrete_CM")]]
