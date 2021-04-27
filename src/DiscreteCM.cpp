@@ -19,7 +19,7 @@ using namespace Eigen;
 //' @param reference a string indicating the reference category
 //' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 //' @param data a dataframe object in R, with the dependent variable as factor.
-//' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.
+//' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 //' @param normalization blabla
 //' @examples
@@ -126,9 +126,9 @@ List Discrete_CM(Formula formula,
       }else if(cdf_1 == "normal"){
         pi = ref.inverse_normal(eta);
         D = ref.inverse_derivative_normal(eta);
-      }else if(cdf_1 == "cauchit"){
-        pi = ref.inverse_cauchit(eta);
-        D = ref.inverse_derivative_cauchit(eta);
+      }else if(cdf_1 == "cauchy"){
+        pi = ref.inverse_cauchy(eta);
+        D = ref.inverse_derivative_cauchy(eta);
       }else if(cdf_1 == "gompertz"){
         pi = ref.inverse_gompertz(eta);
         D = ref.inverse_derivative_gompertz(eta);
@@ -145,7 +145,7 @@ List Discrete_CM(Formula formula,
         pi = ref.inverse_noncentralt(eta, freedom_degrees, mu);
         D = ref.inverse_derivative_noncentralt(eta, freedom_degrees, mu);
       }else{
-        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, laplace, student(df), and noncentral(df,mu)");
+        Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchy, gumbel, gompertz, laplace, student(df), and noncentral(df,mu)");
       }
       // }else{
       //   AdjacentR adj;
@@ -155,9 +155,9 @@ List Discrete_CM(Formula formula,
       //   }else if(cdf_1 == "normal"){
       //     pi = adj.inverse_normal(eta);
       //     D = adj.inverse_derivative_normal(eta);
-      //   }else if(cdf_1 == "cauchit"){
-      //     pi = adj.inverse_cauchit(eta);
-      //     D = adj.inverse_derivative_cauchit(eta);
+      //   }else if(cdf_1 == "cauchy"){
+      //     pi = adj.inverse_cauchy(eta);
+      //     D = adj.inverse_derivative_cauchy(eta);
       //   }else if(cdf_1 == "student"){
       //     pi = adj.inverse_student(eta, freedom_degrees);
       //     D = adj.inverse_derivative_student(eta, freedom_degrees);
@@ -237,9 +237,9 @@ List Discrete_CM(Formula formula,
     if(cdf_1 == "normal"){
       class Normal norm;
       s0 = qp / (norm.qdf_normal(normalization)-norm.qdf_normal(0.5));
-    }else if(cdf_1 == "cauchit"){
-      class Cauchit cauchit;
-      s0 = qp / (cauchit.qdf_cauchit(normalization)- cauchit.qdf_cauchit(0.5));
+    }else if(cdf_1 == "cauchy"){
+      class Cauchy cauchy;
+      s0 = qp / (cauchy.qdf_cauchy(normalization)- cauchy.qdf_cauchy(0.5));
     }else if(cdf_1 == "gompertz"){
       class Gompertz gompertz;
       s0 = qp / (gompertz.qdf_gompertz(normalization)-gompertz.qdf_gompertz(0.5));

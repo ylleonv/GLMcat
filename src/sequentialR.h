@@ -2,7 +2,7 @@
 #define SEQUENTIALR_H_
 #include "cdf.h"
 
-class SequentialR : virtual public cdf, Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace, Noncentralt{
+class SequentialR : virtual public cdf, Logistic, Normal, Cauchy, Student, Gumbel, Gompertz, Laplace, Noncentralt{
 public:
   SequentialR();
 
@@ -12,8 +12,8 @@ public:
   virtual Eigen::VectorXd inverse_normal(const Eigen::VectorXd& eta) const;
   virtual Eigen::MatrixXd inverse_derivative_normal(const Eigen::VectorXd& eta) const;
 
-  virtual Eigen::VectorXd inverse_cauchit(const Eigen::VectorXd& eta) const;
-  virtual Eigen::MatrixXd inverse_derivative_cauchit(const Eigen::VectorXd& eta) const ;
+  virtual Eigen::VectorXd inverse_cauchy(const Eigen::VectorXd& eta) const;
+  virtual Eigen::MatrixXd inverse_derivative_cauchy(const Eigen::VectorXd& eta) const ;
 
   virtual Eigen::VectorXd inverse_gompertz(const Eigen::VectorXd& eta) const;
   virtual Eigen::MatrixXd inverse_derivative_gompertz(const Eigen::VectorXd& eta) const ;

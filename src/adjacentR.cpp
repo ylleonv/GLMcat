@@ -59,26 +59,26 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_normal(const Eigen::VectorXd& eta)
 
 }
 
-Eigen::VectorXd AdjacentR::inverse_cauchit(const Eigen::VectorXd& eta) const
+Eigen::VectorXd AdjacentR::inverse_cauchy(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_cauchit( eta(eta.size()-1) ) / ( 1-cdf_cauchit( eta(eta.size()-1) ) );
+  pi[eta.size()-1] = cdf_cauchy( eta(eta.size()-1) ) / ( 1-cdf_cauchy( eta(eta.size()-1) ) );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
-    pi[j-1] = pi[j] * cdf_cauchit( eta(j-1) ) / ( 1-cdf_cauchit( eta(j-1) ) );
+    pi[j-1] = pi[j] * cdf_cauchy( eta(j-1) ) / ( 1-cdf_cauchy( eta(j-1) ) );
     norm += pi[j-1];
   }
   return in_open_corner(pi/norm);
 }
 
-Eigen::MatrixXd AdjacentR::inverse_derivative_cauchit(const Eigen::VectorXd& eta) const
+Eigen::MatrixXd AdjacentR::inverse_derivative_cauchy(const Eigen::VectorXd& eta) const
 {
-  Eigen::VectorXd pi = AdjacentR::inverse_cauchit(eta);
+  Eigen::VectorXd pi = AdjacentR::inverse_cauchy(eta);
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_cauchit( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_cauchit(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_cauchit(eta(j)))) ); }
+  { D(j,j) = pdf_cauchy( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_cauchy(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_cauchy(eta(j)))) ); }
 
   return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
@@ -286,9 +286,9 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_noncentralt(const Eigen::VectorXd&
 //       }else if(cdf == "normal"){
 //         pi = adj.inverse_normal(eta);
 //         D = adj.inverse_derivative_normal(eta);
-//       }else if(cdf == "cauchit"){
-//         pi = adj.inverse_cauchit(eta);
-//         D = adj.inverse_derivative_cauchit(eta);
+//       }else if(cdf == "cauchy"){
+//         pi = adj.inverse_cauchy(eta);
+//         D = adj.inverse_derivative_cauchy(eta);
 //       }else if(cdf == "gompertz"){
 //         pi = adj.inverse_gompertz(eta);
 //         D = adj.inverse_derivative_gompertz(eta);

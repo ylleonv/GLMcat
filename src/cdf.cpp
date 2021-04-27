@@ -20,16 +20,20 @@ cdf::cdf(void) {
   // Rcout << "cdf is being created" << endl;
 }
 
-std::string cdf::concatenate(std::string x, std::string level)
-{
-  return (x + " " +level);
-}
+// std::string cdf::concatenate(std::string x, std::string level)
+// {
+//   return (x + " " +level);
+// }
 
 // ORDINAL DATA SELECTION
 
 Environment base_base("package:base");
 Function my_transpose1 = base_base["t"];
 
+std::string cdf::concatenate(std::string x, std::string level)
+{
+  return (x + " " +level);
+}
 
 // Environment stats_env1("package:utils");
 // Function head1 = stats_env1["head"];
@@ -72,47 +76,43 @@ List Model_Matrix_or(DataFrame data, Formula formula) {
   Environment base_env("package:base");
   Function model_frame = stats_env["model.frame"];
   Function model_matrix = stats_env["model.matrix"];
-  Function n_levels = base_env["nlevels"];
-  Function is_factor = base_env["is.factor"];
-  Function as_numeric = base_env["as.numeric"];
-  Function sapply_f = base_env["sapply"];
-  Function lapply_f = base_env["lapply"];
+
   Function names_f = base_env["names"];
   DataFrame df_new1 = model_frame(Rcpp::_["formula"] = formula, _["data"] = data);
   SEXP Response = df_new1[0];
+  CharacterVector covariates_names = names_f(df_new1);
+
+  // Function n_levels = base_env["nlevels"];
+  Function is_factor = base_env["is.factor"];
+  Function is_integer = base_env["is.integer"];
+  // Function as_numeric = base_env["as.numeric"];
+  Function sapply_f = base_env["sapply"];
+  // Function lapply_f = base_env["lapply"];
 
 
-  CharacterVector factor_var = names_f(sapply_f(df_new1, is_factor));
+  // Variables which are integers are converted to numeric
+  NumericVector int_var = sapply_f(data[covariates_names], is_integer);
+  int_var = abs(int_var - 1);
+  SEXP int_var1 = int_var;
+  LogicalVector int_var2 = int_var1;
+  CharacterVector var_int = covariates_names[int_var2];
+  // Rcout << int_var << std::endl;
+  // Rcout << var_int << std::endl;
+
+
+  // CharacterVector covariates_names = M_matrix["covariates_names"];
+  LogicalVector factor_var1 = sapply_f(data[var_int], is_factor);
+  // factor_var = factor_var[var_int];
+  CharacterVector factor_var = var_int[factor_var1];
+  // Rcout << "factor_var" << std::endl;
   // Rcout << factor_var << std::endl;
-  DataFrame a1 = df_new1[factor_var];
-  // print(a1);
-  List n_levels_1 = lapply_f(a1, n_levels);
-  // print(n_levels_1);
-  LogicalVector out(n_levels_1.length());
 
-  int a5;
-
-  CharacterVector fac1;
-
-  for(int i = 0; i <n_levels_1.length(); ++i){
-    a5 = n_levels_1[i];
-    if( a5 == 2 ){
-      fac1.push_back(factor_var[i]);
-    };
-  }
-
-  DataFrame a2 = df_new1[fac1];
-  // print(a2);
-
-  a2 = sapply_f(a2, as_numeric);
-  a1[fac1] = a2;
-
-  // print(a1);
-
-  NumericMatrix df_new = model_matrix(a1, _["data"] = a1);
+  NumericMatrix df_new = model_matrix(df_new1, _["data"] = df_new1);
   return List::create(
     Named("df_new") = df_new,
-    Named("Response") = Response
+    Named("Response") = Response,
+    Named("covariates_names") = covariates_names,
+    Named("factor_var") = factor_var
   );
 }
 
@@ -185,8 +185,6 @@ List cdf::All_pre_data_or(Formula formula,
                           std::string threshold,
                           std::string ratio){
 
-  // print(parallel_effect);
-
   Environment base_env("package:base");
   Function my_asnumeric = base_env["as.numeric"];
   Function my_cbind = base_env["cbind"];
@@ -194,8 +192,6 @@ List cdf::All_pre_data_or(Formula formula,
   Function my_levels = base_env["levels"];
 
   List M_matrix = Model_Matrix_or(input_data, formula);
-
-
 
   if(categories_order.length() == 1){
     LogicalVector is_na_ref = is_na(categories_order);
@@ -240,8 +236,61 @@ List cdf::All_pre_data_or(Formula formula,
 
   LogicalVector any_alternative_specific = !is_na(parallel_effect); // TRUE IF THERE ARE
   CharacterVector colnames_final_m = df_tans_2.names();
+  CharacterVector factor_var = M_matrix["factor_var"];
+  CharacterVector covariates_names = M_matrix["covariates_names"];
+
 
   // Rcout << colnames_final_m << std::endl;
+  if(parallel_effect[0] == "TRUE" && (parallel_effect.size() ==1)){
+    parallel_effect = colnames_final_m;
+    parallel_effect.erase(0);
+    parallel_effect.erase(0);
+    // Rcout << parallel_effect << std::endl;
+  }
+  // Rcout << parallel_effect << std::endl;
+  // Rcout << factor_var << std::endl;
+
+  CharacterVector parallel_effect1 = parallel_effect;
+  int con = 0;
+
+  // Identify which parallel effects are factors
+  NumericVector x1(parallel_effect.length());
+  if (any_alternative_specific[0]) {
+    for(int indi = 0 ; indi < parallel_effect.length(); indi++){
+      String var_1 = parallel_effect[indi];
+      for(int id_fac = 0; id_fac < factor_var.length(); id_fac++){
+        if(factor_var[id_fac] == var_1){
+          x1[indi]=1;
+          parallel_effect1.erase(indi-con);
+          con = con + 1;
+        }
+      }
+    }
+  }
+
+  SEXP x2 = x1;
+  LogicalVector x3 = x2;
+  CharacterVector par_factor = parallel_effect[x3];
+  // print(x1);
+  // Rcout << par_factor << std::endl;
+
+  Function f_levels = base_env["levels"];
+  Function f_c = base_env["c"];
+  Function my_paste = base_base["paste"];
+
+  CharacterVector names_factors; // Extended names of parallel covariates that are factors
+
+  for(int indi = 0 ; indi < par_factor.length(); indi++){
+    String var_1 = par_factor[indi];
+    CharacterVector levels_fac = f_levels(input_data[var_1]);
+    levels_fac.erase(0); // Reference is the first level
+    CharacterVector names_factor = my_paste(var_1, levels_fac, _["sep"] = "");
+    names_factors = f_c(names_factors, names_factor);
+  }
+  // Rcout << names_factors << std::endl;
+
+  parallel_effect = f_c(parallel_effect1,names_factors);
+  // Rcout << parallel_effect << std::endl;
 
   NumericVector x(colnames_final_m.length());
   if (any_alternative_specific[0]) {
@@ -262,8 +311,34 @@ List cdf::All_pre_data_or(Formula formula,
   NumericMatrix Response_EXT = to_dummy1(Response, Levels);
   // X EXTEND
   // print(colnames_final_m);
-  // Rcout << "df_tans_2" << std::endl;
-  // print(df_tans_2);
+  // Rcout << "parallel_effect" << std::endl;
+  // print(parallel_effect);
+
+  // CharacterVector covariates_names = M_matrix["covariates_names"];
+  // CharacterVector factor_var = names_f(sapply_f(input_data[covariates_names], is_factor));
+  // Rcout << "factor_var" << std::endl;
+  // Rcout << factor_var << std::endl;
+  // DataFrame a1 = df_new1[factor_var];
+  // // print(a1);
+  // List n_levels_1 = lapply_f(a1, n_levels);
+  // // print(n_levels_1);
+  // LogicalVector out(n_levels_1.length());
+  // int a5;
+  // CharacterVector fac1;
+  // for(int i = 0; i <n_levels_1.length(); ++i){
+  //   a5 = n_levels_1[i];
+  //   if( a5 == 2 ){
+  //     fac1.push_back(factor_var[i]);
+  //   };
+  // }
+  // DataFrame a2 = df_new1[fac1];
+  // // print(a2);
+  //
+  // a2 = sapply_f(a2, as_numeric);
+  // a1[fac1] = a2;
+
+
+
   DataFrame DF_complete_effect = df_tans_2[colnames_final_m];
   NumericMatrix Pre_Design1 = internal::convert_using_rfunction(DF_complete_effect, "as.matrix");
   Eigen::Map<Eigen::MatrixXd> Pre_Design = as<Eigen::Map<Eigen::MatrixXd> >(Pre_Design1);
@@ -373,14 +448,15 @@ List cdf::All_pre_data_or(Formula formula,
   }else{
     Design_Matrix = X_EXT_COMPLETE;
   }
-  // print(head1(Design_Matrix));
   // Rcout << Design_Matrix << std::endl;
   // print(colnames_final_m);
+
   return List::create(
     Named("Design_Matrix") = Design_Matrix,
     Named("Response_EXT") = Response_EXT,
     Named("Levels") = Levels,
     Named("Complete_effects") = colnames_final_m,
+    Named("parallel_effect") = parallel_effect,
     Named("N_cats") = N_cats,
     Named("categories_order") = categories_order
   );
@@ -1184,31 +1260,31 @@ Eigen::VectorXd Normal::InverseLinkQuantileFunction(Eigen::VectorXd vector ){
   return vector;
 }
 
-Cauchit::Cauchit(void) {
+Cauchy::Cauchy(void) {
 }
 
-double Cauchit::cdf_cauchit(const double& value) const
+double Cauchy::cdf_cauchy(const double& value) const
 {
   double _location = 0.0;
   double _scale = 1.0;
   boost::math::cauchy_distribution<> extreme_value(_location, _scale);
   return boost::math::cdf(extreme_value, value);
 }
-double Cauchit::pdf_cauchit(const double& value) const
+double Cauchy::pdf_cauchy(const double& value) const
 {
   double _location = 0.0;
   double _scale =1.0;
   boost::math::cauchy_distribution<> extreme_value(_location, _scale);
   return pdf(extreme_value, value);
 }
-double Cauchit::qdf_cauchit(const double& value) const
+double Cauchy::qdf_cauchy(const double& value) const
 {
   double _location = 0.0;
   double _scale =1.0;
   boost::math::cauchy_distribution<> extreme_value(_location, _scale);
   return quantile(extreme_value, value);
 }
-Eigen::VectorXd Cauchit::InverseLinkQuantileFunction(Eigen::VectorXd vector ){
+Eigen::VectorXd Cauchy::InverseLinkQuantileFunction(Eigen::VectorXd vector ){
   double _location = 0.0;
   double _scale =1.0;
   boost::math::cauchy_distribution<> extreme_value(_location, _scale);

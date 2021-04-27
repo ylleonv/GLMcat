@@ -30,12 +30,12 @@ Eigen::VectorXd CumulativeR::inverse_normal(const Eigen::VectorXd& eta) const
   return in_open_corner(ordered_pi);
 }
 
-Eigen::VectorXd CumulativeR::inverse_cauchit(const Eigen::VectorXd& eta) const
+Eigen::VectorXd CumulativeR::inverse_cauchy(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd ordered_pi( eta.size() );
-  ordered_pi[0] = cdf_cauchit( eta(0) );
+  ordered_pi[0] = cdf_cauchy( eta(0) );
   for(int j=1; j<eta.size(); ++j)
-  { ordered_pi[j] = cdf_cauchit( eta(j) ) - cdf_cauchit( eta(j-1) ); }
+  { ordered_pi[j] = cdf_cauchy( eta(j) ) - cdf_cauchy( eta(j-1) ); }
   return in_open_corner(ordered_pi);
 }
 
@@ -87,13 +87,13 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_normal(const Eigen::VectorXd& et
   return (F_1 * R);
 }
 
-Eigen::MatrixXd CumulativeR::inverse_derivative_cauchit(const Eigen::VectorXd& eta) const
+Eigen::MatrixXd CumulativeR::inverse_derivative_cauchy(const Eigen::VectorXd& eta) const
 {
   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
   Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   for(int j=0; j<eta.rows(); ++j)
-  { F_1(j,j) = pdf_cauchit( eta(j) ); }
+  { F_1(j,j) = pdf_cauchy( eta(j) ); }
   return (F_1 * R);
 }
 
@@ -258,9 +258,9 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_noncentralt(const Eigen::VectorX
 //       }else if(cdf == "normal"){
 //         pi = cum.inverse_normal(eta);
 //         D = cum.inverse_derivative_normal(eta);
-//       }else if(cdf == "cauchit"){
-//         pi = cum.inverse_cauchit(eta);
-//         D = cum.inverse_derivative_cauchit(eta);
+//       }else if(cdf == "cauchy"){
+//         pi = cum.inverse_cauchy(eta);
+//         D = cum.inverse_derivative_cauchy(eta);
 //       }else if(cdf == "gompertz"){
 //         pi = cum.inverse_gompertz(eta);
 //         D = cum.inverse_derivative_gompertz(eta);
@@ -271,7 +271,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_noncentralt(const Eigen::VectorX
 //         pi = cum.inverse_gumbel(eta);
 //         D = cum.inverse_derivative_gumbel(eta);
 //       }else{
-//         Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchit, gumbel, gompertz, and student(df)");
+//         Rcpp::stop("Unrecognized cdf; options are: logistic, normal, cauchy, gumbel, gompertz, and student(df)");
 //       }
 //
 //       Cov_i = Eigen::MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());

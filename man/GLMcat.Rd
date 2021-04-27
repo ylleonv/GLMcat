@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{GLMcat}
 \alias{GLMcat}
-\title{Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)}
+\title{GLMcat}
 \usage{
 GLMcat(
   formula,
@@ -24,7 +24,7 @@ GLMcat(
 
 \item{ratio}{a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
-\item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchit, student (any df), gompertz, gumbel and laplace.}
+\item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.}
 
 \item{parallel}{a character vector indicating the name of the variables with a parallel effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}
 
@@ -46,5 +46,4 @@ data(DisturbedDreams)
 ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,
     ref_category = "Very.severe",
     cdf = "logistic", ratio = "reference")
-
 }

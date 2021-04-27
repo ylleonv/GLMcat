@@ -2,7 +2,7 @@
 #define ADJACENTR_H_
 #include "cdf.h"
 
-class AdjacentR : virtual public Logistic, Normal, Cauchit, Student, Gumbel, Gompertz, Laplace, Noncentralt {
+class AdjacentR : virtual public Logistic, Normal, Cauchy, Student, Gumbel, Gompertz, Laplace, Noncentralt {
 public:
 
   AdjacentR();
@@ -13,8 +13,8 @@ public:
   virtual Eigen::VectorXd inverse_normal(const Eigen::VectorXd& eta) const;
   virtual Eigen::MatrixXd inverse_derivative_normal(const Eigen::VectorXd& eta) const ;
 
-  virtual Eigen::VectorXd inverse_cauchit(const Eigen::VectorXd& eta) const;
-  virtual Eigen::MatrixXd inverse_derivative_cauchit(const Eigen::VectorXd& eta) const ;
+  virtual Eigen::VectorXd inverse_cauchy(const Eigen::VectorXd& eta) const;
+  virtual Eigen::MatrixXd inverse_derivative_cauchy(const Eigen::VectorXd& eta) const ;
 
   virtual Eigen::VectorXd inverse_gompertz(const Eigen::VectorXd& eta) const;
   virtual Eigen::MatrixXd inverse_derivative_gompertz(const Eigen::VectorXd& eta) const ;

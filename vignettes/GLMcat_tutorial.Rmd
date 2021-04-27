@@ -238,7 +238,7 @@ $(Adjacent, Cauchy, Complete)$
 ```{r }
 mod_adj_cau_c <- GLMcat(
   formula = Level ~ Age,
-  ratio = "adjacent", cdf = "cauchit",
+  ratio = "adjacent", cdf = "cauchy",
   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
   data = DisturbedDreams
 )
@@ -249,7 +249,7 @@ summary(mod_adj_cau_c)
 ```{r }
 mod_adj_cau_c_rev <- GLMcat(
   formula = Level ~ Age,
-  ratio = "adjacent", cdf = "cauchit",
+  ratio = "adjacent", cdf = "cauchy",
   categories_order = c("Very.severe", "Severe.2", "Severe.1", "Not.severe"),
   data = DisturbedDreams
 )

@@ -69,25 +69,25 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_normal(const Eigen::VectorXd& eta
   return D * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose().eval() );
 }
 
-Eigen::VectorXd ReferenceF::inverse_cauchit(const Eigen::VectorXd& eta) const
+Eigen::VectorXd ReferenceF::inverse_cauchy(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
-    pi[j] = Cauchit::cdf_cauchit( eta(j) ) / ( 1-Cauchit::cdf_cauchit( eta(j) ) );
+    pi[j] = Cauchy::cdf_cauchy( eta(j) ) / ( 1-Cauchy::cdf_cauchy( eta(j) ) );
     norm1 += pi[j];
   }
   return (pi/norm1);
 }
 
-Eigen::MatrixXd ReferenceF::inverse_derivative_cauchit(const Eigen::VectorXd& eta2) const
+Eigen::MatrixXd ReferenceF::inverse_derivative_cauchy(const Eigen::VectorXd& eta2) const
 {
-  Eigen::VectorXd pi1 = ReferenceF::inverse_cauchit(eta2);
+  Eigen::VectorXd pi1 = ReferenceF::inverse_cauchy(eta2);
   Eigen::MatrixXd D1 = Eigen::MatrixXd::Zero(pi1.rows(),pi1.rows());
   for(int j=0; j<eta2.rows(); ++j)
-  { D1(j,j) = pdf_cauchit( eta2(j) ) /
-    (Cauchit::cdf_cauchit(eta2(j)) * (1-Cauchit::cdf_cauchit(eta2(j))));
+  { D1(j,j) = pdf_cauchy( eta2(j) ) /
+    (Cauchy::cdf_cauchy(eta2(j)) * (1-Cauchy::cdf_cauchy(eta2(j))));
   }
   return D1 * ( Eigen::MatrixXd(pi1.asDiagonal()) - pi1 * pi1.transpose().eval() );
 }

@@ -61,28 +61,28 @@ Eigen::MatrixXd SequentialR::inverse_derivative_normal(const Eigen::VectorXd& et
   return M;
 }
 
-Eigen::VectorXd SequentialR::inverse_cauchit(const Eigen::VectorXd& eta) const
+Eigen::VectorXd SequentialR::inverse_cauchy(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd ordered_pi( eta.size() );
   double product = 1;
   for(int j=0; j<eta.size(); ++j)
   {
-    ordered_pi[j] = product * cdf_cauchit( eta(j) );
-    product *= ( 1 - cdf_cauchit( eta(j) ) );
+    ordered_pi[j] = product * cdf_cauchy( eta(j) );
+    product *= ( 1 - cdf_cauchy( eta(j) ) );
   }
   return in_open_corner(ordered_pi);
 }
 
-Eigen::MatrixXd SequentialR::inverse_derivative_cauchit(const Eigen::VectorXd& eta) const
+Eigen::MatrixXd SequentialR::inverse_derivative_cauchy(const Eigen::VectorXd& eta) const
 {
   Eigen::MatrixXd M = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
   double product = 1.;
   for (int j=0; j < eta.rows(); ++j)
   {
-    M(j,j) = pdf_cauchit(eta(j)) * product;
+    M(j,j) = pdf_cauchy(eta(j)) * product;
     for (int i=0; i<j; ++i)
-    { M(i,j) = - pdf_cauchit(eta(i))  * std::max(1e-10, std::min(cdf_cauchit(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-cdf_cauchit(eta(i)), 1-1e-6)); }
-    product *= std::max(1e-10, std::min( 1-cdf_cauchit(eta(j)), 1-1e-6));
+    { M(i,j) = - pdf_cauchy(eta(i))  * std::max(1e-10, std::min(cdf_cauchy(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-cdf_cauchy(eta(i)), 1-1e-6)); }
+    product *= std::max(1e-10, std::min( 1-cdf_cauchy(eta(j)), 1-1e-6));
   }
   return M;
 }
@@ -293,9 +293,9 @@ Eigen::MatrixXd SequentialR::inverse_derivative_noncentralt(const Eigen::VectorX
 //       }else if(cdf == "normal"){
 //         pi = seq.inverse_normal(eta);
 //         D = seq.inverse_derivative_normal(eta);
-//       }else if(cdf == "cauchit"){
-//         pi = seq.inverse_cauchit(eta);
-//         D = seq.inverse_derivative_cauchit(eta);
+//       }else if(cdf == "cauchy"){
+//         pi = seq.inverse_cauchy(eta);
+//         D = seq.inverse_derivative_cauchy(eta);
 //       }else if(cdf == "gompertz"){
 //         pi = seq.inverse_gompertz(eta);
 //         D = seq.inverse_derivative_gompertz(eta);

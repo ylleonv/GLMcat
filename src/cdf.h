@@ -63,15 +63,15 @@ public:
   Normal();
 };
 
-class Cauchit : virtual public cdf{
+class Cauchy : virtual public cdf{
 public:
-  virtual double cdf_cauchit(const double& value) const;
-  virtual double pdf_cauchit(const double& value) const;
-  virtual double qdf_cauchit(const double& value) const;
+  virtual double cdf_cauchy(const double& value) const;
+  virtual double pdf_cauchy(const double& value) const;
+  virtual double qdf_cauchy(const double& value) const;
 
   Eigen::VectorXd InverseLinkQuantileFunction(Eigen::VectorXd vectordis);
 
-  Cauchit();
+  Cauchy();
 };
 
 class Student :  virtual public cdf{
