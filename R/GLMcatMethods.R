@@ -208,7 +208,7 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
     dev <- dev - dev[1L] ; dev[1L] <- NA
     nas <- !is.na(dev)
     P <- dev
-    P[nas] <- safe_pchisq(dev[nas], dfs[nas], lower.tail = FALSE)
+    P[nas] <- stats:::safe_pchisq(dev[nas], dfs[nas], lower.tail = FALSE)
     aod[, c("LRT", "Pr(>Chi)")] <- list(dev, P)
   }
   head <- c("Single term deletions", "\nModel:", deparse(formula(object)),
@@ -268,7 +268,7 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
     dev <- dev[1L] - dev; dev[1L] <- NA
     nas <- !is.na(dev)
     P <- dev
-    P[nas] <- safe_pchisq(dev[nas], dfs[nas], lower.tail=FALSE)
+    P[nas] <- stats:::safe_pchisq(dev[nas], dfs[nas], lower.tail=FALSE)
     aod[, c("LRT", "Pr(>Chi)")] <- list(dev, P)
   }
   head <- c("Single term additions", "\nModel:", deparse(formula(object)),
@@ -281,11 +281,16 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 #' Stepwise for glmcat models
 #' @description Stepwise
 #' @rdname step_glmcat
+#' @param object a GLMcat model.
+#' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
+#' @param direction the mode of the stepwise search.
+#' @param trace to print the process information.
+#' @param steps the maximum number of steps.
 #' @export
 step_glmcat <- function (object, scope, scale = 0,
                          direction = c("both", "backward",
                                        "forward"),
-                         trace = 1, keep = NULL, steps = 1000, k = 2,
+                         trace = 1, steps = 1000,
                          ...)
 {
   mydeviance <- function(x, ...) {

@@ -10,11 +10,20 @@ step_glmcat(
   scale = 0,
   direction = c("both", "backward", "forward"),
   trace = 1,
-  keep = NULL,
   steps = 1000,
-  k = 2,
   ...
 )
+}
+\arguments{
+\item{object}{a GLMcat model.}
+
+\item{scope}{defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.}
+
+\item{direction}{the mode of the stepwise search.}
+
+\item{trace}{to print the process information.}
+
+\item{steps}{the maximum number of steps.}
 }
 \description{
 Stepwise

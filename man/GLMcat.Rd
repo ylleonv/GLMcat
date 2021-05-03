@@ -41,6 +41,9 @@ GLMcat(
 \description{
 Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 }
+\details{
+Family of models for categorical responses
+}
 \examples{
 data(DisturbedDreams)
 ref_log_com <- GLMcat(formula = Level ~ Age, data = DisturbedDreams,

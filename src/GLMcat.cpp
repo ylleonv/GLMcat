@@ -8,9 +8,11 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
+//' Family of models for categorical responses
 //' @description Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 //' @title GLMcat
 //' @rdname GLMcat
+//' @name GLMcat
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
 //' @param ratio a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.
 //' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.
@@ -491,6 +493,7 @@ List GLMcat(Formula formula,
 
 
 
+//' Prediction based on GLMcat models
 //' @description GLMcat model predictions
 //' @param model_object a GLMcat model
 //' @param data a data frame with the predictor variables used in the GLMcat model.
@@ -498,6 +501,7 @@ List GLMcat(Formula formula,
 //' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
 //' the linear predictor.
 //' @rdname predict
+//' @name predict_glmcat
 //' @title predict.glmcat
 //' @export
 //' @examples

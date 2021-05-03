@@ -18,6 +18,9 @@ the linear predictor.}
 \description{
 GLMcat model predictions
 }
+\details{
+Prediction based on GLMcat models
+}
 \examples{
 data(DisturbedDreams)
 mod1 <- GLMcat(formula = Level ~ Age,

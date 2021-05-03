@@ -700,7 +700,7 @@ List formula_entry(Formula formula1){
   );
 }
 
-// [[Rcpp::export]]
+
 List Cat_ref1(CharacterVector categories_order,
               RObject response_categories){
   Environment base_env("package:base");

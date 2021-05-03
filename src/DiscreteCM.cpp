@@ -14,6 +14,8 @@ using namespace Eigen;
 //' Each case represents a single statistical observation although it comprises
 //' multiple observations.
 //' @title Discrete_CM
+//' @rdname Discrete_CM
+//' @name Discrete_CM
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
 //' @param case_id a string with the name of the column that identifies each case.
 //' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.

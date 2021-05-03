@@ -9,6 +9,8 @@
 #' Each case represents a single statistical observation although it comprises
 #' multiple observations.
 #' @title Discrete_CM
+#' @rdname Discrete_CM
+#' @name Discrete_CM
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
 #' @param case_id a string with the name of the column that identifies each case.
 #' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
@@ -28,9 +30,11 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
     .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization)
 }
 
+#' Family of models for categorical responses
 #' @description Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
 #' @title GLMcat
 #' @rdname GLMcat
+#' @name GLMcat
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
 #' @param ratio a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.
 #' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.
@@ -51,6 +55,7 @@ GLMcat <- function(formula, data, ratio, cdf, parallel, categories_order, ref_ca
     .Call(`_GLMcat_GLMcat`, formula, data, ratio, cdf, parallel, categories_order, ref_category, threshold, control, normalization)
 }
 
+#' Prediction based on GLMcat models
 #' @description GLMcat model predictions
 #' @param model_object a GLMcat model
 #' @param data a data frame with the predictor variables used in the GLMcat model.
@@ -58,6 +63,7 @@ GLMcat <- function(formula, data, ratio, cdf, parallel, categories_order, ref_ca
 #' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
 #' the linear predictor.
 #' @rdname predict
+#' @name predict_glmcat
 #' @title predict.glmcat
 #' @export
 #' @examples
@@ -67,9 +73,5 @@ GLMcat <- function(formula, data, ratio, cdf, parallel, categories_order, ref_ca
 #' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 predict_glmcat <- function(model_object, data, type) {
     .Call(`_GLMcat_predict_glmcat`, model_object, data, type)
-}
-
-Cat_ref1 <- function(categories_order, response_categories) {
-    .Call(`_GLMcat_Cat_ref1`, categories_order, response_categories)
 }
 
