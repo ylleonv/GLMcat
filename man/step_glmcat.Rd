@@ -7,11 +7,9 @@
 step_glmcat(
   object,
   scope,
-  scale = 0,
   direction = c("both", "backward", "forward"),
   trace = 1,
-  steps = 1000,
-  ...
+  steps = 1000
 )
 }
 \arguments{
@@ -26,5 +24,5 @@ step_glmcat(
 \item{steps}{the maximum number of steps.}
 }
 \description{
-Stepwise
+Stepwise based on the AIC
 }

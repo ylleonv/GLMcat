@@ -161,8 +161,13 @@ noncentralt.glmcat <- function(df = 7, mu = 0) {
   return(list("cdf" = "noncentralt", "df" = df, "mu" = mu))
 }
 
+safe_pchisq <- function(q, df, ...) {
+  df[df <= 0] <- NA
+  pchisq(q = q, df = df, ...)
+}
+
 drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
-                  k = 2, trace = FALSE, ...)
+                  trace = FALSE, ...)
 {
   tl <- attr(terms(object), "term.labels")
   if(missing(scope)) scope <- drop.scope(object)
@@ -204,11 +209,11 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
   aod <- data.frame(Df = dfs, AIC = ans[,2])
   test <- match.arg(test)
   if(test == "Chisq") {
-    dev <- ans[, 2L] - k*ans[, 1L]
+    dev <- ans[, 2L] - 2*ans[, 1L]
     dev <- dev - dev[1L] ; dev[1L] <- NA
     nas <- !is.na(dev)
     P <- dev
-    P[nas] <- stats:::safe_pchisq(dev[nas], dfs[nas], lower.tail = FALSE)
+    P[nas] <- safe_pchisq(dev[nas], dfs[nas], lower.tail = FALSE)
     aod[, c("LRT", "Pr(>Chi)")] <- list(dev, P)
   }
   head <- c("Single term deletions", "\nModel:", deparse(formula(object)),
@@ -219,7 +224,7 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 }
 
 add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
-                 k = 2, trace = FALSE, ...)
+                 trace = FALSE, ...)
 {
   if(missing(scope) || is.null(scope)) stop("no terms in scope")
   if(!is.character(scope))
@@ -264,11 +269,11 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
   aod <- data.frame(Df = dfs, AIC = ans[, 2L])
   test <- match.arg(test)
   if(test == "Chisq") {
-    dev <- ans[, 2L] - k*ans[, 1L]
+    dev <- ans[, 2L] - 2*ans[, 1L]
     dev <- dev[1L] - dev; dev[1L] <- NA
     nas <- !is.na(dev)
     P <- dev
-    P[nas] <- stats:::safe_pchisq(dev[nas], dfs[nas], lower.tail=FALSE)
+    P[nas] <- safe_pchisq(dev[nas], dfs[nas], lower.tail=FALSE)
     aod[, c("LRT", "Pr(>Chi)")] <- list(dev, P)
   }
   head <- c("Single term additions", "\nModel:", deparse(formula(object)),
@@ -279,7 +284,7 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 }
 
 #' Stepwise for glmcat models
-#' @description Stepwise
+#' @description Stepwise based on the AIC
 #' @rdname step_glmcat
 #' @param object a GLMcat model.
 #' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
@@ -287,31 +292,30 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 #' @param trace to print the process information.
 #' @param steps the maximum number of steps.
 #' @export
-step_glmcat <- function (object, scope, scale = 0,
+step_glmcat <- function (object, scope,
                          direction = c("both", "backward",
                                        "forward"),
-                         trace = 1, steps = 1000,
-                         ...)
+                         trace = 1, steps = 1000)
 {
   mydeviance <- function(x, ...) {
     dev <- deviance(x)
     if (!is.null(dev))
       dev
-    else AIC(x, k = 0)
+    else AIC(x)
   }
   cut.string <- function(string) {
     if (length(string) > 1L)
       string[-1L] <- paste0("\n", string[-1L])
     string
   }
-  re.arrange <- function(keep) {
-    namr <- names(k1 <- keep[[1L]])
-    namc <- names(keep)
-    nc <- length(keep)
-    nr <- length(k1)
-    array(unlist(keep, recursive = FALSE), c(nr, nc), list(namr,
-                                                           namc))
-  }
+  # re.arrange <- function(keep) {
+  #   namr <- names(k1 <- keep[[1L]])
+  #   namc <- names(keep)
+  #   nc <- length(keep)
+  #   nr <- length(k1)
+  #   array(unlist(keep, recursive = FALSE), c(nr, nc), list(namr,
+  #                                                          namc))
+  # }
   step.results <- function(models, fit, object, usingCp = FALSE) {
     change <- sapply(models, "[[", "change")
     rd <- sapply(models, "[[", "deviance")
@@ -364,8 +368,8 @@ step_glmcat <- function (object, scope, scale = 0,
     }
   }
   models <- vector("list", steps)
-  if (!is.null(keep))
-    keep.list <- vector("list", steps)
+  # if (!is.null(keep))
+  #   keep.list <- vector("list", steps)
   n <- nobs_glmcat(object, use.fallback = TRUE)
   fit <- object
   bAIC <- AIC(fit)
@@ -383,8 +387,8 @@ step_glmcat <- function (object, scope, scale = 0,
   }
   models[[nm]] <- list(deviance = mydeviance(fit), df.resid = n -
                          edf, change = "", AIC = bAIC)
-  if (!is.null(keep))
-    keep.list[[nm]] <- keep(fit, bAIC)
+  # if (!is.null(keep))
+  #   keep.list[[nm]] <- keep(fit, bAIC)
   usingCp <- FALSE
   while (steps > 0) {
     steps <- steps - 1
@@ -394,8 +398,7 @@ step_glmcat <- function (object, scope, scale = 0,
     aod <- NULL
     change <- NULL
     if (backward && length(scope$drop)) {
-      aod <- drop2(fit, scope$drop, scale = scale, trace = trace,
-                   k = k, ...)
+      aod <- drop2(fit, scope$drop, scale = 0, trace = trace)
       rn <- row.names(aod)
       # print(aod)
       row.names(aod) <- c(rn[1L], paste("-", rn[-1L]))
@@ -406,8 +409,8 @@ step_glmcat <- function (object, scope, scale = 0,
     }
     if (is.null(change)) {
       if (forward && length(scope$add)) {
-        aodf <- add2(fit, scope$add, scale = scale,
-                     trace = trace, k = k, ...)
+        aodf <- add2(fit, scope$add, scale = 0,
+                     trace = trace)
         rn <- row.names(aodf)
         row.names(aodf) <- c(rn[1L], paste("+", rn[-1L]))
         aod <- if (is.null(aod))
@@ -460,11 +463,11 @@ step_glmcat <- function (object, scope, scale = 0,
     nm <- nm + 1
     models[[nm]] <- list(deviance = mydeviance(fit), df.resid = n -
                            edf, change = change, AIC = bAIC)
-    if (!is.null(keep))
-      keep.list[[nm]] <- keep(fit, bAIC)
+    # if (!is.null(keep))
+    #   keep.list[[nm]] <- keep(fit, bAIC)
   }
-  if (!is.null(keep))
-    fit$keep <- re.arrange(keep.list[seq(nm)])
+  # if (!is.null(keep))
+  #   fit$keep <- re.arrange(keep.list[seq(nm)])
   step.results(models = models[seq(nm)], fit, object, usingCp)
 }
 

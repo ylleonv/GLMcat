@@ -8,7 +8,7 @@ GLMcat(
   formula,
   data,
   ratio = "reference",
-  cdf = NaN,
+  cdf = list(cdf = "logistic", df = 7L, mu = 0L),
   parallel = NA_character_,
   categories_order = NA_character_,
   ref_category = NA_character_,
@@ -24,7 +24,11 @@ GLMcat(
 
 \item{ratio}{a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
-\item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.}
+\item{cdf}{\describe{
+\item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
+\item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
+\item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
+}}
 
 \item{parallel}{a character vector indicating the name of the variables with a parallel effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}
 
@@ -34,9 +38,13 @@ GLMcat(
 
 \item{threshold}{restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).}
 
-\item{control}{blabla}
+\item{control}{\describe{
+\item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
+\item{\code{epsilon}:}{a double with to fix the epsilon value}
+\item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}
+}}
 
-\item{normalization}{blabla2}
+\item{normalization}{the quantile to use for the normalization of the estimated coefficients.}
 }
 \description{
 Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)

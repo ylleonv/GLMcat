@@ -58,18 +58,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// Cat_ref1
-List Cat_ref1(CharacterVector categories_order, RObject response_categories);
-RcppExport SEXP _GLMcat_Cat_ref1(SEXP categories_orderSEXP, SEXP response_categoriesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< CharacterVector >::type categories_order(categories_orderSEXP);
-    Rcpp::traits::input_parameter< RObject >::type response_categories(response_categoriesSEXP);
-    rcpp_result_gen = Rcpp::wrap(Cat_ref1(categories_order, response_categories));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 RcppExport SEXP _rcpp_module_boot_discretemodule();
 RcppExport SEXP _rcpp_module_boot_GLMcatmodule();
@@ -78,7 +66,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_GLMcat_Discrete_CM", (DL_FUNC) &_GLMcat_Discrete_CM, 9},
     {"_GLMcat_GLMcat", (DL_FUNC) &_GLMcat_GLMcat, 10},
     {"_GLMcat_predict_glmcat", (DL_FUNC) &_GLMcat_predict_glmcat, 3},
-    {"_GLMcat_Cat_ref1", (DL_FUNC) &_GLMcat_Cat_ref1, 2},
     {"_rcpp_module_boot_discretemodule", (DL_FUNC) &_rcpp_module_boot_discretemodule, 0},
     {"_rcpp_module_boot_GLMcatmodule", (DL_FUNC) &_rcpp_module_boot_GLMcatmodule, 0},
     {NULL, NULL, 0}
