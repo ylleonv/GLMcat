@@ -15,20 +15,13 @@
 #' @export student.glmcat
 #' @export noncentralt.glmcat
 #' @export control.glmcat
-# #' @export ReferenceF
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom utils flush.console
-#' @import MASS add
-#' @import stringr str_trim
-#' @importFrom stats model.frame model.matrix as.formula pnorm printCoefmat add.scope deviance drop.scope AIC factor.scope formula terms update update.formula
+#' @importFrom stringr str_trim
+#' @importFrom stats add1 model.frame model.matrix as.formula pnorm printCoefmat add.scope deviance drop.scope AIC factor.scope formula terms update update.formula
 ## usethis namespace: end
 
 loadModule("GLMcatmodule", TRUE)
 loadModule("discretemodule", TRUE)
 # loadModule("discretemodule", TRUE)
-# loadModule("cumulativemodule", TRUE)
-# loadModule("exportmod", TRUE)
-# loadModule("sequentialmodule", TRUE)
-# loadModule("adjacentmodule", TRUE)
-# loadModule("referencemodule", TRUE) # predict_glmcatION
