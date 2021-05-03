@@ -106,7 +106,18 @@ List GLMcat(Formula formula,
   Eigen::VectorXd BETA3 = BETA2;
 
   Eigen::MatrixXd BETA = BETA2;
-  NumericVector beta_init = control["beta_init"];
+
+  NumericVector beta_init;
+  double epsilon;
+  int iterations_us;
+
+  if(control.size() > 1){
+    iterations_us = control[0];
+    epsilon = control[1] ;
+    beta_init = control[2];
+  }
+
+
 
   if(beta_init.length() >= 2 ){
     // BETA = beta_init;
@@ -136,8 +147,7 @@ List GLMcat(Formula formula,
 
   // for (int iteration=1; iteration < 18; iteration++){
   // while (check_tutz > 0.0001){
-  double epsilon = control["epsilon"] ;
-  int iterations_us = control["maxit"];
+
   double qp , s0 = 1;
 
   while ((Stop_criteria>(epsilon / N)) & (iteration < (iterations_us ))){
@@ -684,14 +694,14 @@ RCPP_MODULE(GLMcatmodule){
                  List::create(_["formula"],
                               _["data"],
                                _["ratio"] = "reference",
-                               // _["cdf"] = R_NaN,
-                               _["cdf"] = List::create(Named("cdf")= "logistic", _["df"] = 7, _["mu"] = 0),
+                               _["cdf"] = R_NaN,
+                               // _["cdf"] = List::create(Named("cdf")= "logistic", _["df"] = 7, _["mu"] = 0),
                                _["parallel"] = CharacterVector::create(NA_STRING),
                                _["categories_order"] = CharacterVector::create(NA_STRING),
                                _["ref_category"] = CharacterVector::create(NA_STRING),
                                _["threshold"] = "standard",
-                               // _["control"] = R_NaN,
-                               _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
+                               _["control"] = R_NaN,
+                               // _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
                                _["normalization"] = 1.0
                  ),
                  "GLMcat models");

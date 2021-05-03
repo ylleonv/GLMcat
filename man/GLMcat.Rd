@@ -8,12 +8,12 @@ GLMcat(
   formula,
   data,
   ratio = "reference",
-  cdf = list(cdf = "logistic", df = 7L, mu = 0L),
+  cdf = NaN,
   parallel = NA_character_,
   categories_order = NA_character_,
   ref_category = NA_character_,
   threshold = "standard",
-  control = list(maxit = 25L, epsilon = 1e-07, beta_init = NA_real_),
+  control = NaN,
   normalization = 1
 )
 }
