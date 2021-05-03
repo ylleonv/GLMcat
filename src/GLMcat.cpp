@@ -441,14 +441,26 @@ List GLMcat(Formula formula,
   deviance = -2*deviance;
   // bool conv = true;
 
+  List cdf_list = List::create(
+    Named("cdf") = cdf_1,
+    Named("freedom_degrees") = freedom_degrees,
+    Named("mu") = mu
+
+  );
+
+
   List output_list = List::create(
     Named("coefficients") = coef,
     Named("stderr") = Std_Error,
     Named("iteration") = iteration,
     Named("ratio") = ratio,
-    // Named("AIC") = AIC,
+    Named("data") = data,
+    Named("ref_category") = ref_category,
+    Named("threshold") = threshold,
+    Named("control") = control,
+    Named("normalization") = normalization,
     // Named("pinv") = pinv,
-    Named("cov_beta") = cov_beta,
+    // Named("cov_beta") = cov_beta,
     Rcpp::Named("df of the model") = df,
     Rcpp::Named("fitted") = pi_ma,
     // Rcpp::Named("D_ma") = D_ma,
@@ -458,7 +470,7 @@ List GLMcat(Formula formula,
     Rcpp::Named("deviance") = deviance,
     // Rcpp::Named("residuals") = residuals,
     Named("LogLikelihood") = LogLik,
-    Named("mu_noncentralt") = mu,
+    // Named("mu_noncentralt") = mu,
     // Named("Y_init") = Y_init,
     // Named("LogLikIter") = LogLikIter,
     Named("formula") = formula,
@@ -466,9 +478,9 @@ List GLMcat(Formula formula,
     Named("parallel") = parallel,
     Named("N_cats") = N_cats,
     Named("nobs_glmcat") = N,
-    Named("cdf") = cdf_1,
+    Named("cdf") = cdf_list,
     // Named("coverged") = true,
-    Named("freedom_degrees") = freedom_degrees,
+    // Named("freedom_degrees") = freedom_degrees,
     Named("normalization_s0") =  s0
   );
 
@@ -506,7 +518,6 @@ NumericMatrix predict_glmcat(List model_object,
   Eigen::MatrixXd coef = model_object["coefficients"];
 
   // model_object["coefficients"]
-
   List newdataList = dist1.All_pre_data_NEWDATA(model_object["formula"],
                                                 data,
                                                 model_object["categories_order"],
@@ -516,10 +527,13 @@ NumericMatrix predict_glmcat(List model_object,
   Eigen::MatrixXd Design_Matrix = newdataList["Design_Matrix"];
   Eigen::MatrixXd predict_glmcated_eta;
 
+
   std::string ratio = model_object["ratio"];
-  String cdf = model_object["cdf"];
-  double freedom_degrees = model_object["freedom_degrees"];
-  double mu = model_object["mu_noncentralt"];
+  List cdf_list = model_object["cdf"];
+
+  String cdf = cdf_list[0];
+  double freedom_degrees = cdf_list[1];
+  double mu = cdf_list[2];
 
   Eigen::VectorXd pi;
   int N = data.rows();

@@ -109,8 +109,8 @@ We used the 223 observations of the *boy's disturbed dreams* benchmark dataset d
 For more information see the manual entry for the `DisturbedDreams` data: `help(DisturbedDreams)`.
 
 ```{r , include = FALSE}
-# devtools::load_all()
-library(GLMcat)
+devtools::load_all()
+# library(GLMcat)
 ```
 
 ```{r}
