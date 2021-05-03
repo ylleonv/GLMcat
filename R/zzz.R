@@ -18,7 +18,10 @@
 # #' @export ReferenceF
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
-#' @importFrom stats model.frame model.matrix as.formula pnorm printCoefmat
+#' @importFrom utils flush.console
+#' @import MASS add
+#' @import stringr str_trim
+#' @importFrom stats model.frame model.matrix as.formula pnorm printCoefmat add.scope deviance drop.scope AIC factor.scope formula terms update update.formula
 ## usethis namespace: end
 
 loadModule("GLMcatmodule", TRUE)

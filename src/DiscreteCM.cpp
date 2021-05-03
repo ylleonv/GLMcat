@@ -13,6 +13,7 @@ using namespace Eigen;
 //' We call the group of observations for an individual a “case”.
 //' Each case represents a single statistical observation although it comprises
 //' multiple observations.
+//' @title Discrete_CM
 //' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
 //' @param case_id a string with the name of the column that identifies each case.
 //' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
@@ -21,7 +22,7 @@ using namespace Eigen;
 //' @param data a dataframe object in R, with the dependent variable as factor.
 //' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
-//' @param normalization blabla
+//' @param normalization blabla sdfe
 //' @examples
 //' library(GLMcat)
 // ' data(TravelChoice)

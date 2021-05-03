@@ -4,7 +4,8 @@
 \name{TravelChoice}
 \alias{TravelChoice}
 \title{Travel Mode Choice}
-\format{{A dataframe containing :
+\format{
+{A dataframe containing :
 \describe{
 \item{indv}{Id of the individual}
 \item{mode}{available options: air, train, bus or car}
@@ -18,7 +19,8 @@ As case-specific variables:
 \item{hinc}{household income}
 \item{psize}{traveling group size in mode chosen}
 }
-}}
+}
+}
 \source{
 {
 Download from on-line (18/09/2020) complements to Greene, W.H. (2011) Econometric Analysis, Prentice Hall, 7th Edition \url{http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-2.csv}, Table F18-2.

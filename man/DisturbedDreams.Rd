@@ -4,11 +4,13 @@
 \name{DisturbedDreams}
 \alias{DisturbedDreams}
 \title{Severity of disturbed dreams}
-\format{A dataframe containing :
+\format{
+A dataframe containing :
 \describe{
 \item{Age}{Individuals age}
 \item{Level}{Severity level: Not.severe, Severe.1, Severe.2, Very.severe.}
-}}
+}
+}
 \usage{
 data(DisturbedDreams)
 }
