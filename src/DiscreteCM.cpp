@@ -1,6 +1,5 @@
 #include "cdf.h"
 #include "reference.h"
-// #include "adjacentR.h"
 
 using namespace std;
 using namespace Rcpp ;
