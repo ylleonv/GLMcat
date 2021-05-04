@@ -700,8 +700,8 @@ RCPP_MODULE(GLMcatmodule){
                                _["categories_order"] = CharacterVector::create(NA_STRING),
                                _["ref_category"] = CharacterVector::create(NA_STRING),
                                _["threshold"] = "standard",
-                               _["control"] = R_NaN,
-                               // _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
+                               // _["control"] = R_NaN,
+                               _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
                                _["normalization"] = 1.0
                  ),
                  "GLMcat models");
