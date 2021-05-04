@@ -26,7 +26,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // GLMcat
-List GLMcat(Formula formula, DataFrame data, std::string ratio, List cdf, CharacterVector parallel, CharacterVector categories_order, CharacterVector ref_category, std::string threshold, List control, double normalization);
+List GLMcat(Formula formula, DataFrame data, std::string ratio, Rcpp::List cdf, CharacterVector parallel, CharacterVector categories_order, CharacterVector ref_category, std::string threshold, Rcpp::List control, double normalization);
 RcppExport SEXP _GLMcat_GLMcat(SEXP formulaSEXP, SEXP dataSEXP, SEXP ratioSEXP, SEXP cdfSEXP, SEXP parallelSEXP, SEXP categories_orderSEXP, SEXP ref_categorySEXP, SEXP thresholdSEXP, SEXP controlSEXP, SEXP normalizationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -34,12 +34,12 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Formula >::type formula(formulaSEXP);
     Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
     Rcpp::traits::input_parameter< std::string >::type ratio(ratioSEXP);
-    Rcpp::traits::input_parameter< List >::type cdf(cdfSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type cdf(cdfSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type parallel(parallelSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type categories_order(categories_orderSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type ref_category(ref_categorySEXP);
     Rcpp::traits::input_parameter< std::string >::type threshold(thresholdSEXP);
-    Rcpp::traits::input_parameter< List >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type control(controlSEXP);
     Rcpp::traits::input_parameter< double >::type normalization(normalizationSEXP);
     rcpp_result_gen = Rcpp::wrap(GLMcat(formula, data, ratio, cdf, parallel, categories_order, ref_category, threshold, control, normalization));
     return rcpp_result_gen;

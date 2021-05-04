@@ -43,12 +43,12 @@ using namespace Eigen;
 List GLMcat(Formula formula,
             DataFrame data,
             std::string ratio,
-            List cdf,
+            Rcpp::List cdf,
             CharacterVector parallel,
             CharacterVector categories_order,
             CharacterVector ref_category,
             std::string threshold,
-            List control,
+            Rcpp::List control,
             double normalization){
 
   std::string cdf_1 = cdf[0];
@@ -694,13 +694,11 @@ RCPP_MODULE(GLMcatmodule){
                  List::create(_["formula"],
                               _["data"],
                                _["ratio"] = "reference",
-                               _["cdf"] = R_NaN,
-                               // _["cdf"] = List::create(Named("cdf")= "logistic", _["df"] = 7, _["mu"] = 0),
+                               _["cdf"] = List::create(Named("cdf")= "logistic", _["df"] = 7, _["mu"] = 0),
                                _["parallel"] = CharacterVector::create(NA_STRING),
                                _["categories_order"] = CharacterVector::create(NA_STRING),
                                _["ref_category"] = CharacterVector::create(NA_STRING),
                                _["threshold"] = "standard",
-                               // _["control"] = R_NaN,
                                _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
                                _["normalization"] = 1.0
                  ),
