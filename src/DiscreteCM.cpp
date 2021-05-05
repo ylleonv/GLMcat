@@ -193,8 +193,8 @@ List Discrete_CM(Formula formula,
     // BETA = BETA * s0;
 
     iteration = iteration + 1;
-    // Rcout << "BETA" << std::endl;
-    // Rcout << BETA << std::endl;
+    Rcout << "BETA" << std::endl;
+    Rcout << BETA << std::endl;
 
     // Rcout << "iteration" << std::endl;
     // Rcout << iteration << std::endl;
@@ -216,6 +216,7 @@ List Discrete_CM(Formula formula,
 
   NumericMatrix BETA_2 = wrap(BETA);
   rownames(BETA_2) = Names_design;
+
 
   List output_list_dis = List::create(
     Named("Nb. iterations") = iteration-1 ,

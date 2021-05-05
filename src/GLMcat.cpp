@@ -51,7 +51,16 @@ List GLMcat(Formula formula,
             Rcpp::List control,
             double normalization){
 
-  std::string cdf_1 = cdf[0];
+  // If not cdf given, assume logistic as default
+  LogicalVector cdf_given = is_na(cdf);
+  // Rcout << cdf_given << std::endl;
+  std::string cdf_1;
+  if(cdf_given){
+    cdf_1 = "logistic";
+  }else{
+    std::string cdf2 = cdf[0];
+    cdf_1 = cdf2;}
+
   double freedom_degrees = 1;
   double mu = 0;
   if(cdf.size() == 2){
@@ -116,7 +125,6 @@ List GLMcat(Formula formula,
     epsilon = control[1] ;
     beta_init = control[2];
   }
-
 
 
   if(beta_init.length() >= 2 ){
@@ -694,12 +702,12 @@ RCPP_MODULE(GLMcatmodule){
                  List::create(_["formula"],
                               _["data"],
                                _["ratio"] = "reference",
-                               _["cdf"] = List::create(Named("cdf")= "logistic", _["df"] = 7, _["mu"] = 0),
+                               _["cdf"] = R_NaN,
                                _["parallel"] = CharacterVector::create(NA_STRING),
                                _["categories_order"] = CharacterVector::create(NA_STRING),
                                _["ref_category"] = CharacterVector::create(NA_STRING),
                                _["threshold"] = "standard",
-                               _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
+                               _["control"] = R_NaN,
                                _["normalization"] = 1.0
                  ),
                  "GLMcat models");
@@ -711,3 +719,6 @@ RCPP_MODULE(GLMcatmodule){
                  ),
                  "GLMcat model predictions");
 }
+
+// _["cdf"] = List::create(Named("cdf")= "logistic", _["df"] = 7, _["mu"] = 0),
+// _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),
