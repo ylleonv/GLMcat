@@ -1,5 +1,7 @@
 #include "cdf.h"
 #include "reference.h"
+#include "adjacentR.h"
+
 
 using namespace std;
 using namespace Rcpp ;
@@ -21,7 +23,12 @@ using namespace Eigen;
 //' @param reference a string indicating the reference category
 //' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 //' @param data a dataframe object in R, with the dependent variable as factor.
-//' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.
+//' @param cdf
+//' \describe{
+//' \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
+//' \item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
+//' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
+//' }
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 //' @param normalization blabla sdfe
 //' @examples
@@ -44,17 +51,19 @@ List Discrete_CM(Formula formula,
                  String intercept,
                  double normalization
 ){
+  // std::string cdf2 = cdf[0];
+  //
+  // Rcout << cdf2 << std::endl;
 
+  CharacterVector cdf_given = cdf[0];
 
-  // If not cdf given, assume logistic as default
-  LogicalVector cdf_given = is_na(cdf);
-  // Rcout << cdf_given << std::endl;
   std::string cdf_1;
-  if(cdf_given){
+  if(cdf_given[0] == "NaN"){
     cdf_1 = "logistic";
-  }else{
+  }else if(cdf_given[0] != "NaN"){
     std::string cdf2 = cdf[0];
-    cdf_1 = cdf2;}
+    cdf_1 = cdf2;
+  }
 
   double freedom_degrees = 1;
   double mu = 0;
@@ -89,50 +98,70 @@ List Discrete_CM(Formula formula,
   int K = Q + 1;
   int N = K * Y_init.rows();
 
-  Eigen::MatrixXd BETA;
-  BETA = Eigen::MatrixXd::Zero(X_EXT.cols(),1); // Beta initialization with zeros
+  // Eigen::MatrixXd BETA;
+  // BETA = Eigen::MatrixXd::Zero(X_EXT.cols(),1); // Beta initialization with zeros
+
+  Eigen::MatrixXd BETA2;
+  BETA2 = Eigen::MatrixXd::Zero(X_EXT.cols(),1);
+  Eigen::VectorXd BETA3 = BETA2;
+
+  Eigen::MatrixXd BETA = BETA2;
+
   int iteration = 0;
   double Stop_criteria = 1.0;
-  Eigen::MatrixXd X_M_i ;
-  Eigen::VectorXd Y_M_i ;
-  Eigen::VectorXd eta ;
-  Eigen::VectorXd pi ;
-  Eigen::MatrixXd D ;
-  Eigen::MatrixXd Cov_i ;
-  Eigen::MatrixXd W_in ;
-  Eigen::MatrixXd Score_i_2 ;
-  Eigen::MatrixXd F_i_2 ;
-  Eigen::VectorXd LogLikIter;
-  LogLikIter = Eigen::MatrixXd::Zero(1,1) ;
+  MatrixXd X_M_i ;
+  VectorXd Y_M_i ;
+  VectorXd eta ;
+  VectorXd pi ;
+  MatrixXd D ;
+  MatrixXd Cov_i ;
+  MatrixXd W_in ;
+  MatrixXd Score_i_2 ;
+  MatrixXd F_i_2 ;
+  VectorXd LogLikIter;
+  LogLikIter = MatrixXd::Zero(1,1) ;
+  MatrixXd cov_beta;
+  VectorXd Std_Error;
   double LogLik;
-
-  Eigen::MatrixXd F_i_final = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
-  Eigen::MatrixXd cov_beta;
-  Eigen::VectorXd Std_Error;
+  MatrixXd pi_ma(N, Q);
+  MatrixXd D_ma(N, Q);
+  MatrixXd F_i_final = MatrixXd::Zero(BETA.rows(), BETA.rows());
 
   double epsilon = 0.0001 ;
   double qp , s0 = 1;
 
-  // for (int iteration=1; iteration < 18; iteration++){
-  // while ( (iteration < (9 )) ){
   while ((Stop_criteria >( epsilon / N) ) & (iteration < ( 25 )) ){
     Eigen::MatrixXd Score_i = Eigen::MatrixXd::Zero(BETA.rows(),1);
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
+
+    Rcout << cdf_1 << std::endl;
 
     for (int i=0; i < N/K; i++){
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
       Y_M_i = Y_init.row(i);
       eta = X_M_i * BETA;
 
-      // if(ratio == "reference"){
       ReferenceF ref;
       if(cdf_1 == "logistic"){
+
+        // Rcout << eta << std::endl;
+        // print("as");
         pi = ref.inverse_logistic(eta);
         D = ref.inverse_derivative_logistic(eta);
+
+        // Rcout << pi << std::endl;
+
+
       }else if(cdf_1 == "normal"){
+
+        Rcout << eta << std::endl;
+
         pi = ref.inverse_normal(eta);
         D = ref.inverse_derivative_normal(eta);
+
+        Rcout << pi << std::endl;
+
       }else if(cdf_1 == "cauchy"){
         pi = ref.inverse_cauchy(eta);
         D = ref.inverse_derivative_cauchy(eta);
@@ -173,14 +202,12 @@ List Discrete_CM(Formula formula,
 
       Cov_i = Eigen::MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
       W_in = D * Cov_i.inverse();
-      // Rcout << (W_in) << std::endl;
-      Score_i_2 = X_M_i.transpose() * W_in  * (Y_M_i - pi);
-      // Score_i_2 = X_M_i.transpose() * D * (Y_M_i - pi);
+      Score_i_2 = X_M_i.transpose() * W_in * (Y_M_i - pi);
       Score_i = Score_i + Score_i_2;
       F_i_2 = X_M_i.transpose() * (W_in) * (D.transpose() * X_M_i);
-      // F_i_2 = X_M_i.transpose() * (D * Cov_i) * (D.transpose() * X_M_i);
       F_i = F_i + F_i_2;
       LogLik = LogLik + (Y_M_i.transpose().eval()*Eigen::VectorXd(pi.array().log())) + ( (1 - Y_M_i.sum()) * std::log(1 - pi.sum()) );
+
     }
     // To stop when LogLik is smaller than the previous
     if(iteration>1){
@@ -191,24 +218,36 @@ List Discrete_CM(Formula formula,
     LogLikIter.conservativeResize( LogLikIter.rows() +1 , 1);
     LogLikIter(LogLikIter.rows() - 1) = LogLik;
     Stop_criteria = (abs(LogLikIter(iteration+1) - LogLikIter(iteration))) / (epsilon + (abs(LogLikIter(iteration+1)))) ;
-    Eigen::VectorXd beta_old = BETA;
-    BETA = BETA + (F_i.inverse() * Score_i);
+    VectorXd beta_old = BETA;
 
-    // BETA = (BETA * s0) + (F_i.inverse() * Score_i);
-    // BETA = BETA * s0;
+    // MatrixXd inverse;
+    FullPivLU<MatrixXd> lu(F_i);
+    bool invertible = lu.isInvertible();
 
-    iteration = iteration + 1;
+    if(!invertible) {
+      Rcpp::stop("Fisher matrix is not invertible");
+    }
+
     Rcout << "BETA" << std::endl;
     Rcout << BETA << std::endl;
+
+    BETA = BETA + (F_i.inverse() * Score_i);
+
+    iteration = iteration + 1;
+    // Rcout << "BETA" << std::endl;
+    // Rcout << BETA << std::endl;
 
     // Rcout << "iteration" << std::endl;
     // Rcout << iteration << std::endl;
     // Rcout << "LogLik" << std::endl;
     // Rcout << LogLik << std::endl;
-    F_i_final = F_i;
 
-    // Rcout << "LogLikIter" << std::endl;
-    // Rcout << LogLikIter << std::endl;
+
+    F_i_final = F_i;
+    Rcout << "BETA" << std::endl;
+    Rcout << BETA << std::endl;
+    Rcout << "LogLik" << std::endl;
+    Rcout << LogLik << std::endl;
 
   }
 
@@ -273,7 +312,7 @@ List Discrete_CM(Formula formula,
   return output_list_dis;
 }
 
-RCPP_MODULE(discretemodule){
+RCPP_MODULE(discretecmmodule){
   Rcpp::function("Discrete_CM", &Discrete_CM,
                  List::create(_["formula"] = R_NaN,
                               _["case_id"] = "a",

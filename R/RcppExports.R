@@ -17,7 +17,12 @@
 #' @param reference a string indicating the reference category
 #' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
 #' @param data a dataframe object in R, with the dependent variable as factor.
-#' @param cdf a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.
+#' @param cdf
+#' \describe{
+#' \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
+#' \item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
+#' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
+#' }
 #' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 #' @param normalization blabla sdfe
 #' @examples

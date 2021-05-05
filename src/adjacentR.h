@@ -31,7 +31,7 @@ public:
   virtual Eigen::VectorXd inverse_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const;
   virtual Eigen::MatrixXd inverse_derivative_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const ;
 
-    // List GLMadj(std::string response,
+  // List GLMadj(std::string response,
   //             StringVector explanatory_complete,
   //             StringVector explanatory_parallel,
   //             std::string cdf,

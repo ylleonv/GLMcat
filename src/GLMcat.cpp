@@ -52,14 +52,14 @@ List GLMcat(Formula formula,
             double normalization){
 
   // If not cdf given, assume logistic as default
-  LogicalVector cdf_given = is_na(cdf);
-  // Rcout << cdf_given << std::endl;
+  CharacterVector cdf_given = cdf[0];
   std::string cdf_1;
-  if(cdf_given){
+  if(cdf_given[0] == "NaN"){
     cdf_1 = "logistic";
-  }else{
+  }else if(cdf_given[0] != "NaN"){
     std::string cdf2 = cdf[0];
-    cdf_1 = cdf2;}
+    cdf_1 = cdf2;
+  }
 
   double freedom_degrees = 1;
   double mu = 0;
@@ -170,12 +170,12 @@ List GLMcat(Formula formula,
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
       Y_M_i = Y_init.row(i);
       eta = X_M_i * BETA;
-      VectorXd eta1 = eta;
+      // VectorXd eta1 = eta;
       if(ratio == "reference"){
         ReferenceF ref;
         if(cdf_1 == "logistic"){
-          pi = ref.inverse_logistic(eta1);
-          D = ref.inverse_derivative_logistic(eta1);
+          pi = ref.inverse_logistic(eta);
+          D = ref.inverse_derivative_logistic(eta);
         }else if(cdf_1 == "normal"){
           pi = ref.inverse_normal(eta);
           D = ref.inverse_derivative_normal(eta);

@@ -16,7 +16,11 @@
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{cdf}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), gompertz, gumbel and laplace.}
+\item{cdf}{\describe{
+\item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
+\item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
+\item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
+}}
 
 \item{intercept}{if "conditional" then the design will be equivalent to the conditional logit model}
 
