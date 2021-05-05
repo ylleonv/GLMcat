@@ -46,9 +46,16 @@ List Discrete_CM(Formula formula,
 ){
 
 
+  // If not cdf given, assume logistic as default
+  LogicalVector cdf_given = is_na(cdf);
+  // Rcout << cdf_given << std::endl;
+  std::string cdf_1;
+  if(cdf_given){
+    cdf_1 = "logistic";
+  }else{
+    std::string cdf2 = cdf[0];
+    cdf_1 = cdf2;}
 
-
-  std::string cdf_1 = cdf[0];
   double freedom_degrees = 1;
   double mu = 0;
   if(cdf.size() == 2){
@@ -58,6 +65,7 @@ List Discrete_CM(Formula formula,
     freedom_degrees = cdf[1];
     mu = cdf[2];
   }
+
 
   class cdf dist1;
 
@@ -115,10 +123,7 @@ List Discrete_CM(Formula formula,
     for (int i=0; i < N/K; i++){
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
       Y_M_i = Y_init.row(i);
-      // BETA = BETA / s0;
       eta = X_M_i * BETA;
-
-      // eta = eta/s0;
 
       // if(ratio == "reference"){
       ReferenceF ref;
@@ -260,12 +265,8 @@ List Discrete_CM(Formula formula,
       s0 = qp / (noncentralt.qdf_non_central_t(normalization, freedom_degrees, mu)- noncentralt.qdf_non_central_t(0.5, freedom_degrees, mu));
     }
 
-    // s0 = qp / (stu.qdf_student(normalization, freedom_degrees)-
-    // stu.qdf_student(0.5, freedom_degrees));
     NumericMatrix BETA_3 = BETA_2 * (s0);
-    // Rcout << BETA_3 ;
     output_list_dis["normalized_coefficients"] = BETA_3;
-    // output_list_dis.push_back(BETA_3);
   }
 
   output_list_dis.attr("class") = "glmcat";
@@ -281,7 +282,6 @@ RCPP_MODULE(discretemodule){
                               _["alternative_specific"] = CharacterVector::create( NA_STRING),
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
                               _["cdf"] = R_NaN,
-                              // _["cdf"] = List::create(_["cdf"] = "logistic", _["df"] = 0, _["mu"] = 0),
                               _["intercept"] = "standard",
                               _["normalization"] = 1.0
                  ),
