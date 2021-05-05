@@ -33,11 +33,11 @@ using namespace Eigen;
 //' @param normalization blabla sdfe
 //' @examples
 //' library(GLMcat)
-// ' data(TravelChoice)
-// ' Discrete_CM(formula = choice ~ hinc + gc + invt,
-// ' case_id = "indv",alternatives = "mode", reference = "air",
-// ' data = TravelChoice,  alternative_specific = c("gc", "invt"),
-// ' cdf = "logistic")
+//' data(TravelChoice)
+//' Discrete_CM(formula = choice ~ hinc + gc + invt,
+//' case_id = "indv",alternatives = "mode", reference = "air",
+//' data = TravelChoice,  alternative_specific = c("gc", "invt"),
+//' cdf = "logistic")
 //' @note For these models it is not allowed to exclude the intercept.
 //' @export
 // [[Rcpp::export("Discrete_CM")]]
@@ -89,7 +89,15 @@ List Discrete_CM(Formula formula,
                                            // ratio
   );
 
-  Eigen::MatrixXd Y_init = Full_M["Response_M"];
+  Eigen::MatrixXd Y_init = Full_M["Response_M"] ;
+
+  Y_init = Y_init + MatrixXd::Ones(Y_init.rows(), Y_init.cols());
+
+  Rcout << "Y_init" << std::endl;
+  Rcout << Y_init << std::endl;
+
+  Rcout << "Y_init" << std::endl;
+
   Eigen::MatrixXd X_EXT = Full_M["Design_Matrix"];
 
   CharacterVector Names_design = Full_M["Names_design"];
@@ -130,16 +138,32 @@ List Discrete_CM(Formula formula,
   double epsilon = 0.0001 ;
   double qp , s0 = 1;
 
+
+  Rcout << N/K << std::endl;
+
   while ((Stop_criteria >( epsilon / N) ) & (iteration < ( 25 )) ){
+
     Eigen::MatrixXd Score_i = Eigen::MatrixXd::Zero(BETA.rows(),1);
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
 
     Rcout << cdf_1 << std::endl;
+    Rcout << Score_i << std::endl;
+    Rcout << F_i << std::endl;
+
 
     for (int i=0; i < N/K; i++){
+
+
+
       X_M_i = X_EXT.block(i*Q , 0 , Q , X_EXT.cols());
+      // Rcout << "X_M_i" << std::endl;
+      // Rcout << X_M_i << std::endl;
       Y_M_i = Y_init.row(i);
+
+      // Rcout << "Y_M_i" << std::endl;
+      // Rcout << Y_M_i << std::endl;
+
       eta = X_M_i * BETA;
 
       ReferenceF ref;
@@ -231,7 +255,11 @@ List Discrete_CM(Formula formula,
     Rcout << "BETA" << std::endl;
     Rcout << BETA << std::endl;
 
-    BETA = BETA + (F_i.inverse() * Score_i);
+    MatrixXd F_inv = F_i.inverse();
+    F_inv = F_inv * Score_i;
+    Rcout << F_inv << std::endl;
+
+    BETA = BETA + F_inv;
 
     iteration = iteration + 1;
     // Rcout << "BETA" << std::endl;

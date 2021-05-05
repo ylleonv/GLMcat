@@ -1169,7 +1169,7 @@ List cdf::select_data_nested(Formula formula,
   String ref_cat1 = ref_cat[ref_cat.length()-1];
   List Response_L = Extend_Response(Final_mat1);
   Eigen::MatrixXd Response_M = Response_L["Y_Ext"];
-  //
+
   //   print(Var_spe_alt); // All variables including the intercept
   //   print(var_alt_specific); // JUst the specific for alternatives
 

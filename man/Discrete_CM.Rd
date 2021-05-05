@@ -3,6 +3,19 @@
 \name{Discrete_CM}
 \alias{Discrete_CM}
 \title{Discrete_CM}
+\usage{
+Discrete_CM(
+  formula = NaN,
+  case_id = "a",
+  alternatives = "a",
+  reference = NaN,
+  alternative_specific = NA_character_,
+  data = c(1, NA, NaN, Inf, -Inf),
+  cdf = NaN,
+  intercept = "standard",
+  normalization = 1
+)
+}
 \arguments{
 \item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.}
 
@@ -37,6 +50,14 @@ multiple observations.
 \details{
 Family of models for Discrete Choice
 }
+\note{
+For these models it is not allowed to exclude the intercept.
+}
 \examples{
 library(GLMcat)
+data(TravelChoice)
+Discrete_CM(formula = choice ~ hinc + gc + invt,
+case_id = "indv",alternatives = "mode", reference = "air",
+data = TravelChoice,  alternative_specific = c("gc", "invt"),
+cdf = "logistic")
 }
