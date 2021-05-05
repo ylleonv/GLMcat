@@ -202,7 +202,7 @@ List Discrete_CM(Formula formula,
 
       Cov_i = Eigen::MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
       W_in = D * Cov_i.inverse();
-      Score_i_2 = X_M_i.transpose() * W_in * (Y_M_i - pi);
+      Score_i_2 = (X_M_i.transpose() * W_in) * (Y_M_i - pi);
       Score_i = Score_i + Score_i_2;
       F_i_2 = X_M_i.transpose() * (W_in) * (D.transpose() * X_M_i);
       F_i = F_i + F_i_2;
@@ -312,7 +312,7 @@ List Discrete_CM(Formula formula,
   return output_list_dis;
 }
 
-RCPP_MODULE(discretecmmodule){
+RCPP_MODULE(Discrete_CMmodule){
   Rcpp::function("Discrete_CM", &Discrete_CM,
                  List::create(_["formula"] = R_NaN,
                               _["case_id"] = "a",

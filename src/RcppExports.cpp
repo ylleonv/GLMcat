@@ -59,14 +59,14 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _rcpp_module_boot_discretecmmodule();
+RcppExport SEXP _rcpp_module_boot_Discrete_CMmodule();
 RcppExport SEXP _rcpp_module_boot_GLMcatmodule();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_GLMcat_Discrete_CM", (DL_FUNC) &_GLMcat_Discrete_CM, 9},
     {"_GLMcat_GLMcat", (DL_FUNC) &_GLMcat_GLMcat, 10},
     {"_GLMcat_predict_glmcat", (DL_FUNC) &_GLMcat_predict_glmcat, 3},
-    {"_rcpp_module_boot_discretecmmodule", (DL_FUNC) &_rcpp_module_boot_discretecmmodule, 0},
+    {"_rcpp_module_boot_Discrete_CMmodule", (DL_FUNC) &_rcpp_module_boot_Discrete_CMmodule, 0},
     {"_rcpp_module_boot_GLMcatmodule", (DL_FUNC) &_rcpp_module_boot_GLMcatmodule, 0},
     {NULL, NULL, 0}
 };

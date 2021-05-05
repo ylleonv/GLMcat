@@ -23,4 +23,4 @@
 ## usethis namespace: end
 
 loadModule("GLMcatmodule", TRUE)
-loadModule("discretecmmodule", TRUE)
+loadModule("Discrete_CMmodule", TRUE)
