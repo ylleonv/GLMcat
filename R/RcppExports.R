@@ -24,7 +24,13 @@
 #' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
 #' }
 #' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
-#' @param normalization blabla sdfe
+#' @param normalization the quantile to use for the normalization of the estimated coefficients.
+#' @param control
+#' \describe{
+#' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
+#' \item{\code{epsilon}:}{a double with to fix the epsilon value}
+#' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}
+#' }
 #' @examples
 #' library(GLMcat)
 #' data(TravelChoice)
