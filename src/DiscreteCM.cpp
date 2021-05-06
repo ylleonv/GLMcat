@@ -93,10 +93,10 @@ List Discrete_CM(Formula formula,
 
   Y_init = Y_init + MatrixXd::Ones(Y_init.rows(), Y_init.cols());
 
-  Rcout << "Y_init" << std::endl;
-  Rcout << Y_init << std::endl;
-
-  Rcout << "Y_init" << std::endl;
+  // Rcout << "Y_init" << std::endl;
+  // Rcout << Y_init << std::endl;
+  //
+  // Rcout << "Y_init" << std::endl;
 
   Eigen::MatrixXd X_EXT = Full_M["Design_Matrix"];
 
@@ -139,7 +139,7 @@ List Discrete_CM(Formula formula,
   double qp , s0 = 1;
 
 
-  Rcout << N/K << std::endl;
+  // Rcout << N/K << std::endl;
 
   while ((Stop_criteria >( epsilon / N) ) & (iteration < ( 25 )) ){
 
@@ -147,9 +147,9 @@ List Discrete_CM(Formula formula,
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
 
-    Rcout << cdf_1 << std::endl;
-    Rcout << Score_i << std::endl;
-    Rcout << F_i << std::endl;
+    // Rcout << cdf_1 << std::endl;
+    // Rcout << Score_i << std::endl;
+    // Rcout << F_i << std::endl;
 
 
     for (int i=0; i < N/K; i++){
@@ -179,12 +179,12 @@ List Discrete_CM(Formula formula,
 
       }else if(cdf_1 == "normal"){
 
-        Rcout << eta << std::endl;
+        // Rcout << eta << std::endl;
 
         pi = ref.inverse_normal(eta);
         D = ref.inverse_derivative_normal(eta);
 
-        Rcout << pi << std::endl;
+        // Rcout << pi << std::endl;
 
       }else if(cdf_1 == "cauchy"){
         pi = ref.inverse_cauchy(eta);
@@ -252,12 +252,12 @@ List Discrete_CM(Formula formula,
       Rcpp::stop("Fisher matrix is not invertible");
     }
 
-    Rcout << "BETA" << std::endl;
-    Rcout << BETA << std::endl;
+    // Rcout << "BETA" << std::endl;
+    // Rcout << BETA << std::endl;
 
     MatrixXd F_inv = F_i.inverse();
     F_inv = F_inv * Score_i;
-    Rcout << F_inv << std::endl;
+    // Rcout << F_inv << std::endl;
 
     BETA = BETA + F_inv;
 
@@ -272,10 +272,10 @@ List Discrete_CM(Formula formula,
 
 
     F_i_final = F_i;
-    Rcout << "BETA" << std::endl;
-    Rcout << BETA << std::endl;
-    Rcout << "LogLik" << std::endl;
-    Rcout << LogLik << std::endl;
+    // Rcout << "BETA" << std::endl;
+    // Rcout << BETA << std::endl;
+    // Rcout << "LogLik" << std::endl;
+    // Rcout << LogLik << std::endl;
 
   }
 
@@ -290,19 +290,14 @@ List Discrete_CM(Formula formula,
   rownames(BETA_2) = Names_design;
 
 
-  List output_list_dis = List::create(
-    Named("Nb. iterations") = iteration-1 ,
-    Named("coefficients") = BETA_2,
-    Named("LogLikelihood") = LogLikIter(LogLikIter.rows() - 1),
-    Named("LogLikIter") =  LogLikIter,
-    Named("X_M_i") =  X_M_i,
-    Named("stderr") =  Std_Error,
-    Named("normalization_s0") =  s0
-  );
 
+  // Rcout << normalization << std::endl;
+  // Rcout << cdf_1 << std::endl;
+
+  // double qp , s0;
 
   if((normalization != 1) & (cdf_1 != "logistic")){
-    double qp , s0;
+
     // BETA_3 = BETA_2;
     class Logistic logistic;
     // class Student stu;
@@ -333,8 +328,19 @@ List Discrete_CM(Formula formula,
     }
 
     NumericMatrix BETA_3 = BETA_2 * (s0);
-    output_list_dis["normalized_coefficients"] = BETA_3;
+    // output_list_dis["normalized_coefficients"] = BETA_3;
   }
+
+  List output_list_dis = List::create(
+    Named("Nb. iterations") = iteration-1 ,
+    Named("coefficients") = BETA_2,
+    Named("LogLikelihood") = LogLikIter(LogLikIter.rows() - 1),
+    Named("LogLikIter") =  LogLikIter,
+    Named("X_M_i") =  X_M_i,
+    Named("stderr") =  Std_Error,
+    Named("normalization_s0") =  s0
+  );
+
 
   output_list_dis.attr("class") = "glmcat";
   return output_list_dis;
