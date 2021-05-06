@@ -121,11 +121,22 @@ List GLMcat(Formula formula,
   int iterations_us;
 
   if(control.size() > 1){
+
     iterations_us = control[0];
     epsilon = control[1] ;
     beta_init = control[2];
+
+  }else{
+    iterations_us = 25;
+    epsilon = 1e-06;
+    List control1 = List::create(Named("iteration_us") = 25 , Named("elpsilon") = 1e-06);
+    control= control1;
+    // beta_init = control[2];
   }
 
+
+  // Rcout << iterations_us << std::endl;
+  // cout << epsilon << std::endl;
 
   if(beta_init.length() >= 2 ){
     // BETA = beta_init;

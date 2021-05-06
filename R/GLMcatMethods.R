@@ -198,7 +198,8 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 
     nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
                    object$categories_order, object$ref_category,
-                   object$threshold, object$control, object$normalization)
+                   object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                   object$normalization_s0)
     ans[i+1, ] <- AIC(nfit)
     nnew <- nobs_glmcat(nfit, use.fallback = TRUE)
     if(all(is.finite(c(n0, nnew))) && nnew != n0)
@@ -257,7 +258,8 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
     # object$parallel <- object$parallel[object$parallel != tt]
     nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
                    object$categories_order, object$ref_category,
-                   object$threshold, object$control, object$normalization)
+                   object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                   object$normalization_s0)
 
     ans[i+1L, ] <- AIC(nfit)
     nnew <- nobs_glmcat(nfit, use.fallback = TRUE)
@@ -443,7 +445,8 @@ step_glmcat <- function (object, scope,
 
     fit <- GLMcat(form1, object$data, object$ratio, object$cdf, object$parallel,
                   object$categories_order, object$ref_category,
-                  object$threshold, object$control, object$normalization)
+                  object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                  object$normalization_s0)
 
     fit$terms <-   terms(formula(fit$formula), data = fit$data)
 
