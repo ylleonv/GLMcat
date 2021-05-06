@@ -111,8 +111,8 @@ nobs_glmcat <- function(object, ...) {
 #' logLik(mod1)
 logLik.glmcat <- function(object, ...) {
   structure(object$LogLikelihood,
-    df = object$df, nobs_glmcat = object$nobs_glmcat,
-    class = "logLik"
+            df = object$df, nobs_glmcat = object$nobs_glmcat,
+            class = "logLik"
   )
 }
 
@@ -167,8 +167,9 @@ safe_pchisq <- function(q, df, ...) {
 }
 
 drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
-                  trace = FALSE, ...)
+                  trace = FALSE,  ...)
 {
+
   tl <- attr(terms(object), "term.labels")
   if(missing(scope)) scope <- drop.scope(object)
   else {
@@ -193,13 +194,31 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
     nfit <- update(object$formula, as.formula(paste("~ . -", tt)),
                    evaluate = FALSE)
 
-    object$parallel <- object$parallel[object$parallel != tt]
-    if(length(object$parallel) == 0) {object$parallel <- NA}
+    fun_in = object$Function
+    if(fun_in == "GLMcat"){
+      object$parallel <- object$parallel[object$parallel != tt]
+      if(length(object$parallel) == 0) {object$parallel <- NA}
+      nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
+                     object$categories_order, object$ref_category,
+                     object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                     object$normalization_s0)
+    }else{
+      object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
+      if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
+      nfit <- Discrete_CM(formula = nfit,
+                          data = object$data,
+                          cdf = object$cdf,
+                          case_id = object$arguments$case_id,
+                          alternatives = object$arguments$alternatives,
+                          alternative_specific = object$arguments$alternative_specific,
+                          # object$categories_order,
+                          intercept = object$arguments$intercept,
+                          reference = object$arguments$reference,
+                          control.glmcat(object$control$maxit,
+                                         object$control$epsilon, object$control$beta_init),
+                          normalization = object$normalization_s0)
 
-    nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
-                   object$categories_order, object$ref_category,
-                   object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
-                   object$normalization_s0)
+    }
     ans[i+1, ] <- AIC(nfit)
     nnew <- nobs_glmcat(nfit, use.fallback = TRUE)
     if(all(is.finite(c(n0, nnew))) && nnew != n0)
@@ -256,10 +275,30 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
                    evaluate = FALSE)
 
     # object$parallel <- object$parallel[object$parallel != tt]
-    nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
-                   object$categories_order, object$ref_category,
-                   object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
-                   object$normalization_s0)
+    fun_in = object$Function
+    if(fun_in == "GLMcat"){
+      # object$parallel <- object$parallel[object$parallel != tt]
+      # if(length(object$parallel) == 0) {object$parallel <- NA}
+      nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
+                     object$categories_order, object$ref_category,
+                     object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                     object$normalization_s0)
+    }else{
+      # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
+      # if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
+      nfit <- Discrete_CM(formula = nfit,
+                          data = object$data,
+                          cdf = object$cdf,
+                          alternative_specific = object$arguments$alternative_specific,
+                          # object$categories_order,
+                          case_id = object$arguments$case_id,
+                          alternatives = object$arguments$alternatives,
+                          reference = object$arguments$reference,
+                          intercept = object$arguments$intercept,
+                          control.glmcat(object$control$maxit,
+                                         object$control$epsilon, object$control$beta_init),
+                          normalization = object$normalization_s0)
+    }
 
     ans[i+1L, ] <- AIC(nfit)
     nnew <- nobs_glmcat(nfit, use.fallback = TRUE)
@@ -443,10 +482,33 @@ step_glmcat <- function (object, scope,
     object$parallel <- object$parallel[object$parallel != str_trim(sub("-","", change))]
     if(length(object$parallel) == 0) {object$parallel <- NA}
 
-    fit <- GLMcat(form1, object$data, object$ratio, object$cdf, object$parallel,
-                  object$categories_order, object$ref_category,
-                  object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
-                  object$normalization_s0)
+    # fit <- GLMcat(form1, object$data, object$ratio, object$cdf, object$parallel,
+    #               object$categories_order, object$ref_category,
+    #               object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+    #               object$normalization_s0)
+
+    fun_in = object$Function
+    if(fun_in == "GLMcat"){
+      fit <- GLMcat(form1, object$data, object$ratio, object$cdf, object$parallel,
+                    object$categories_order, object$ref_category,
+                    object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                    object$normalization_s0)
+    }else{
+      # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
+      # if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
+      fit <- Discrete_CM(formula = form1,
+                         data = object$data,
+                         cdf = object$cdf,
+                         alternative_specific = object$arguments$alternative_specific,
+                         # object$categories_order,
+                         case_id = object$arguments$case_id,
+                         alternatives = object$arguments$alternatives,
+                         reference = object$arguments$reference,
+                         intercept = object$arguments$intercept,
+                         control.glmcat(object$control$maxit,
+                                        object$control$epsilon, object$control$beta_init),
+                         normalization = object$normalization_s0)
+    }
 
     fit$terms <-   terms(formula(fit$formula), data = fit$data)
 

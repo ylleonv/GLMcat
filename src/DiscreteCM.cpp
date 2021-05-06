@@ -49,7 +49,8 @@ List Discrete_CM(Formula formula,
                  DataFrame data,
                  List cdf,
                  String intercept,
-                 double normalization
+                 double normalization,
+                 List control
 ){
   // std::string cdf2 = cdf[0];
   //
@@ -141,9 +142,25 @@ List Discrete_CM(Formula formula,
   double qp , s0 = 1;
 
 
+  int iterations_us = 25;
+
+  if(control.size() > 1){
+
+    iterations_us = control[0];
+    epsilon = control[1] ;
+
+  }else{
+    iterations_us = 25;
+    epsilon = 1e-06;
+    List control1 = List::create(Named("iteration_us") = 25 , Named("elpsilon") = 1e-06);
+    control= control1;
+    // beta_init = control[2];
+  }
+
+
   // Rcout << N/K << std::endl;
 
-  while ((Stop_criteria >( epsilon / N) ) & (iteration < ( 25 )) ){
+  while ((Stop_criteria >( epsilon / N) ) & (iteration < ( iterations_us )) ){
 
     Eigen::MatrixXd Score_i = Eigen::MatrixXd::Zero(BETA.rows(),1);
     Eigen::MatrixXd F_i = Eigen::MatrixXd::Zero(BETA.rows(), BETA.rows());
@@ -332,19 +349,26 @@ List Discrete_CM(Formula formula,
     NumericMatrix BETA_3 = BETA_2 * (s0);
     // output_list_dis["normalized_coefficients"] = BETA_3;
   }
+  int df = BETA_2.length();
 
 
   List output_list_dis = List::create(
     Named("Function") = "DiscreteCM",
+    Named("formula") = formula,
+    Named("data") = data,
+    Named("ratio") = "reference",
     Named("Nb. iterations") = iteration-1 ,
     Named("coefficients") = BETA_2,
     Named("LogLikelihood") = LogLikIter(LogLikIter.rows() - 1),
     Named("LogLikIter") =  LogLikIter,
+    Rcpp::Named("df of the model") = df,
     Named("X_M_i") =  X_M_i,
     Named("stderr") =  Std_Error,
     Named("N_cats") = K,
     Named("normalization_s0") =  s0,
     Named("cdf") = cdf,
+    Named("nobs_glmcat") = N/K,
+    Named("control") = control,
     Named("arguments") = List::create(Named("formula")= formula,Named("case_id")= case_id, Named("alternatives") = alternatives,
           Named("reference") = reference, Named("alternative_specific") = alternative_specific, Named("intercept") = intercept,
                  Named("categories_order") = categories_order)
@@ -365,7 +389,8 @@ RCPP_MODULE(Discrete_CMmodule){
                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
                               _["cdf"] = R_NaN,
                               _["intercept"] = "standard",
-                              _["normalization"] = 1.0
+                              _["normalization"] = 1.0,
+                              _["control"] = R_NaN
                  ),
                  "Discrete Choice Model");
 

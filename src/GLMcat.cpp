@@ -533,6 +533,7 @@ List GLMcat(Formula formula,
 
 
   List output_list = List::create(
+    Named("Function") = "GLMcat",
     Named("coefficients") = coef,
     Named("stderr") = Std_Error,
     Named("iteration") = iteration,
@@ -561,10 +562,10 @@ List GLMcat(Formula formula,
     Named("parallel") = parallel,
     Named("N_cats") = N_cats,
     Named("nobs_glmcat") = N,
-    Named("cdf") = cdf_list,
+    Named("cdf") = cdf_list
     // Named("coverged") = true,
     // Named("freedom_degrees") = freedom_degrees,
-    Named("normalization_s0") =  s0
+    // Named("normalization_s0") =  s0
   );
 
   output_list.attr("class") = "glmcat";

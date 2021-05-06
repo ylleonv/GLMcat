@@ -34,8 +34,8 @@
 #' cdf = "logistic")
 #' @note For these models it is not allowed to exclude the intercept.
 #' @export
-Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization) {
-    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization)
+Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization, control) {
+    .Call(`_GLMcat_Discrete_CM`, formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization, control)
 }
 
 #' Family of models for categorical responses
