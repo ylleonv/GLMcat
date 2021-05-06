@@ -1191,7 +1191,8 @@ List cdf::select_data_nested(Formula formula,
   return List::create(
     _["Design_Matrix"] = Design_Matrix,
     _["Response_M"] = Response_M,
-    _["Names_design"] = Names_design
+    _["Names_design"] = Names_design,
+    _["categories_order"] = Levels
   );
 }
 

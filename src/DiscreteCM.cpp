@@ -102,6 +102,8 @@ List Discrete_CM(Formula formula,
 
   CharacterVector Names_design = Full_M["Names_design"];
 
+  CharacterVector categories_order = Full_M["categories_order"];
+
   int Q = Y_init.cols();
   int K = Q + 1;
   int N = K * Y_init.rows();
@@ -331,14 +333,21 @@ List Discrete_CM(Formula formula,
     // output_list_dis["normalized_coefficients"] = BETA_3;
   }
 
+
   List output_list_dis = List::create(
+    Named("Function") = "DiscreteCM",
     Named("Nb. iterations") = iteration-1 ,
     Named("coefficients") = BETA_2,
     Named("LogLikelihood") = LogLikIter(LogLikIter.rows() - 1),
     Named("LogLikIter") =  LogLikIter,
     Named("X_M_i") =  X_M_i,
     Named("stderr") =  Std_Error,
-    Named("normalization_s0") =  s0
+    Named("N_cats") = K,
+    Named("normalization_s0") =  s0,
+    Named("cdf") = cdf,
+    Named("arguments") = List::create(Named("formula")= formula,Named("case_id")= case_id, Named("alternatives") = alternatives,
+          Named("reference") = reference, Named("alternative_specific") = alternative_specific, Named("intercept") = intercept,
+                 Named("categories_order") = categories_order)
   );
 
 

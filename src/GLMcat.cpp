@@ -471,6 +471,48 @@ List GLMcat(Formula formula,
   deviance = -2*deviance;
   // bool conv = true;
 
+
+  // Normalization of parameters
+
+  // double qp , s0;
+
+  if((normalization != 1) & (cdf_1 != "logistic")){
+
+    // BETA_3 = BETA_2;
+    class Logistic logistic;
+    // class Student stu;
+
+    qp = logistic.qdf_logit(normalization);
+
+    if(cdf_1 == "normal"){
+      class Normal norm;
+      s0 = qp / (norm.qdf_normal(normalization)-norm.qdf_normal(0.5));
+    }else if(cdf_1 == "cauchy"){
+      class Cauchy cauchy;
+      s0 = qp / (cauchy.qdf_cauchy(normalization)- cauchy.qdf_cauchy(0.5));
+    }else if(cdf_1 == "gompertz"){
+      class Gompertz gompertz;
+      s0 = qp / (gompertz.qdf_gompertz(normalization)-gompertz.qdf_gompertz(0.5));
+    }else if(cdf_1 == "gumbel"){
+      class Gumbel gumbel;
+      s0 = qp / (gumbel.qdf_gumbel(normalization)-gumbel.qdf_gumbel(0.5));
+    }else if(cdf_1 == "laplace"){
+      class Laplace laplace;
+      s0 = qp / (laplace.qdf_laplace(normalization)-laplace.qdf_laplace(0.5));
+    }else if(cdf_1 == "student"){
+      class Student stu;
+      s0 = qp / (stu.qdf_student(normalization, freedom_degrees)- stu.qdf_student(0.5, freedom_degrees));
+    }else if(cdf_1 == "noncentralt"){
+      class Noncentralt noncentralt;
+      s0 = qp / (noncentralt.qdf_non_central_t(normalization, freedom_degrees, mu)- noncentralt.qdf_non_central_t(0.5, freedom_degrees, mu));
+    }
+
+    // NumericMatrix BETA_3 = BETA_2 * (s0);
+    // output_list_dis["normalized_coefficients"] = BETA_3;
+  }
+
+
+
   List cdf_list = List::create(
     Named("cdf") = cdf_1,
     Named("freedom_degrees") = freedom_degrees,
@@ -488,7 +530,7 @@ List GLMcat(Formula formula,
     Named("ref_category") = ref_category,
     Named("threshold") = threshold,
     Named("control") = control,
-    Named("normalization") = normalization,
+    Named("normalization_s0") = s0,
     // Named("pinv") = pinv,
     // Named("cov_beta") = cov_beta,
     Rcpp::Named("df of the model") = df,
@@ -543,41 +585,85 @@ NumericMatrix predict_glmcat(List model_object,
                              String type
 ){
 
+  String function = model_object["Function"];
   class cdf dist1;
   // Environment base_env("package:base");
   // Function my_rowSums = base_env["rowSums"];
   int N_cats = model_object["N_cats"];
   Eigen::MatrixXd coef = model_object["coefficients"];
 
-  // model_object["coefficients"]
-  List newdataList = dist1.All_pre_data_NEWDATA(model_object["formula"],
-                                                data,
-                                                model_object["categories_order"],
-                                                            model_object["parallel"],
-                                                                        N_cats);
+  List newdataList, cdf_list;
+  std::string ratio;
+  int N ;
+  CharacterVector names_col;
+
+
+  if(function == "DiscreteCM"){
+    List arguments = model_object["arguments"];
+    ratio = "reference";
+    cdf_list = model_object["cdf"];
+    N = data.rows() / N_cats;
+    names_col = arguments["categories_order"];
+    newdataList = dist1.select_data_nested(arguments["formula"],
+                                           arguments["case_id"],arguments["alternatives"],
+                                                                         arguments["reference"],arguments["alternative_specific"],
+                                                                                                         data,arguments["intercept"]
+                                             //   ,
+                                             // ratio
+    );
+  }else{
+    String ratio1 = model_object["ratio"];
+    ratio = ratio1;
+    cdf_list = model_object["cdf"];
+    N = data.rows();
+    names_col = model_object["categories_order"];
+    newdataList = dist1.All_pre_data_NEWDATA(model_object["formula"],
+                                             data,
+                                             model_object["categories_order"],
+                                                         model_object["parallel"],
+                                                                     N_cats);
+  }
 
   Eigen::MatrixXd Design_Matrix = newdataList["Design_Matrix"];
   Eigen::MatrixXd predict_glmcated_eta;
 
 
-  std::string ratio = model_object["ratio"];
-  List cdf_list = model_object["cdf"];
+  std::string cdf ;
+  CharacterVector cdf_given = cdf_list[0];
 
-  String cdf = cdf_list[0];
-  double freedom_degrees = cdf_list[1];
-  double mu = cdf_list[2];
+  std::string cdf_1;
+  if(cdf_given[0] == "NaN"){
+    cdf = "logistic";
+  }else if(cdf_given[0] != "NaN"){
+    std::string cdf2 = cdf_list[0];
+    cdf = cdf2;
+  }
+
+  double freedom_degrees = 1;
+  double mu = 0;
+  if(cdf_list.size() == 2){
+    freedom_degrees = cdf_list[1];
+  }
+  if(cdf_list.size() == 3){
+    freedom_degrees = cdf_list[1];
+    mu = cdf_list[2];
+  }
 
   Eigen::VectorXd pi;
-  int N = data.rows();
+
   Eigen::MatrixXd X_M_i;
   Eigen::MatrixXd pi_total = Eigen::MatrixXd::Zero(N,N_cats-1);
+
   for (int i=0; i < N; i++){
 
     X_M_i = Design_Matrix.block(i*(N_cats-1) , 0 , N_cats-1 , Design_Matrix.cols());
     predict_glmcated_eta = X_M_i * coef;
 
+
     if(ratio == "reference"){
       ReferenceF ref;
+      // Rcout << cdf << std::endl;
+      // // print(cdf);
       if(cdf == "logistic"){
         pi = ref.inverse_logistic(predict_glmcated_eta);
       }else if(cdf == "normal"){
@@ -670,6 +756,7 @@ NumericMatrix predict_glmcat(List model_object,
 
   // NumericVector cum_prob = my_rowSums(pi_total);
   NumericVector cum_prob = wrap(pi_total.rowwise().sum());
+  // Rcout << cum_prob << std::endl;
   Eigen::Map<Eigen::VectorXd> cum_prob1 = as<Eigen::Map<Eigen::VectorXd> >(cum_prob);
   Eigen::VectorXd Ones1 = Eigen::VectorXd::Ones(pi_total.rows());
 
@@ -678,7 +765,6 @@ NumericMatrix predict_glmcat(List model_object,
 
   NumericVector predict_glmcat;
   NumericMatrix predict_mat;
-  CharacterVector names_col = model_object["categories_order"];
 
   if(type == "prob"){
     predict_glmcat = pi_total;
