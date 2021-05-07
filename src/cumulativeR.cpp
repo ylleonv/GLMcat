@@ -427,7 +427,7 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_noncentralt(const Eigen::VectorX
 //     Named("categories_order") = categories_order,
 //     Named("parallel") = parallel,
 //     Named("N_cats") = N_cats,
-//     Named("nobs") = N,
+//     Named("nobs_glmcat") = N,
 //     Named("cdf") = cdf,
 //     Named("freedom_degrees") = freedom_degrees
 //   );

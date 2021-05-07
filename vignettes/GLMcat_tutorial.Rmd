@@ -139,7 +139,7 @@ summary(mod_ref_log_c)
 * The number or observations:
 
 ```{r }
-nobs(mod_ref_log_c)
+nobs_glmcat(mod_ref_log_c)
 ```
 
 * The coefficients of the model

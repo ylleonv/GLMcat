@@ -546,7 +546,7 @@ List GLMcat(Formula formula,
     // Named("pinv") = pinv,
     // Named("cov_beta") = cov_beta,
     Rcpp::Named("df of the model") = df,
-    Rcpp::Named("fitted") = pi_ma,
+    // Rcpp::Named("fitted") = pi_ma,
     // Rcpp::Named("D_ma") = D_ma,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
     // Rcpp::Named("Y_init_vec") = Y_init_vec,
@@ -817,6 +817,3 @@ RCPP_MODULE(GLMcatmodule){
                  ),
                  "GLMcat model predictions");
 }
-
-// _["cdf"] = List::create(Named("cdf")= "logistic", _["df"] = 7, _["mu"] = 0),
-// _["control"] = List::create(_["maxit"] = 25, _["epsilon"] = 1e-07, _["beta_init"] = NumericVector::create(NA_REAL)),

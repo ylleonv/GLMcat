@@ -34,22 +34,6 @@ summary.glmcat <- function(object, ...) {
     printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
   }
 
-
-  # cf src/stats/R/lm.R and case with no weights and an intercept
-  # f <- object$fitted.values
-  # r <- object$residuals
-  # mss <- sum((f - mean(f))^2)
-  # mss <- if (object$intercept) sum((f - mean(f))^2) else sum(f^2)
-  # rss <- sum(r^2)
-  #
-  # object$r.squared <- mss/(mss + rss)
-  # df.int <- if (object$intercept) 1L else 0L
-  # n <- length(f)
-  # rdf <- object$df
-  # object$adj.r.squared <- 1 - (1 - object$r.squared) * ((n - df.int)/rdf)
-  # class(object) <- "summary"
-  # object
-  # return(sum_ma)
 }
 
 #' Model coefficients
@@ -81,7 +65,7 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #' @description Extract the number of observations from a GLMcat model.
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
-#' @rdname nobs
+#' @rdname nobs_glmcat
 #' @export
 #' @examples
 #' data(DisturbedDreams)
@@ -90,8 +74,8 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 #'   data = DisturbedDreams, cdf = "logistic"
 #' )
-#' nobs(mod1)
-nobs.glmcat <- function(object, ...) {
+#' nobs_glmcat(mod1)
+nobs_glmcat <- function(object, ...) {
   return(object$nobs_glmcat)
 }
 

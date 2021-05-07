@@ -8,7 +8,7 @@
 #' @export Discrete_CM
 #' @export summary.glmcat
 #' @export coef.glmcat
-#' @export nobs.glmcat
+#' @export nobs_glmcat
 #' @export logLik.glmcat
 #' @export student.glmcat
 #' @export noncentralt.glmcat
