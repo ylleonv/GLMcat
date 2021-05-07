@@ -300,6 +300,7 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
 #' @rdname step_glmcat
 #' @param object a GLMcat model.
 #' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
+#' @param data the same dataset used for the model specified in object.
 #' @param direction the mode of the stepwise search.
 #' @param trace to print the process information.
 #' @param steps the maximum number of steps.

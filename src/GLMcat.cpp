@@ -184,6 +184,8 @@ List GLMcat(Formula formula,
 
   while ((Stop_criteria>(epsilon / N)) & (iteration < (iterations_us ))){
 
+    // Rcout << Stop_criteria << std::endl;
+
     MatrixXd Score_i = MatrixXd::Zero(BETA.rows(),1);
     MatrixXd F_i = MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
@@ -350,7 +352,7 @@ List GLMcat(Formula formula,
     // pi_ma.col(Q) = Ones1 - pima3 ;
 
     // To stop when LogLik is smaller than the previous
-    if(iteration>1){
+    if(iteration>25){
       if (LogLikIter[iteration] > LogLik)
         break;
       // iteration = 25;

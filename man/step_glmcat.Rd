@@ -16,6 +16,8 @@ step_glmcat(
 \arguments{
 \item{object}{a GLMcat model.}
 
+\item{data}{the same dataset used for the model specified in object.}
+
 \item{scope}{defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.}
 
 \item{direction}{the mode of the stepwise search.}
