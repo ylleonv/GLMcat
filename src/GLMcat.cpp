@@ -352,11 +352,16 @@ List GLMcat(Formula formula,
     // pi_ma.col(Q) = Ones1 - pima3 ;
 
     // To stop when LogLik is smaller than the previous
-    if(iteration>25){
-      if (LogLikIter[iteration] > LogLik)
+    if(iteration>5){
+      if (LogLikIter[iteration] > LogLik )
         break;
       // iteration = 25;
     }
+
+//
+//     Rcout << iteration << std::endl;
+//     Rcout << LogLik << std::endl;
+
     LogLikIter.conservativeResize(iteration+2, 1);
     LogLikIter(iteration+1) = LogLik;
     Stop_criteria = (abs(LogLikIter(iteration+1) - LogLikIter(iteration))) / (epsilon + (abs(LogLikIter(iteration+1)))) ;
@@ -366,9 +371,14 @@ List GLMcat(Formula formula,
     FullPivLU<MatrixXd> lu(F_i);
     bool invertible = lu.isInvertible();
 
-    if(!invertible) {
-      Rcpp::stop("Fisher matrix is not invertible");
+    // if(!invertible || LogLikIter[iteration]>-0.000001 ) {
+    //   Rcpp::stop("Fisher matrix is not invertible. Check for convergence problems");
+    // }
+
+    if(!invertible ) {
+      Rcpp::stop("Fisher matrix is not invertible. Check for convergence problems");
     }
+
 
     BETA = BETA + (F_i.inverse() * Score_i);
     // check_tutz = ((BETA - beta_old).norm())/(beta_old.norm()+check_tutz);

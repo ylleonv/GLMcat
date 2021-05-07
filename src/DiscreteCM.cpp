@@ -263,7 +263,7 @@ List Discrete_CM(Formula formula,
 
     }
     // To stop when LogLik is smaller than the previous
-    if(iteration>25){
+    if(iteration>5){
       if (LogLikIter[iteration] > LogLik)
         break;
     }
