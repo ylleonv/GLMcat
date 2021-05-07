@@ -1,6 +1,6 @@
 #' Severity of disturbed dreams
 #'
-#' @description $Boy's disturbed dreams$ benchmark dataset drawn from a study that cross-classified boys by their age, and the severity (not severe, severe 1, severe 2, very severe) of their disturbed dreams (Maxwell, 1961).
+#' @description Boy's disturbed dreams benchmark dataset drawn from a study that cross-classified boys by their age, and the severity (not severe, severe 1, severe 2, very severe) of their disturbed dreams (Maxwell, 1961).
 #'
 #' @docType data
 #' @usage data(DisturbedDreams)

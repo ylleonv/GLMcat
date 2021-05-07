@@ -15,7 +15,7 @@ A dataframe containing :
 data(DisturbedDreams)
 }
 \description{
-$Boy's disturbed dreams$ benchmark dataset drawn from a study that cross-classified boys by their age, and the severity (not severe, severe 1, severe 2, very severe) of their disturbed dreams (Maxwell, 1961).
+Boy's disturbed dreams benchmark dataset drawn from a study that cross-classified boys by their age, and the severity (not severe, severe 1, severe 2, very severe) of their disturbed dreams (Maxwell, 1961).
 }
 \examples{
 data(DisturbedDreams)
