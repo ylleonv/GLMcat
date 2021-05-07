@@ -40,17 +40,17 @@ GLMcat(
 
 \item{control}{\describe{
 \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
-\item{\code{epsilon}:}{a double with to fix the epsilon value}
-\item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}
+\item{\code{epsilon}:}{a double to change update the convergence criterion of GLMcat models.}
+\item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
 }}
 
-\item{normalization}{the quantile to use for the normalization of the estimated coefficients.}
+\item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.}
 }
 \description{
-Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
+Families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio)
 }
 \details{
-Family of models for categorical responses
+Families of models for categorical responses
 }
 \examples{
 data(DisturbedDreams)

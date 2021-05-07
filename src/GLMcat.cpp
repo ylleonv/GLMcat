@@ -8,8 +8,8 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
-//' Family of models for categorical responses
-//' @description Family of models for categorical responses (reference, adjacent, sequential and cumulative ratio)
+//' Families of models for categorical responses
+//' @description Families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio)
 //' @title GLMcat
 //' @rdname GLMcat
 //' @name GLMcat
@@ -29,10 +29,10 @@ using namespace Eigen;
 //' @param control
 //' \describe{
 //' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
-//' \item{\code{epsilon}:}{a double with to fix the epsilon value}
-//' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}
+//' \item{\code{epsilon}:}{a double to change update the convergence criterion of GLMcat models.}
+//' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
 //' }
-//' @param normalization the quantile to use for the normalization of the estimated coefficients.
+//' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.
 //' @export
 //' @examples
 //' data(DisturbedDreams)

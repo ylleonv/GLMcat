@@ -6,12 +6,10 @@
 # #' @export GLMref
 #' @export GLMcat
 #' @export Discrete_CM
-# #' @export predict_glmcat_Response
 #' @export summary.glmcat
 #' @export coef.glmcat
 #' @export nobs.glmcat
 #' @export logLik.glmcat
-#' @export normalization.glmcat
 #' @export student.glmcat
 #' @export noncentralt.glmcat
 #' @export control.glmcat

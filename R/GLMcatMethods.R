@@ -120,25 +120,12 @@ logLik.glmcat <- function(object, ...) {
 #' control glmcat models
 #' @description Set control parameters for GLMcat models.
 #' @rdname control
-#' @param maxit iterations
-#' @param epsilon the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.
-#' @param beta_init starting vector to Fisher's Scoring Algorithm
+#' @param maxit the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.
+#' @param epsilon a double to change update the convergence criterion of GLMcat models.
+#' @param beta_init an appropiate sized vector for the initial iteration of the algorithm.
 #' @export
 control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   return(list("maxit" = maxit, "epsilon" = epsilon, "beta_init" = beta_init))
-  # return(maxit)
-}
-
-#' normalization glmcat models
-#' @description normalization of coefficients of GLMcat models.
-#' @rdname normalization
-#' @param p percentile
-#' @param cdf cdf
-#' @param degrees_freedom cdf
-#' @export
-normalization.glmcat <- function(p = 0.95, cdf = "logistic", degrees_freedom = 7) {
-  # print(list("p" = p, "cdf" = cdf, "degrees_freedom" = degrees_freedom))
-  return(list("p" = p, "cdf" = cdf, "degrees_freedom" = degrees_freedom))
   # return(maxit)
 }
 

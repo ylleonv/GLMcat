@@ -28,7 +28,7 @@ Discrete_CM(
 
 \item{alternative_specific}{a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.}
 
-\item{data}{a dataframe object in R, with the dependent variable as factor.}
+\item{data}{a dataframe (in a long format) object in R, with the dependent variable as factor.}
 
 \item{cdf}{\describe{
 \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
@@ -38,7 +38,7 @@ Discrete_CM(
 
 \item{intercept}{if "conditional" then the design will be equivalent to the conditional logit model}
 
-\item{normalization}{the quantile to use for the normalization of the estimated coefficients.}
+\item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.}
 
 \item{control}{\describe{
 \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}

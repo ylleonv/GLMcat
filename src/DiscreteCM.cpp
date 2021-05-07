@@ -20,7 +20,7 @@ using namespace Eigen;
 //' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
 //' @param reference a string indicating the reference category
 //' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
-//' @param data a dataframe object in R, with the dependent variable as factor.
+//' @param data a dataframe (in a long format) object in R, with the dependent variable as factor.
 //' @param cdf
 //' \describe{
 //' \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
@@ -28,7 +28,7 @@ using namespace Eigen;
 //' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
 //' }
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
-//' @param normalization the quantile to use for the normalization of the estimated coefficients.
+//' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.
 //' @param control
 //' \describe{
 //' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
@@ -371,7 +371,7 @@ List Discrete_CM(Formula formula,
     Named("N_cats") = K,
     Named("normalization_s0") =  s0,
     Named("cdf") = cdf,
-    Named("nobs_glmcat") = N/K,
+    Named("nobs") = N/K,
     Named("control") = control,
     Named("arguments") = List::create(Named("formula")= formula,Named("case_id")= case_id, Named("alternatives") = alternatives,
           Named("reference") = reference, Named("alternative_specific") = alternative_specific, Named("intercept") = intercept,
