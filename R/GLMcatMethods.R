@@ -137,7 +137,7 @@ safe_pchisq <- function(q, df, ...) {
   pchisq(q = q, df = df, ...)
 }
 
-drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
+drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                   trace = FALSE,  ...)
 {
 
@@ -169,7 +169,7 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
     if(fun_in == "GLMcat"){
       object$parallel <- object$parallel[object$parallel != tt]
       if(length(object$parallel) == 0) {object$parallel <- NA}
-      nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
+      nfit <- GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
                      object$categories_order, object$ref_category,
                      object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
                      object$normalization_s0)
@@ -177,7 +177,7 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
       object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
       if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
       nfit <- Discrete_CM(formula = nfit,
-                          data = object$data,
+                          data = data,
                           cdf = object$cdf,
                           case_id = object$arguments$case_id,
                           alternatives = object$arguments$alternatives,
@@ -214,7 +214,7 @@ drop2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
   aod
 }
 
-add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
+add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                  trace = FALSE, ...)
 {
   if(missing(scope) || is.null(scope)) stop("no terms in scope")
@@ -250,7 +250,7 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
     if(fun_in == "GLMcat"){
       # object$parallel <- object$parallel[object$parallel != tt]
       # if(length(object$parallel) == 0) {object$parallel <- NA}
-      nfit <- GLMcat(nfit, object$data, object$ratio, object$cdf, object$parallel,
+      nfit <- GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
                      object$categories_order, object$ref_category,
                      object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
                      object$normalization_s0)
@@ -258,7 +258,7 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
       # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
       # if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
       nfit <- Discrete_CM(formula = nfit,
-                          data = object$data,
+                          data = data,
                           cdf = object$cdf,
                           alternative_specific = object$arguments$alternative_specific,
                           # object$categories_order,
@@ -304,7 +304,8 @@ add2 <- function(object, scope, scale = 0, test=c("none", "Chisq"),
 #' @param trace to print the process information.
 #' @param steps the maximum number of steps.
 #' @export
-step_glmcat <- function (object, scope,
+step_glmcat <- function (object, data,
+                         scope,
                          direction = c("both", "backward",
                                        "forward"),
                          trace = 1, steps = 1000)
@@ -351,7 +352,7 @@ step_glmcat <- function (object, scope,
     fit
   }
 
-  object$terms <-   terms(formula(object$formula), data = object$data)
+  object$terms <-   terms(formula(object$formula), data = data)
 
   Terms <- terms(object)
   object$call$formula <- object$formula <- Terms
@@ -410,7 +411,7 @@ step_glmcat <- function (object, scope,
     aod <- NULL
     change <- NULL
     if (backward && length(scope$drop)) {
-      aod <- drop2(fit, scope$drop, scale = 0, trace = trace)
+      aod <- drop2(fit, scope$drop, data, scale = 0, trace = trace)
       rn <- row.names(aod)
       # print(aod)
       row.names(aod) <- c(rn[1L], paste("-", rn[-1L]))
@@ -421,7 +422,7 @@ step_glmcat <- function (object, scope,
     }
     if (is.null(change)) {
       if (forward && length(scope$add)) {
-        aodf <- add2(fit, scope$add, scale = 0,
+        aodf <- add2(fit, scope$add, data, scale = 0,
                      trace = trace)
         rn <- row.names(aodf)
         row.names(aodf) <- c(rn[1L], paste("+", rn[-1L]))
@@ -453,14 +454,14 @@ step_glmcat <- function (object, scope,
     object$parallel <- object$parallel[object$parallel != str_trim(sub("-","", change))]
     if(length(object$parallel) == 0) {object$parallel <- NA}
 
-    # fit <- GLMcat(form1, object$data, object$ratio, object$cdf, object$parallel,
+    # fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
     #               object$categories_order, object$ref_category,
     #               object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
     #               object$normalization_s0)
 
     fun_in = object$Function
     if(fun_in == "GLMcat"){
-      fit <- GLMcat(form1, object$data, object$ratio, object$cdf, object$parallel,
+      fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
                     object$categories_order, object$ref_category,
                     object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
                     object$normalization_s0)
@@ -468,7 +469,7 @@ step_glmcat <- function (object, scope,
       # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
       # if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
       fit <- Discrete_CM(formula = form1,
-                         data = object$data,
+                         data = data,
                          cdf = object$cdf,
                          alternative_specific = object$arguments$alternative_specific,
                          # object$categories_order,

@@ -6,6 +6,7 @@
 \usage{
 step_glmcat(
   object,
+  data,
   scope,
   direction = c("both", "backward", "forward"),
   trace = 1,

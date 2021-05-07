@@ -146,23 +146,29 @@ List Discrete_CM(Formula formula,
   double qp , s0 = 1;
 
 
+  NumericVector beta_init;
   int iterations_us = 25;
 
   if(control.size() > 1){
 
     iterations_us = control[0];
     epsilon = control[1] ;
+    beta_init = control[2];
 
   }else{
     iterations_us = 25;
     epsilon = 1e-06;
-    List control1 = List::create(Named("iteration_us") = 25 , Named("elpsilon") = 1e-06);
+    beta_init = R_NaN;
+    List control1 = List::create(Named("maxit") = 25 , Named("epsilon") = 1e-06, Named("beta_init")= beta_init);
     control= control1;
     // beta_init = control[2];
   }
-
-
   // Rcout << N/K << std::endl;
+
+  if(beta_init.length() >= 2 ){
+    // BETA = beta_init;
+    BETA = as<Eigen::Map<Eigen::VectorXd> >(beta_init);
+  }
 
   while ((Stop_criteria >( epsilon / N) ) & (iteration < ( iterations_us )) ){
 
@@ -355,11 +361,17 @@ List Discrete_CM(Formula formula,
   }
   int df = BETA_2.length();
 
+  std::string Convergence = "False";
+
+  if(iteration < iterations_us){
+    Convergence = "True";
+  }
+
 
   List output_list_dis = List::create(
     Named("Function") = "DiscreteCM",
     Named("formula") = formula,
-    Named("data") = data,
+    Named("convergence") = Convergence,
     Named("ratio") = "reference",
     Named("Nb. iterations") = iteration-1 ,
     Named("coefficients") = BETA_2,

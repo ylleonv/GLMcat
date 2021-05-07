@@ -101,6 +101,7 @@ List GLMcat(Formula formula,
   categories_order = Full_M["categories_order"];
   CharacterVector parallel_effect = Full_M["parallel_effect"];
   CharacterVector explanatory_complete = Full_M["Complete_effects"];
+  // Rcout << explanatory_complete << std::endl;
   int N_cats = Full_M["N_cats"];
 
   int P_c = explanatory_complete.length();
@@ -129,22 +130,34 @@ List GLMcat(Formula formula,
   }else{
     iterations_us = 25;
     epsilon = 1e-06;
-    List control1 = List::create(Named("iteration_us") = 25 , Named("elpsilon") = 1e-06);
+    beta_init = R_NaN;
+    List control1 = List::create(Named("maxit") = 25 , Named("epsilon") = 1e-06, Named("beta_init")= beta_init);
     control= control1;
     // beta_init = control[2];
   }
 
-
   // Rcout << iterations_us << std::endl;
   // cout << epsilon << std::endl;
 
+
+  if((ratio == "cumulative" && explanatory_complete[0] == "(Intercept)") && threshold == "standard"){
+    int qm = Q/2;
+    IntegerVector seqvec = seq(-qm,Q-qm-1); // kind of symmetric around 0
+    NumericVector seqvec2 = as<NumericVector>(seqvec);
+    Eigen::Map<Eigen::VectorXd> seqvec1 = as<Eigen::Map<Eigen::VectorXd> >(seqvec2);
+    // Rcout << BETA.size() << std::endl;
+    BETA.block(0, 0 , Q , 1) = seqvec1;
+    // Rcout << BETA << std::endl;
+  }
+
   if(beta_init.length() >= 2 ){
-    // BETA = beta_init;
     BETA = as<Eigen::Map<Eigen::VectorXd> >(beta_init);
   }
-  //
+
+
+  std::string Convergence = "False";
+
   int iteration = 0;
-  // double check_tutz = 1.0;
   double Stop_criteria = 1.0;
   MatrixXd X_M_i ;
   VectorXd Y_M_i ;
@@ -532,13 +545,17 @@ List GLMcat(Formula formula,
   );
 
 
+  if(iteration < iterations_us){
+    Convergence = "True";
+  }
+
   List output_list = List::create(
     Named("Function") = "GLMcat",
     Named("coefficients") = coef,
     Named("stderr") = Std_Error,
     Named("iteration") = iteration,
     Named("ratio") = ratio,
-    Named("data") = data,
+    Named("convergence") = Convergence,
     Named("ref_category") = ref_category,
     Named("threshold") = threshold,
     Named("control") = control,
