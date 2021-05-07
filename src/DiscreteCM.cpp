@@ -28,7 +28,7 @@ using namespace Eigen;
 //' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
 //' }
 //' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
-//' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.
+//' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
 //' @param control
 //' \describe{
 //' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}

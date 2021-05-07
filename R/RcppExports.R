@@ -24,7 +24,7 @@
 #' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
 #' }
 #' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
-#' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.
+#' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
 #' @param control
 #' \describe{
 #' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
@@ -68,7 +68,7 @@ Discrete_CM <- function(formula, case_id, alternatives, reference, alternative_s
 #' \item{\code{epsilon}:}{a double to change update the convergence criterion of GLMcat models.}
 #' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
 #' }
-#' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.
+#' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
 #' @export
 #' @examples
 #' data(DisturbedDreams)

@@ -32,7 +32,7 @@ using namespace Eigen;
 //' \item{\code{epsilon}:}{a double to change update the convergence criterion of GLMcat models.}
 //' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
 //' }
-//' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.
+//' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
 //' @export
 //' @examples
 //' data(DisturbedDreams)
