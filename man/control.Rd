@@ -9,10 +9,10 @@ control.glmcat(maxit = 25, epsilon = 1e-06, beta_init = NA)
 \arguments{
 \item{maxit}{iterations}
 
-\item{epsilon}{epsilon}
+\item{epsilon}{the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.}
 
 \item{beta_init}{starting vector to Fisher's Scoring Algorithm}
 }
 \description{
-control LogLikelihood for GLMcat models.
+Set control parameters for GLMcat models.
 }

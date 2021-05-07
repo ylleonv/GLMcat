@@ -14,5 +14,5 @@ normalization.glmcat(p = 0.95, cdf = "logistic", degrees_freedom = 7)
 \item{degrees_freedom}{cdf}
 }
 \description{
-normalization of coefficients for GLMcat models.
+normalization of coefficients of GLMcat models.
 }

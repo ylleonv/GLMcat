@@ -81,7 +81,7 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #' @description Extract the number of observations from a GLMcat model.
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
-#' @rdname nobs_glmcat
+#' @rdname nobs
 #' @export
 #' @examples
 #' data(DisturbedDreams)
@@ -90,8 +90,8 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
 #'   data = DisturbedDreams, cdf = "logistic"
 #' )
-#' nobs_glmcat(mod1)
-nobs_glmcat <- function(object, ...) {
+#' nobs(mod1)
+nobs.glmcat <- function(object, ...) {
   return(object$nobs_glmcat)
 }
 
@@ -118,10 +118,10 @@ logLik.glmcat <- function(object, ...) {
 
 
 #' control glmcat models
-#' @description control LogLikelihood for GLMcat models.
+#' @description Set control parameters for GLMcat models.
 #' @rdname control
 #' @param maxit iterations
-#' @param epsilon epsilon
+#' @param epsilon the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.
 #' @param beta_init starting vector to Fisher's Scoring Algorithm
 #' @export
 control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
@@ -130,7 +130,7 @@ control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
 }
 
 #' normalization glmcat models
-#' @description normalization of coefficients for GLMcat models.
+#' @description normalization of coefficients of GLMcat models.
 #' @rdname normalization
 #' @param p percentile
 #' @param cdf cdf

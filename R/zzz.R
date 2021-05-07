@@ -9,7 +9,7 @@
 # #' @export predict_glmcat_Response
 #' @export summary.glmcat
 #' @export coef.glmcat
-#' @export nobs_glmcat
+#' @export nobs.glmcat
 #' @export logLik.glmcat
 #' @export normalization.glmcat
 #' @export student.glmcat
