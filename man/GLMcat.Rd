@@ -44,7 +44,7 @@ GLMcat(
 \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
 }}
 
-\item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.}
+\item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.}
 }
 \description{
 Families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio)

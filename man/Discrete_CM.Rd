@@ -38,7 +38,7 @@ Discrete_CM(
 
 \item{intercept}{if "conditional" then the design will be equivalent to the conditional logit model}
 
-\item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cdf.}
+\item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.}
 
 \item{control}{\describe{
 \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
