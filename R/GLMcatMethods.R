@@ -452,7 +452,8 @@ step_glmcat <- function (object, data,
 
     form1 <- update(fit$formula, as.formula(paste("~ .", change)),
                     evaluate = FALSE)
-    object$parallel <- object$parallel[object$parallel != str_trim(sub("-","", change))]
+    # object$parallel <- object$parallel[object$parallel != str_trim(sub("-","", change))]
+    object$parallel <- object$parallel[object$parallel != trimws(sub("-","", change))]
     if(length(object$parallel) == 0) {object$parallel <- NA}
 
     # fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,

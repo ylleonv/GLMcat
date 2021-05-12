@@ -16,7 +16,6 @@
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom utils flush.console
-#' @importFrom stringr str_trim
 #' @importFrom stats pchisq add1 model.frame model.matrix as.formula pnorm printCoefmat add.scope deviance drop.scope AIC factor.scope formula terms update update.formula
 ## usethis namespace: end
 
