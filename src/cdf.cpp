@@ -1065,7 +1065,8 @@ List Extend_Response(DataFrame Final_mat ){
   NumericVector y11 = my_asnumeric(Final_mat["choice"]) ;
   DataFrame Y_Ext = my_transpose(my_matrix(y11 ,  _["nrow"] = N_cat));
   NumericMatrix Y_Ext1 = internal::convert_using_rfunction(Y_Ext, "as.matrix");
-  Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1-1);
+  // Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1-1);
+  Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1);
   Y_n2.conservativeResize(Y_n2.rows(), Y_n2.cols() - 1);
   return List::create(
     Named("N_cat") = N_cat,
