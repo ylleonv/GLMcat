@@ -105,7 +105,7 @@ List Discrete_CM(Formula formula,
 
   // Rcout << "Y_init" << std::endl;
   // Rcout << ai << std::endl;
-  // Rcout << Y_init << std::endl;
+  Rcout << Y_init << std::endl;
   //
   Rcout << "Y_init" << std::endl;
 
