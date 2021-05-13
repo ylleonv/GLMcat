@@ -96,9 +96,15 @@ List Discrete_CM(Formula formula,
 
   Eigen::MatrixXd Y_init = Full_M["Response_M"] ;
 
+  int ai = Y_init.row(0).sum();
   // Y_init = Y_init + MatrixXd::Ones(Y_init.rows(), Y_init.cols());
 
+  if(!(ai == 0 | ai == 1)){
+    Y_init = Y_init + MatrixXd::Ones(Y_init.rows(), Y_init.cols());
+  }
+
   Rcout << "Y_init" << std::endl;
+  // Rcout << ai << std::endl;
   Rcout << Y_init << std::endl;
   //
   // Rcout << "Y_init" << std::endl;
