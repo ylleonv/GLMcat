@@ -1060,16 +1060,17 @@ List Extend_Response(DataFrame Final_mat ){
   Function my_length = base_env["length"];
   Function my_matrix = base_env["matrix"];
   Function my_asnumeric = base_env["as.numeric"];
+  Function my_asfactor = base_env["as.factor"];
   SEXP N_cat_1 = my_length(my_unique(Final_mat["alternatives"]));
   int N_cat = Rcpp::as<int>(N_cat_1);
-  NumericVector y11 = my_asnumeric(Final_mat["choice"]) ;
+  NumericVector y11 = my_asnumeric(my_asfactor(Final_mat["choice"])) ;
   DataFrame Y_Ext = my_transpose(my_matrix(y11 ,  _["nrow"] = N_cat));
   // Rcout << "Y_Ext" << std::endl;
   // Rcout << Y_Ext << std::endl;
 
   NumericMatrix Y_Ext1 = internal::convert_using_rfunction(Y_Ext, "as.matrix");
-  // Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1-1);
-  Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1);
+  Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1-1);
+  // Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1);
   Y_n2.conservativeResize(Y_n2.rows(), Y_n2.cols() - 1);
   Rcout << "Y_n2" << std::endl;
   Rcout << Y_n2 << std::endl;
