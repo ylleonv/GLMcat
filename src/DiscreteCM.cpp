@@ -103,9 +103,9 @@ List Discrete_CM(Formula formula,
     Y_init = Y_init + MatrixXd::Ones(Y_init.rows(), Y_init.cols());
   }
 
-  Rcout << "Y_init" << std::endl;
+  // Rcout << "Y_init" << std::endl;
   // Rcout << ai << std::endl;
-  Rcout << Y_init << std::endl;
+  // Rcout << Y_init << std::endl;
   //
   // Rcout << "Y_init" << std::endl;
 

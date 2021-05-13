@@ -1,9 +1,9 @@
 ## Test environments
-* local OS X install, R 4.0.5
-* ubuntu 20.04.2 (on travis-ci), R 4.0.5
+* local OS X install, R 4.0.3
+* ubuntu 20.04.2 (on travis-ci), R 4.0.3
 * win-builder (devel)
 
-Hello, I hereby submit version 0.2.2 of GLMcat
+Hello, I hereby submit version 0.2.3 of GLMcat
  
 There was 1 NOTE:
      installed size is 22.5Mb
