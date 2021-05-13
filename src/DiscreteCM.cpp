@@ -96,7 +96,7 @@ List Discrete_CM(Formula formula,
 
   Eigen::MatrixXd Y_init = Full_M["Response_M"] ;
 
-  Y_init = Y_init + MatrixXd::Ones(Y_init.rows(), Y_init.cols());
+  // Y_init = Y_init + MatrixXd::Ones(Y_init.rows(), Y_init.cols());
 
   Rcout << "Y_init" << std::endl;
   Rcout << Y_init << std::endl;
