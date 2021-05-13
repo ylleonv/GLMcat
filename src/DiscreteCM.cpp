@@ -107,7 +107,7 @@ List Discrete_CM(Formula formula,
   // Rcout << ai << std::endl;
   // Rcout << Y_init << std::endl;
   //
-  // Rcout << "Y_init" << std::endl;
+  Rcout << "Y_init" << std::endl;
 
   Eigen::MatrixXd X_EXT = Full_M["Design_Matrix"];
 
