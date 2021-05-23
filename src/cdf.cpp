@@ -1072,8 +1072,8 @@ List Extend_Response(DataFrame Final_mat ){
   Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1-1);
   // Eigen::MatrixXd Y_n2 = as<Eigen::Map<Eigen::MatrixXd> >(Y_Ext1);
   Y_n2.conservativeResize(Y_n2.rows(), Y_n2.cols() - 1);
-  Rcout << "Y_n2" << std::endl;
-  Rcout << Y_n2 << std::endl;
+  // Rcout << "Y_n2" << std::endl;
+  // Rcout << Y_n2 << std::endl;
 
   return List::create(
     Named("N_cat") = N_cat,
