@@ -205,7 +205,6 @@ List Discrete_CM(Formula formula,
       if(cdf_1 == "logistic"){
 
         // Rcout << eta << std::endl;
-        // print("as");
         pi = ref.inverse_logistic(eta);
         D = ref.inverse_derivative_logistic(eta);
 

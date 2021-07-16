@@ -21,9 +21,9 @@ Eigen::VectorXd ReferenceF::inverse_logistic(const Eigen::VectorXd& eta) const
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
-    pi[j] = cdf_logit( eta(j) ) / ( 1-
-      std::max(1e-10, std::min(1-1e-6, cdf_logit(eta(j))))
-    );
+    pi[j] = cdf_logit( eta(j) ) /
+      // ( 1- std::max(1e-10, std::min(1-1e-6, cdf_logit(eta(j)))) );
+      cdf_logit_complement(eta(j) );
     norm1 += pi[j];
   }
   pi_return = pi/norm1;
@@ -37,9 +37,9 @@ Eigen::VectorXd ReferenceF::inverse_normal(const Eigen::VectorXd& eta) const
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
-    pi[j] = cdf_normal( eta(j) ) / ( 1-
-      std::max(1e-10, std::min(1-1e-6,cdf_normal( eta(j) )))
-    );
+    pi[j] = cdf_normal( eta(j) ) /
+      // ( 1-      std::max(1e-10, std::min(1-1e-6,cdf_normal( eta(j) ))));
+      cdf_normal_complement(eta(j) );
     norm1 += pi[j];
 
   }
@@ -53,7 +53,11 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_logistic(const Eigen::VectorXd& e
   for(int j=0; j<eta2.rows(); ++j)
   { D1(j,j) = pdf_logit( eta2(j) ) /
     ( std::max(1e-10, std::min(1-1e-6,cdf_logit(eta2(j)))) *
-      std::max(1e-10, std::min(1-1e-6, 1-cdf_logit(eta2(j)))) ); }
+      std::max(1e-10, std::min(1-1e-6,
+                               // 1-cdf_logit(eta2(j))
+                                 cdf_logit_complement(eta2(j))
+
+                                 )) ); }
 
   return D1 * ( Eigen::MatrixXd(pi1.asDiagonal()) - pi1 * pi1.transpose().eval() );
 }
@@ -65,7 +69,10 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_normal(const Eigen::VectorXd& eta
   for(int j=0; j<pi.rows(); ++j)
   { D(j,j) = pdf_normal( eta(j) ) /
     ( std::max(1e-10, std::min(1-1e-6,cdf_normal(eta(j)))) *
-      std::max(1e-10, std::min(1-1e-6, 1-cdf_normal(eta(j)))) ); }
+      std::max(1e-10, std::min(1-1e-6,
+                               // 1-cdf_normal(eta(j))
+                               cdf_normal_complement(eta(j))
+                                 )) ); }
   return D * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose().eval() );
 }
 
@@ -75,7 +82,10 @@ Eigen::VectorXd ReferenceF::inverse_cauchy(const Eigen::VectorXd& eta) const
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
-    pi[j] = Cauchy::cdf_cauchy( eta(j) ) / ( 1-Cauchy::cdf_cauchy( eta(j) ) );
+    pi[j] = Cauchy::cdf_cauchy( eta(j) ) / (
+      // 1-Cauchy::cdf_cauchy( eta(j) )
+    cdf_cauchy_complement(eta(j))
+    );
     norm1 += pi[j];
   }
   return (pi/norm1);
@@ -87,7 +97,10 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_cauchy(const Eigen::VectorXd& eta
   Eigen::MatrixXd D1 = Eigen::MatrixXd::Zero(pi1.rows(),pi1.rows());
   for(int j=0; j<eta2.rows(); ++j)
   { D1(j,j) = pdf_cauchy( eta2(j) ) /
-    (Cauchy::cdf_cauchy(eta2(j)) * (1-Cauchy::cdf_cauchy(eta2(j))));
+    (Cauchy::cdf_cauchy(eta2(j)) * (
+        // 1-Cauchy::cdf_cauchy(eta2(j))
+        cdf_cauchy_complement(eta2(j))
+       ));
   }
   return D1 * ( Eigen::MatrixXd(pi1.asDiagonal()) - pi1 * pi1.transpose().eval() );
 }
@@ -121,7 +134,10 @@ Eigen::VectorXd ReferenceF::inverse_gumbel(const Eigen::VectorXd& eta) const
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
-    pi[j] = cdf_gumbel( eta(j) ) / ( 1-cdf_gumbel( eta(j) ) );
+    pi[j] = cdf_gumbel( eta(j) ) / (
+      // 1-cdf_gumbel( eta(j) )
+      cdf_gumbel_complement(eta(j))
+    );
     norm1 += pi[j];
   }
   return (pi/norm1);
@@ -133,7 +149,10 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_gumbel(const Eigen::VectorXd& eta
   Eigen::MatrixXd D1 = Eigen::MatrixXd::Zero(pi1.rows(),pi1.rows());
   for(int j=0; j<eta2.rows(); ++j)
   { D1(j,j) = pdf_gumbel( eta2(j) ) /
-    (cdf_gumbel(eta2(j)) * (1-cdf_gumbel(eta2(j))));
+    (cdf_gumbel(eta2(j)) * (
+        // 1-cdf_gumbel(eta2(j))
+       cdf_gumbel_complement(eta2(j))
+       ));
   }
   return D1 * ( Eigen::MatrixXd(pi1.asDiagonal()) - pi1 * pi1.transpose().eval() );
 }
@@ -178,8 +197,10 @@ Eigen::VectorXd ReferenceF::inverse_laplace(const Eigen::VectorXd& eta) const
   double norm1 = 1.;
   for(int j=0; j<eta.size(); ++j)
   {
-    pi[j] = cdf_laplace( eta(j) ) / ( 1-
-      std::max(1e-10, std::min(1-1e-6, cdf_laplace(eta(j))))
+    pi[j] = cdf_laplace( eta(j) ) / (
+      // 1- std::max(1e-10, std::min(1-1e-6, cdf_laplace(eta(j))))
+      cdf_laplace_complement(eta(j))
+
     );
     norm1 += pi[j];
   }
@@ -195,7 +216,10 @@ Eigen::MatrixXd ReferenceF::inverse_derivative_laplace(const Eigen::VectorXd& et
   for(int j=0; j<eta2.rows(); ++j)
   { D1(j,j) = pdf_laplace( eta2(j) ) /
     ( std::max(1e-10, std::min(1-1e-6,cdf_laplace(eta2(j)))) *
-      std::max(1e-10, std::min(1-1e-6, 1-cdf_laplace(eta2(j)))) ); }
+      std::max(1e-10, std::min(1-1e-6,
+                               // 1-cdf_laplace(eta2(j))
+                               cdf_laplace_complement(eta2(j))
+                                 )) ); }
 
   return D1 * ( Eigen::MatrixXd(pi1.asDiagonal()) - pi1 * pi1.transpose().eval() );
 }
@@ -207,7 +231,10 @@ Eigen::VectorXd ReferenceF::inverse_noncentralt(const Eigen::VectorXd& eta, cons
   for(int j=0; j<eta.size(); ++j)
   {
     double num = Noncentralt::cdf_non_central_t(eta(j),freedom_degrees, mu);
-    double den = std::max(1e-10, std::min(1-1e-6, 1 - Noncentralt::cdf_non_central_t(eta(j),freedom_degrees, mu)));
+    double den = std::max(1e-10, std::min(1-1e-6,
+                                          // 1 - Noncentralt::cdf_non_central_t(eta(j),freedom_degrees, mu)
+                                          cdf_non_central_t_complement(eta(j), freedom_degrees, mu)
+                                            ));
     pi[j] = (num / den);
     norm1 += pi[j];
   }

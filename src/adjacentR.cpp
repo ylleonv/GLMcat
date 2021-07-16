@@ -12,11 +12,18 @@ AdjacentR::AdjacentR(void) {
 Eigen::VectorXd AdjacentR::inverse_logistic(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_logit( eta(eta.size()-1) ) / ( 1-cdf_logit( eta(eta.size()-1) ) );
+  pi[eta.size()-1] = cdf_logit( eta(eta.size()-1) ) / (
+    // 1-cdf_logit( eta(eta.size()-1) )
+    cdf_logit_complement( eta(eta.size()-1) )
+
+    );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
-    pi[j-1] = pi[j] * cdf_logit( eta(j-1) ) / ( 1-cdf_logit( eta(j-1) ) );
+    pi[j-1] = pi[j] * cdf_logit( eta(j-1) ) / (
+      // 1-cdf_logit( eta(eta.size()-1) )
+      cdf_logit_complement( eta(eta.size()-1) )
+      );
     norm += pi[j-1];
   }
   return in_open_corner(pi/norm);
@@ -28,7 +35,13 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_logistic(const Eigen::VectorXd& et
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_logit( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_logit(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_logit(eta(j)))) ); }
+  { D(j,j) = pdf_logit( eta(j) ) /
+    ( std::max(1e-10, std::min(1-1e-6, cdf_logit(eta(j)))) *
+      std::max(1e-10, std::min(1-1e-6,
+                               // 1-cdf_logit( eta(eta.size()-1) )
+                               cdf_logit_complement( eta(eta.size()-1) )
+                               ))
+        ); }
 
   return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
@@ -37,11 +50,17 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_logistic(const Eigen::VectorXd& et
 Eigen::VectorXd AdjacentR::inverse_normal(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_normal( eta(eta.size()-1) ) / ( 1-cdf_normal( eta(eta.size()-1) ) );
+  pi[eta.size()-1] = cdf_normal( eta(eta.size()-1) ) / (
+    // 1-cdf_normal( eta(eta.size()-1) )
+    cdf_normal_complement( eta(eta.size()-1) )
+    );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
-    pi[j-1] = pi[j] * cdf_normal( eta(j-1) ) / ( 1-cdf_normal( eta(j-1) ) );
+    pi[j-1] = pi[j] * cdf_normal( eta(j-1) ) / (
+      // 1-cdf_normal( eta(eta.size()-1) )
+      cdf_normal_complement( eta(eta.size()-1) )
+      );
     norm += pi[j-1];
   }
   return in_open_corner(pi/norm);
@@ -53,7 +72,11 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_normal(const Eigen::VectorXd& eta)
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_normal( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_normal(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_normal(eta(j)))) ); }
+  { D(j,j) = pdf_normal( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_normal(eta(j)))) *
+    std::max(1e-10, std::min(1-1e-6,
+                             // 1-cdf_normal( eta(eta.size()-1) )
+                             cdf_normal_complement( eta(eta.size()-1) )
+                             )) ); }
 
   return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
@@ -62,11 +85,18 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_normal(const Eigen::VectorXd& eta)
 Eigen::VectorXd AdjacentR::inverse_cauchy(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_cauchy( eta(eta.size()-1) ) / ( 1-cdf_cauchy( eta(eta.size()-1) ) );
+  pi[eta.size()-1] = cdf_cauchy( eta(eta.size()-1) ) / (
+    // 1-cdf_cauchy( eta(eta.size()-1) )
+    1-cdf_cauchy( eta(eta.size()-1) )
+    );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
-    pi[j-1] = pi[j] * cdf_cauchy( eta(j-1) ) / ( 1-cdf_cauchy( eta(j-1) ) );
+    pi[j-1] = pi[j] * cdf_cauchy( eta(j-1) ) / (
+      // 1-cdf_cauchy( eta(j-1) )
+      cdf_cauchy_complement( eta(j-1) )
+
+    );
     norm += pi[j-1];
   }
   return in_open_corner(pi/norm);
@@ -78,16 +108,23 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_cauchy(const Eigen::VectorXd& eta)
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_cauchy( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_cauchy(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_cauchy(eta(j)))) ); }
+  { D(j,j) = pdf_cauchy( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_cauchy(eta(j)))) *
+    std::max(1e-10, std::min(1-1e-6,
+                             // 1-cdf_cauchy(eta(j))
+                             cdf_cauchy_complement(eta(j))
+                               )) ); }
 
-  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
+  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) *
+    ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
 }
 
 Eigen::VectorXd AdjacentR::inverse_gompertz(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_gompertz( eta(eta.size()-1) ) / ( 1-cdf_gompertz( eta(eta.size()-1) ) );
+  pi[eta.size()-1] = cdf_gompertz( eta(eta.size()-1) ) / (
+    1-cdf_gompertz( eta(eta.size()-1) )
+    );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
@@ -103,20 +140,29 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_gompertz(const Eigen::VectorXd& et
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_gompertz( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_gompertz(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_gompertz(eta(j)))) ); }
+  { D(j,j) = pdf_gompertz( eta(j) ) /
+    ( std::max(1e-10, std::min(1-1e-6, cdf_gompertz(eta(j)))) *
+      std::max(1e-10, std::min(1-1e-6, 1-cdf_gompertz(eta(j)))) ); }
 
-  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
+  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) *
+    ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
 }
 
 Eigen::VectorXd AdjacentR::inverse_gumbel(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_gumbel( eta(eta.size()-1) ) / ( 1-cdf_gumbel( eta(eta.size()-1) ) );
+  pi[eta.size()-1] = cdf_gumbel( eta(eta.size()-1) ) / (
+    // 1-cdf_gumbel( eta(eta.size()-1) )
+    cdf_gumbel_complement( eta(eta.size()-1) )
+    );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
-    pi[j-1] = pi[j] * cdf_gumbel( eta(j-1) ) / ( 1-cdf_gumbel( eta(j-1) ) );
+    pi[j-1] = pi[j] * cdf_gumbel( eta(j-1) ) / (
+      // 1-cdf_gumbel( eta(j-1) )
+      cdf_gumbel_complement( eta(j-1) )
+    );
     norm += pi[j-1];
   }
   return in_open_corner(pi/norm);
@@ -128,9 +174,14 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_gumbel(const Eigen::VectorXd& eta)
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_gumbel( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_gumbel(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_gumbel(eta(j)))) ); }
+  { D(j,j) = pdf_gumbel( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_gumbel(eta(j)))) *
+    std::max(1e-10, std::min(1-1e-6,
+                             // 1-cdf_gumbel(eta(j))
+                             cdf_gumbel_complement(eta(j))
+                               )) ); }
 
-  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
+  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) *
+    ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
 }
 
@@ -153,7 +204,9 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_student(const Eigen::VectorXd& eta
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_student( eta(j) ,freedom_degrees) /( std::max(1e-10, std::min(1-1e-6, pdf_student(eta(j),freedom_degrees))) * std::max(1e-10, std::min(1-1e-6, 1-pdf_student(eta(j),freedom_degrees))) ); }
+  { D(j,j) = pdf_student( eta(j) ,freedom_degrees) /
+    ( std::max(1e-10, std::min(1-1e-6, cdf_student(eta(j),freedom_degrees))) *
+      std::max(1e-10, std::min(1-1e-6, 1-cdf_student(eta(j),freedom_degrees))) ); }
 
   return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
@@ -162,11 +215,18 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_student(const Eigen::VectorXd& eta
 Eigen::VectorXd AdjacentR::inverse_laplace(const Eigen::VectorXd& eta) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_laplace( eta(eta.size()-1) ) / ( 1-cdf_laplace( eta(eta.size()-1) ) );
+  pi[eta.size()-1] = cdf_laplace( eta(eta.size()-1) ) / (
+    // 1-cdf_laplace( eta(eta.size()-1) )
+    cdf_laplace_complement( eta(eta.size()-1) )
+
+    );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
-    pi[j-1] = pi[j] * cdf_laplace( eta(j-1) ) / ( 1-cdf_laplace( eta(j-1) ) );
+    pi[j-1] = pi[j] * cdf_laplace( eta(j-1) ) / (
+      // 1-cdf_laplace( eta(j-1) )
+      cdf_laplace_complement( eta(j-1) )
+    );
     norm += pi[j-1];
   }
   return in_open_corner(pi/norm);
@@ -178,20 +238,31 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_laplace(const Eigen::VectorXd& eta
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_laplace( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_laplace(eta(j)))) * std::max(1e-10, std::min(1-1e-6, 1-cdf_laplace(eta(j)))) ); }
+  { D(j,j) = pdf_laplace( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_laplace(eta(j)))) *
+    std::max(1e-10, std::min(1-1e-6,
+                             // 1-cdf_laplace(eta(j))
+                             cdf_laplace_complement(eta(j))
+                               )) ); }
 
-  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
+  return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) *
+    ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 
 }
 
 Eigen::VectorXd AdjacentR::inverse_noncentralt(const Eigen::VectorXd& eta, const double& freedom_degrees, const double& mu) const
 {
   Eigen::VectorXd pi( eta.size() );
-  pi[eta.size()-1] = cdf_non_central_t( eta(eta.size()-1),freedom_degrees , mu) / ( 1-cdf_non_central_t( eta(eta.size()-1),freedom_degrees , mu) );
+  pi[eta.size()-1] = cdf_non_central_t( eta(eta.size()-1),freedom_degrees , mu) / (
+    // 1-cdf_non_central_t( eta(eta.size()-1),freedom_degrees , mu)
+      cdf_non_central_t_complement( eta(eta.size()-1),freedom_degrees , mu)
+    );
   double norm = 1 + pi[eta.size()-1];
   for(int j=(eta.size()-1); j>0; --j)
   {
-    pi[j-1] = pi[j] * cdf_non_central_t( eta(j-1) ,freedom_degrees, mu) / ( 1-cdf_non_central_t( eta(j-1),freedom_degrees , mu) );
+    pi[j-1] = pi[j] * cdf_non_central_t( eta(j-1) ,freedom_degrees, mu) / (
+      // 1-cdf_non_central_t( eta(j-1),freedom_degrees , mu)
+      cdf_non_central_t_complement( eta(j-1),freedom_degrees , mu)
+    );
     norm += pi[j-1];
   }
   return in_open_corner(pi/norm);
@@ -203,7 +274,13 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_noncentralt(const Eigen::VectorXd&
   Eigen::MatrixXd D = Eigen::MatrixXd::Zero(pi.rows(),pi.rows());
   Eigen::MatrixXd Ones = Eigen::MatrixXd::Ones(pi.rows(),pi.rows());
   for(int j=0; j<pi.rows(); ++j)
-  { D(j,j) = pdf_non_central_t( eta(j) ,freedom_degrees, mu) /( std::max(1e-10, std::min(1-1e-6, pdf_non_central_t(eta(j),freedom_degrees, mu))) * std::max(1e-10, std::min(1-1e-6, 1-pdf_non_central_t(eta(j),freedom_degrees, mu))) ); }
+  { D(j,j) = pdf_non_central_t( eta(j) ,freedom_degrees, mu) /
+    ( std::max(1e-10, std::min(1-1e-6, cdf_non_central_t(eta(j),freedom_degrees, mu))) *
+      std::max(1e-10, std::min(1-1e-6,
+                               // 1-pdf_non_central_t(eta(j),freedom_degrees, mu)
+                               cdf_non_central_t_complement(eta(j),freedom_degrees, mu)
+
+                                 )) ); }
 
   return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
 

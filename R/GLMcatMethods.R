@@ -23,7 +23,7 @@ summary.glmcat <- function(object, ...) {
   printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
 
   if(s0 !=1 ){
-    print("Normalized coefficients")
+    cat("Normalized coefficients")
     object$coefficients <- cbind(
       "Estimate" = coef * s0,
       "Std. Error" = se * s0,
@@ -414,7 +414,6 @@ step_glmcat <- function (object, data,
     if (backward && length(scope$drop)) {
       aod <- drop2(fit, scope$drop, data, scale = 0, trace = trace)
       rn <- row.names(aod)
-      # print(aod)
       row.names(aod) <- c(rn[1L], paste("-", rn[-1L]))
       if (any(aod$Df == 0, na.rm = TRUE)) {
         zdf <- aod$Df == 0 & !is.na(aod$Df)
@@ -441,7 +440,7 @@ step_glmcat <- function (object, data,
       nc <- nc[!is.na(nc)][1L]
       o <- order(aod[, nc])
       if (trace)
-        print(aod[o, ])
+        cat(aod[o, ])
       if (o[1L] == 1)
         break
       change <- rownames(aod)[o[1L]]

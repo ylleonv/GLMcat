@@ -182,13 +182,17 @@ List GLMcat(Formula formula,
 
   double qp , s0 = 1;
 
-  while ((Stop_criteria>(epsilon / N)) & (iteration < (iterations_us ))){
+  Environment base_base7("package:base");
+  Function my_solve = base_base7["solve"];
 
+  // while ((Stop_criteria>(epsilon / N))){
+  while ((Stop_criteria>(epsilon / N)) & (iteration <= (iterations_us ))){
     // Rcout << Stop_criteria << std::endl;
 
     MatrixXd Score_i = MatrixXd::Zero(BETA.rows(),1);
     MatrixXd F_i = MatrixXd::Zero(BETA.rows(), BETA.rows());
     LogLik = 0.;
+
 
     // Loop by subject
     for (int i=0; i < N; i++){
@@ -320,7 +324,23 @@ List GLMcat(Formula formula,
 
       // Rcout << "Cov_i.determinant()" << std::endl;
       // Rcout << Cov_i.determinant() << std::endl;
+
+
+      // FullPivLU<MatrixXd> lu(Cov_i);
+      // bool invertible = lu.isInvertible();
+      //
+      // if(!invertible || LogLikIter[iteration]>-0.000001 ) {
+      //   Rcpp::stop("Fisher matrix is not invertible COV. Check for convergence problems");
+      // }
+
+      // NumericMatrix Cov_i_2 = wrap(Cov_i);
+      // NumericMatrix Cov_i_3 = my_solve(Cov_i_2, Named("tol")= 2.95222e-200);
+      //
+      // Eigen::Map<Eigen::MatrixXd> Cov_i_3_4 = as<Eigen::Map<Eigen::MatrixXd> >(Cov_i_3);
+
+
       W_in = D * Cov_i.inverse();
+      // W_in = D * Cov_i_3_4;
       Score_i_2 = X_M_i.transpose() * W_in * (Y_M_i - pi);
       Score_i = Score_i + Score_i_2;
       F_i_2 = X_M_i.transpose() * (W_in) * (D.transpose() * X_M_i);
@@ -352,35 +372,42 @@ List GLMcat(Formula formula,
     // pi_ma.col(Q) = Ones1 - pima3 ;
 
     // To stop when LogLik is smaller than the previous
-    if(iteration>5){
+    if(iteration>10){
       if (LogLikIter[iteration] > LogLik )
         break;
       // iteration = 25;
     }
 
-//
-//     Rcout << iteration << std::endl;
-//     Rcout << LogLik << std::endl;
+    //
+    //     Rcout << iteration << std::endl;
+    //     Rcout << LogLik << std::endl;
 
     LogLikIter.conservativeResize(iteration+2, 1);
     LogLikIter(iteration+1) = LogLik;
     Stop_criteria = (abs(LogLikIter(iteration+1) - LogLikIter(iteration))) / (epsilon + (abs(LogLikIter(iteration+1)))) ;
     VectorXd beta_old = BETA;
 
+    //     Rcout << LogLik << std::endl;
     // MatrixXd inverse;
     FullPivLU<MatrixXd> lu(F_i);
     bool invertible = lu.isInvertible();
 
-    // if(!invertible || LogLikIter[iteration]>-0.000001 ) {
+    if(!invertible || LogLikIter[iteration]>-0.000001 ) {
+      Rcpp::warning("Fisher matrix is not invertible. Check for convergence problems");
+    }
+
+    // if(!invertible ) {
     //   Rcpp::stop("Fisher matrix is not invertible. Check for convergence problems");
     // }
 
-    if(!invertible ) {
-      Rcpp::stop("Fisher matrix is not invertible. Check for convergence problems");
-    }
 
+    // NumericMatrix F_i_2 = wrap(F_i);
+    // NumericMatrix F_i_3 = my_solve(F_i_2, Named("tol")= 2.95222e-200);
+    //
+    // Eigen::Map<Eigen::MatrixXd> A_eigen = as<Eigen::Map<Eigen::MatrixXd> >(F_i_3);
 
     BETA = BETA + (F_i.inverse() * Score_i);
+    // BETA = BETA + (A_eigen * Score_i);
     // check_tutz = ((BETA - beta_old).norm())/(beta_old.norm()+check_tutz);
     iteration = iteration + 1;
     // if (iteration == 30) {
@@ -393,7 +420,15 @@ List GLMcat(Formula formula,
     // Rcout << BETA << std::endl;
     // Rcout << "LogLik" << std::endl;
     // Rcout << LogLik << std::endl;
+
+
+    if(iteration == iterations_us){
+      warning("Maximum number of iterations reached.");
+    }
+
   }
+
+
   // Rcout << "pi_ma" << std::endl;
   // Rcout << pi_ma << std::endl;
   VectorXd pima3 = pi_ma.rowwise().sum();
@@ -445,7 +480,6 @@ List GLMcat(Formula formula,
       names1 = names2;
     }
 
-    // print(names1);
     if(P_c > 1){
       for(int var = 1 ; var < explanatory_complete.size() ; var++){
         for(int cat = 0 ; cat < Q ; cat++){
@@ -454,7 +488,6 @@ List GLMcat(Formula formula,
         }
       }
     }
-    // print(names1);
     if(P_p > 0){
       for(int var_p = 0 ; var_p < P_p ; var_p++){
         names1[ind_name] = parallel_effect[var_p];
@@ -560,6 +593,8 @@ List GLMcat(Formula formula,
   if(iteration < iterations_us){
     Convergence = "True";
   }
+
+
 
   List output_list = List::create(
     Named("Function") = "GLMcat",

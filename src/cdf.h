@@ -44,6 +44,7 @@ class Logistic : virtual public cdf{
 public:
   virtual Eigen::VectorXd in_open_corner(const Eigen::VectorXd& p) const;
   virtual double cdf_logit(const double& value) const;
+  virtual double cdf_logit_complement(const double& value) const;
   virtual double pdf_logit(const double& value) const;
   virtual double qdf_logit(const double& value) const;
 
@@ -55,6 +56,7 @@ public:
 class Normal : virtual public cdf{
 public:
   virtual double cdf_normal(const double& value) const;
+  virtual double cdf_normal_complement(const double& value) const;
   virtual double pdf_normal(const double& value) const;
   virtual double qdf_normal(const double& value) const;
 
@@ -66,6 +68,7 @@ public:
 class Cauchy : virtual public cdf{
 public:
   virtual double cdf_cauchy(const double& value) const;
+  virtual double cdf_cauchy_complement(const double& value) const;
   virtual double pdf_cauchy(const double& value) const;
   virtual double qdf_cauchy(const double& value) const;
 
@@ -77,6 +80,7 @@ public:
 class Student :  virtual public cdf{
 public:
   virtual double cdf_student(const double& value, const double& freedom_degrees) const;
+  // virtual double cdf_student_complement(const double& value, const double& freedom_degrees) const;
   virtual double pdf_student(const double& value, const double& freedom_degrees) const;
   virtual double qdf_student(const double& value, const double& freedom_degrees) const;
 
@@ -89,6 +93,7 @@ public:
 class Noncentralt :  virtual public cdf{
 public:
   virtual double cdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const;
+  virtual double cdf_non_central_t_complement(const double& value, const double& freedom_degrees, const double& non_centrality) const;
   virtual double pdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const;
   virtual double qdf_non_central_t(const double& value, const double& freedom_degrees, const double& non_centrality) const;
 
@@ -98,6 +103,7 @@ public:
 class Gumbel :  virtual public cdf{
 public:
   virtual double cdf_gumbel(const double& value) const;
+  virtual double cdf_gumbel_complement(const double& value) const;
   virtual double pdf_gumbel(const double& value) const;
   virtual double qdf_gumbel(const double& value) const;
 
@@ -109,6 +115,7 @@ public:
 class Gompertz : virtual public cdf{
 public:
   virtual double cdf_gompertz(const double& value) const;
+  // virtual double cdf_gompertz_complement(const double& value) const;
   virtual double pdf_gompertz(const double& value) const;
   virtual double qdf_gompertz(const double& value) const;
 
@@ -120,6 +127,7 @@ public:
 class Laplace : virtual public cdf{
 public:
   virtual double cdf_laplace(const double& value) const;
+  virtual double cdf_laplace_complement(const double& value) const;
   virtual double pdf_laplace(const double& value) const;
   virtual double qdf_laplace(const double& value) const;
 

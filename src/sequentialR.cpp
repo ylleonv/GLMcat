@@ -16,7 +16,10 @@ Eigen::VectorXd SequentialR::inverse_logistic(const Eigen::VectorXd& eta) const
   for(int j=0; j<eta.size(); ++j)
   {
     ordered_pi[j] = product * Logistic::cdf_logit( eta(j) );
-    product *= ( 1 - Logistic::cdf_logit( eta(j) ) );
+    product *= (
+      // 1 - Logistic::cdf_logit( eta(j) )
+      cdf_logit_complement(eta(j))
+      );
   }
   return in_open_corner(ordered_pi);
 }
@@ -30,7 +33,10 @@ Eigen::MatrixXd SequentialR::inverse_derivative_logistic(const Eigen::VectorXd& 
     M(j,j) = Logistic::pdf_logit(eta(j)) * product;
     for (int i=0; i<j; ++i)
     { M(i,j) = - Logistic::pdf_logit(eta(i))  * std::max(1e-10, std::min(Logistic::cdf_logit(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-Logistic::cdf_logit(eta(i)), 1-1e-6)); }
-    product *= std::max(1e-10, std::min( 1-Logistic::cdf_logit(eta(j)), 1-1e-6));
+    product *= std::max(1e-10, std::min(
+      // 1-Logistic::cdf_logit(eta(j))
+                          cdf_logit_complement(eta(j))
+                          , 1-1e-6));
   }
   return M;
 }
@@ -42,7 +48,10 @@ Eigen::VectorXd SequentialR::inverse_normal(const Eigen::VectorXd& eta) const
   for(int j=0; j<eta.size(); ++j)
   {
     ordered_pi[j] = product * cdf_normal( eta(j) );
-    product *= ( 1 - cdf_normal( eta(j) ) );
+    product *= (
+      // 1 - cdf_normal( eta(j) )
+      cdf_normal_complement(eta(j))
+      );
   }
   return in_open_corner(ordered_pi);
 }
@@ -56,7 +65,10 @@ Eigen::MatrixXd SequentialR::inverse_derivative_normal(const Eigen::VectorXd& et
     M(j,j) = pdf_normal(eta(j)) * product;
     for (int i=0; i<j; ++i)
     { M(i,j) = - pdf_normal(eta(i))  * std::max(1e-10, std::min(cdf_normal(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-cdf_normal(eta(i)), 1-1e-6)); }
-    product *= std::max(1e-10, std::min( 1-cdf_normal(eta(j)), 1-1e-6));
+    product *= std::max(1e-10, std::min(
+      // 1-cdf_normal(eta(j))
+      cdf_normal_complement(eta(j))
+                          , 1-1e-6));
   }
   return M;
 }
@@ -68,7 +80,10 @@ Eigen::VectorXd SequentialR::inverse_cauchy(const Eigen::VectorXd& eta) const
   for(int j=0; j<eta.size(); ++j)
   {
     ordered_pi[j] = product * cdf_cauchy( eta(j) );
-    product *= ( 1 - cdf_cauchy( eta(j) ) );
+    product *= (
+      // 1 - cdf_cauchy( eta(j) )
+      cdf_cauchy_complement(eta(j))
+      );
   }
   return in_open_corner(ordered_pi);
 }
@@ -81,8 +96,14 @@ Eigen::MatrixXd SequentialR::inverse_derivative_cauchy(const Eigen::VectorXd& et
   {
     M(j,j) = pdf_cauchy(eta(j)) * product;
     for (int i=0; i<j; ++i)
-    { M(i,j) = - pdf_cauchy(eta(i))  * std::max(1e-10, std::min(cdf_cauchy(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-cdf_cauchy(eta(i)), 1-1e-6)); }
-    product *= std::max(1e-10, std::min( 1-cdf_cauchy(eta(j)), 1-1e-6));
+    { M(i,j) = - pdf_cauchy(eta(i))  * std::max(1e-10, std::min(cdf_cauchy(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min(
+      // 1-cdf_cauchy(eta(i))
+      cdf_cauchy_complement(eta(i))
+                                                                                                                    , 1-1e-6)); }
+    product *= std::max(1e-10, std::min(
+      // 1-cdf_cauchy(eta(j))
+      cdf_cauchy_complement(eta(j))
+                          , 1-1e-6));
   }
   return M;
 }
@@ -120,7 +141,11 @@ Eigen::VectorXd SequentialR::inverse_gumbel(const Eigen::VectorXd& eta) const
   for(int j=0; j<eta.size(); ++j)
   {
     ordered_pi[j] = product * cdf_gumbel( eta(j) );
-    product *= ( 1 - cdf_gumbel( eta(j) ) );
+    product *= (
+      // 1 - cdf_gumbel( eta(j) )
+      cdf_gumbel_complement(eta(j))
+
+      );
   }
   return in_open_corner(ordered_pi);
 }
@@ -133,8 +158,14 @@ Eigen::MatrixXd SequentialR::inverse_derivative_gumbel(const Eigen::VectorXd& et
   {
     M(j,j) = pdf_gumbel(eta(j)) * product;
     for (int i=0; i<j; ++i)
-    { M(i,j) = - pdf_gumbel(eta(i))  * std::max(1e-10, std::min(cdf_gumbel(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-cdf_gumbel(eta(i)), 1-1e-6)); }
-    product *= std::max(1e-10, std::min( 1-cdf_gumbel(eta(j)), 1-1e-6));
+    { M(i,j) = - pdf_gumbel(eta(i))  * std::max(1e-10, std::min(cdf_gumbel(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min(
+      // 1-cdf_gumbel(eta(i))
+      cdf_gumbel_complement(eta(i))
+                                                                                                                    , 1-1e-6)); }
+    product *= std::max(1e-10, std::min(
+      // 1-cdf_gumbel(eta(j))
+      cdf_gumbel_complement(eta(j))
+                          , 1-1e-6));
   }
   return M;
 }
@@ -172,7 +203,10 @@ Eigen::VectorXd SequentialR::inverse_laplace(const Eigen::VectorXd& eta) const
   for(int j=0; j<eta.size(); ++j)
   {
     ordered_pi[j] = product * Laplace::cdf_laplace( eta(j) );
-    product *= ( 1 - Laplace::cdf_laplace( eta(j) ) );
+    product *= (
+      // 1 - Laplace::cdf_laplace( eta(j) )
+      cdf_laplace_complement(eta(j))
+      );
   }
   return in_open_corner(ordered_pi);
 }
@@ -185,8 +219,14 @@ Eigen::MatrixXd SequentialR::inverse_derivative_laplace(const Eigen::VectorXd& e
   {
     M(j,j) = Laplace::pdf_laplace(eta(j)) * product;
     for (int i=0; i<j; ++i)
-    { M(i,j) = - Laplace::pdf_laplace(eta(i))  * std::max(1e-10, std::min(Laplace::cdf_laplace(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min( 1-Laplace::cdf_laplace(eta(i)), 1-1e-6)); }
-    product *= std::max(1e-10, std::min( 1-Laplace::cdf_laplace(eta(j)), 1-1e-6));
+    { M(i,j) = - Laplace::pdf_laplace(eta(i))  * std::max(1e-10, std::min(Laplace::cdf_laplace(eta(j)), 1-1e-6)) * product / std::max(1e-10, std::min(
+      // 1 - Laplace::cdf_laplace( eta(j) )
+      cdf_laplace_complement(eta(j))
+                                                                                                                                        , 1-1e-6)); }
+    product *= std::max(1e-10, std::min(
+      // 1 - Laplace::cdf_laplace( eta(j) )
+      cdf_laplace_complement(eta(j))
+      , 1-1e-6));
   }
   return M;
 }
@@ -198,7 +238,8 @@ Eigen::VectorXd SequentialR::inverse_noncentralt(const Eigen::VectorXd& eta, con
   for(int j=0; j<eta.size(); ++j)
   {
     ordered_pi[j] = product * cdf_non_central_t( eta(j) ,freedom_degrees,mu);
-    product *= ( 1 - cdf_non_central_t( eta(j) ,freedom_degrees,mu) );
+    // product *= ( 1 - cdf_non_central_t( eta(j) ,freedom_degrees,mu) );
+    product *= ( cdf_non_central_t_complement( eta(j) ,freedom_degrees,mu) );
   }
   return in_open_corner(ordered_pi);
 }
@@ -211,8 +252,15 @@ Eigen::MatrixXd SequentialR::inverse_derivative_noncentralt(const Eigen::VectorX
   {
     M(j,j) = pdf_non_central_t(eta(j),freedom_degrees,mu) * product;
     for (int i=0; i<j; ++i)
-    { M(i,j) = - pdf_non_central_t(eta(i),freedom_degrees,mu)  * std::max(1e-10, std::min(cdf_non_central_t(eta(j),freedom_degrees,mu), 1-1e-6)) * product / std::max(1e-10, std::min( 1-cdf_non_central_t(eta(i),freedom_degrees,mu), 1-1e-6)); }
-    product *= std::max(1e-10, std::min( 1-cdf_non_central_t(eta(j),freedom_degrees,mu), 1-1e-6));
+    { M(i,j) = - pdf_non_central_t(eta(i),freedom_degrees,mu)  * std::max(1e-10, std::min(cdf_non_central_t(eta(j),freedom_degrees,mu), 1-1e-6)) * product / std::max(1e-10,
+        std::min(
+          // 1-cdf_non_central_t(eta(i),freedom_degrees,mu)
+          cdf_non_central_t_complement(eta(i),freedom_degrees,mu)
+                                                                                                                                                                        , 1-1e-6)); }
+    product *= std::max(1e-10, std::min(
+      // 1-cdf_non_central_t(eta(j),freedom_degrees,mu)
+      cdf_non_central_t_complement(eta(j),freedom_degrees,mu)
+                          ,  1-1e-6));
   }
   return M;
 }
