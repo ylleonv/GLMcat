@@ -392,7 +392,7 @@ List GLMcat(Formula formula,
     FullPivLU<MatrixXd> lu(F_i);
     bool invertible = lu.isInvertible();
 
-    if(!invertible || LogLikIter[iteration]>-0.000001 ) {
+    if(!invertible || LogLik > -0.000001 ) {
       Rcpp::warning("Fisher matrix is not invertible. Check for convergence problems");
     }
 

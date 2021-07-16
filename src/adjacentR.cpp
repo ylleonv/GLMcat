@@ -21,8 +21,8 @@ Eigen::VectorXd AdjacentR::inverse_logistic(const Eigen::VectorXd& eta) const
   for(int j=(eta.size()-1); j>0; --j)
   {
     pi[j-1] = pi[j] * cdf_logit( eta(j-1) ) / (
-      // 1-cdf_logit( eta(eta.size()-1) )
-      cdf_logit_complement( eta(eta.size()-1) )
+      // 1-cdf_logit( eta(j-1)  )
+      cdf_logit_complement( eta(j-1)  )
       );
     norm += pi[j-1];
   }
@@ -38,8 +38,8 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_logistic(const Eigen::VectorXd& et
   { D(j,j) = pdf_logit( eta(j) ) /
     ( std::max(1e-10, std::min(1-1e-6, cdf_logit(eta(j)))) *
       std::max(1e-10, std::min(1-1e-6,
-                               // 1-cdf_logit( eta(eta.size()-1) )
-                               cdf_logit_complement( eta(eta.size()-1) )
+                               // 1-cdf_logit( eta(j) )
+                               cdf_logit_complement( eta(j) )
                                ))
         ); }
 
@@ -58,8 +58,8 @@ Eigen::VectorXd AdjacentR::inverse_normal(const Eigen::VectorXd& eta) const
   for(int j=(eta.size()-1); j>0; --j)
   {
     pi[j-1] = pi[j] * cdf_normal( eta(j-1) ) / (
-      // 1-cdf_normal( eta(eta.size()-1) )
-      cdf_normal_complement( eta(eta.size()-1) )
+      // 1-cdf_normal( eta(j) )
+      cdf_normal_complement( eta(j) )
       );
     norm += pi[j-1];
   }
@@ -74,8 +74,8 @@ Eigen::MatrixXd AdjacentR::inverse_derivative_normal(const Eigen::VectorXd& eta)
   for(int j=0; j<pi.rows(); ++j)
   { D(j,j) = pdf_normal( eta(j) ) /( std::max(1e-10, std::min(1-1e-6, cdf_normal(eta(j)))) *
     std::max(1e-10, std::min(1-1e-6,
-                             // 1-cdf_normal( eta(eta.size()-1) )
-                             cdf_normal_complement( eta(eta.size()-1) )
+                             // 1-cdf_normal( eta(j))
+                             cdf_normal_complement( eta(j) )
                              )) ); }
 
   return D * Eigen::TriangularView<Eigen::MatrixXd, Eigen::UpLoType::Lower>(Ones) * ( Eigen::MatrixXd(pi.asDiagonal()) - pi * pi.transpose() );
