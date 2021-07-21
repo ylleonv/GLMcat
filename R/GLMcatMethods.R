@@ -4,17 +4,17 @@
 #' @param ... additional arguments affecting the summary produced.
 #' @rdname print
 #' @export
-print.glmcat <- function(x, ...) {
+print.glmcat <- function(object, ...) {
   cat("\nFormula:\n")
-  print(x$formula)
+  print(object$formula)
   cat("\nRatio:\n")
-  print(x$ratio)
+  print(object$ratio)
   cat("\nCoefficients:\n")
-  print(coef(x, with_baseline = FALSE))
-  ll <- logLik(x)
+  print(coef(object, with_baseline = FALSE))
+  ll <- logLik(object)
   cat("\nLog-Likelihood:\n ", ll, " (df = ", attr(ll, "df"), ")", sep = "")
   cat("\n\n")
-  invisible(x)
+  invisible(object)
 }
 
 #' Variance-Covariance Matrix for a Fitted glmcat Model Object
@@ -38,8 +38,8 @@ vcov.glmcat <- function(object, ...) {
 #' @method terms glmcat
 #' @usage \method{terms}{glmcat}(object, ...)
 #' @export
-terms.glmcat <- function(x, ...) {
-  return(terms(x$formula))
+terms.glmcat <- function(object, ...) {
+  return(terms(object$formula))
 }
 
 #' Predict Method for a Fitted glmcat Model Object
@@ -50,7 +50,7 @@ terms.glmcat <- function(x, ...) {
 #' @param ... additional arguments affecting the predict produced.
 #' @rdname predict
 #' @method predict glmcat
-#' @usage \method{predict}{glmcat}(object, ...)
+#' @usage \method{predict}{glmcat}(object, newdata, type, ...)
 #' @export
 predict.glmcat <- function(object, newdata,
                            type = c("prob", "linear.predictor")) {

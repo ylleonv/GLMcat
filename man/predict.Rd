@@ -5,7 +5,7 @@
 \alias{predict_glmcat}
 \title{Predict Method for a Fitted glmcat Model Object}
 \usage{
-\method{predict}{glmcat}(object, ...)
+\method{predict}{glmcat}(object, newdata, type, ...)
 
 predict_glmcat(model_object = NaN, data, type = "prob")
 }

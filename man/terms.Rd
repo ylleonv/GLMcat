@@ -7,9 +7,9 @@
 \method{terms}{glmcat}(object, ...)
 }
 \arguments{
-\item{...}{additional arguments affecting the summary produced.}
-
 \item{object}{an object of class \code{"glmcat"}.}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
