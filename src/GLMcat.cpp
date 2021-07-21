@@ -608,7 +608,7 @@ List GLMcat(Formula formula,
     Named("control") = control,
     Named("normalization_s0") = s0,
     // Named("pinv") = pinv,
-    // Named("cov_beta") = cov_beta,
+    Named("cov_beta") = cov_beta,
     Rcpp::Named("df of the model") = df,
     // Rcpp::Named("fitted") = pi_ma,
     // Rcpp::Named("D_ma") = D_ma,
@@ -682,8 +682,8 @@ NumericMatrix predict_glmcat(List model_object,
     names_col = arguments["categories_order"];
     newdataList = dist1.select_data_nested(arguments["formula"],
                                            arguments["case_id"],arguments["alternatives"],
-                                                                         arguments["reference"],arguments["alternative_specific"],
-                                                                                                         data,arguments["intercept"]
+                                           arguments["reference"],arguments["alternative_specific"],
+                                           data,arguments["intercept"]
                                              //   ,
                                              // ratio
     );

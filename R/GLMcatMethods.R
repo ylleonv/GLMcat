@@ -1,3 +1,64 @@
+#' Print method for an "glmcat" object.
+#' @description \code{print} method for a fitted \code{glmcat} model object.
+#' @param object an object of class \code{"glmcat"}.
+#' @param ... additional arguments affecting the summary produced.
+#' @rdname print
+#' @export
+print.glmcat <- function(x, ...) {
+  cat("\nFormula:\n")
+  print(x$formula)
+  cat("\nRatio:\n")
+  print(x$ratio)
+  cat("\nCoefficients:\n")
+  print(coef(x, with_baseline = FALSE))
+  ll <- logLik(x)
+  cat("\nLog-Likelihood:\n ", ll, " (df = ", attr(ll, "df"), ")", sep = "")
+  cat("\n\n")
+  invisible(x)
+}
+
+#' Variance-Covariance Matrix for a Fitted glmcat Model Object
+#' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
+#' @param object an object of class \code{"glmcat"}.
+#' @param ... additional arguments affecting the summary produced.
+#' @rdname vcov
+#' @method vcov glmcat
+#' @usage \method{vcov}{glmcat}(object, ...)
+#' @export
+vcov.glmcat <- function(object, ...) {
+  colnames(object$cov_beta) <- rownames(object$cov_beta) <- rownames(object$coefficients)
+  return(object$cov_beta)
+}
+
+#' Terms for a Fitted glmcat Model Object
+#' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
+#' @param object an object of class \code{"glmcat"}.
+#' @param ... additional arguments affecting the summary produced.
+#' @rdname terms
+#' @method terms glmcat
+#' @usage \method{terms}{glmcat}(object, ...)
+#' @export
+terms.glmcat <- function(x, ...) {
+  return(terms(x$formula))
+}
+
+#' Predict Method for a Fitted glmcat Model Object
+#' @description Obtains predictions from a fitted \code{"glmcat"} object.
+#' @param object an fitted object of class \code{"glmcat"}.
+#' @param newdata optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.
+#' @param type the type of prediction required. The default is on the scale of the linear predictors; ' \code{"prob"} gives probabilities and \code{"linear.predictor"} gives predictions on the scale of thelinear predictor including the boundary categories.
+#' @param ... additional arguments affecting the predict produced.
+#' @rdname predict
+#' @method predict glmcat
+#' @usage \method{predict}{glmcat}(object, ...)
+#' @export
+predict.glmcat <- function(object, newdata,
+                           type = c("prob", "linear.predictor")) {
+  if (missing(newdata)) newdata <- model.frame(object)
+  return(predict_glmcat(model_object = object,data = newdata,type = type))
+}
+
+
 #' Summary of models
 #' @description \code{summary} method for GLMcat objects.
 #' @param object a GLMcat model
@@ -23,7 +84,7 @@ summary.glmcat <- function(object, ...) {
   printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
 
   if(s0 !=1 ){
-    cat("Normalized coefficients")
+    print("Normalized coefficients")
     object$coefficients <- cbind(
       "Estimate" = coef * s0,
       "Std. Error" = se * s0,
@@ -65,17 +126,11 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #' @description Extract the number of observations from a GLMcat model.
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
-#' @rdname nobs_glmcat
+#' @rdname nobs.glmcat
+#' @method nobs glmcat
 #' @export
-#' @examples
-#' data(DisturbedDreams)
-#' mod1 <- GLMcat(
-#'   formula = Level ~ Age,
-#'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#'   data = DisturbedDreams, cdf = "logistic"
-#' )
-#' nobs_glmcat(mod1)
-nobs_glmcat <- function(object, ...) {
+#' @usage \method{nobs}{glmcat}(object, ...)
+nobs.glmcat <- function(object, ...) {
   return(object$nobs_glmcat)
 }
 
@@ -414,6 +469,7 @@ step_glmcat <- function (object, data,
     if (backward && length(scope$drop)) {
       aod <- drop2(fit, scope$drop, data, scale = 0, trace = trace)
       rn <- row.names(aod)
+      # print(aod)
       row.names(aod) <- c(rn[1L], paste("-", rn[-1L]))
       if (any(aod$Df == 0, na.rm = TRUE)) {
         zdf <- aod$Df == 0 & !is.na(aod$Df)
@@ -440,7 +496,7 @@ step_glmcat <- function (object, data,
       nc <- nc[!is.na(nc)][1L]
       o <- order(aod[, nc])
       if (trace)
-        cat(aod[o, ])
+        print(aod[o, ])
       if (o[1L] == 1)
         break
       change <- rownames(aod)[o[1L]]
@@ -451,8 +507,7 @@ step_glmcat <- function (object, data,
 
     form1 <- update(fit$formula, as.formula(paste("~ .", change)),
                     evaluate = FALSE)
-    # object$parallel <- object$parallel[object$parallel != str_trim(sub("-","", change))]
-    object$parallel <- object$parallel[object$parallel != trimws(sub("-","", change))]
+    object$parallel <- object$parallel[object$parallel != str_trim(sub("-","", change))]
     if(length(object$parallel) == 0) {object$parallel <- NA}
 
     # fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
