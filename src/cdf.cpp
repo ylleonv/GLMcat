@@ -71,6 +71,7 @@ NumericMatrix to_dummy1(NumericVector A, CharacterVector levels)
   return B_Ma;
 }
 
+// [[Rcpp::export("Model_Matrix_or")]]
 List Model_Matrix_or(DataFrame data, Formula formula) {
   Environment stats_env("package:stats");
   Environment base_env("package:base");
@@ -105,9 +106,12 @@ List Model_Matrix_or(DataFrame data, Formula formula) {
   // factor_var = factor_var[var_int];
   CharacterVector factor_var = var_int[factor_var1];
   // Rcout << "factor_var" << std::endl;
-  // Rcout << factor_var << std::endl;
+  // Rcout << df_new << std::endl;
 
   NumericMatrix df_new = model_matrix(df_new1, _["data"] = df_new1);
+
+  // Rcout << df_new << std::endl;
+
   return List::create(
     Named("df_new") = df_new,
     Named("Response") = Response,

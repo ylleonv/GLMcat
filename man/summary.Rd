@@ -2,14 +2,12 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{summary.glmcat}
 \alias{summary.glmcat}
-\title{Summary of models}
+\title{Summarising \code{glmcat} Model Fits}
 \usage{
 \method{summary}{glmcat}(object, ...)
 }
 \arguments{
-\item{object}{a GLMcat model}
-
-\item{...}{additional arguments affecting the summary produced.}
+\item{object}{an object of class \code{"glmcat"}.}
 }
 \description{
 \code{summary} method for GLMcat objects.

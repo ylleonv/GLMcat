@@ -7,8 +7,9 @@
 print.glmcat <- function(object, ...) {
   cat("\nFormula:\n")
   print(object$formula)
-  cat("\nRatio:\n")
-  print(object$ratio)
+  print(object$table_summary)
+  # cat("\nRatio:\n")
+  # print(object$ratio)
   cat("\nCoefficients:\n")
   print(coef(object, with_baseline = FALSE))
   ll <- logLik(object)
@@ -59,41 +60,51 @@ predict.glmcat <- function(object, newdata,
 }
 
 
-#' Summary of models
+#' Summarising \code{glmcat} Model Fits
 #' @description \code{summary} method for GLMcat objects.
-#' @param object a GLMcat model
-#' @param ... additional arguments affecting the summary produced.
+#' @param object an object of class \code{"glmcat"}.
 #' @rdname summary
+#' @method summary glmcat
 #' @export
 summary.glmcat <- function(object, ...) {
-  coef <- object$coefficients
+  cat("\nFormula:\n")
+  print(object$formula)
+  print(object$table_summary)
+  cat("\n")
   se <- object$stderr
   s0 <- object$normalization_s0
+  tval <- object$coefficients / se
 
-  tval <- coef / se
-
-  object$coefficients <- cbind(
-    "Estimate" = coef,
+  coefs <- cbind(
+    "Estimate" = object$coefficients,
     "Std. Error" = se,
     "z value" = tval,
     "Pr(>|z|)" = 2 * pnorm(-abs(tval))
   )
 
-  colnames(object$coefficients) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-  sum_ma <- object$coefficients
-  printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
+  colnames(coefs) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+  # sum_ma <- object$coefficients
+  printCoefmat(coefs, P.values = TRUE, has.Pvalue = TRUE, ...)
+  ll <- logLik(object)
+  cat("\nLog-Likelihood:\n ", ll, " (df = ", attr(ll, "df"), ")", sep = "")
+  cat("\n\n")
 
   if(s0 !=1 ){
-    print("Normalized coefficients")
-    object$coefficients <- cbind(
-      "Estimate" = coef * s0,
+    cat("Normalized coefficients with s0 = ", s0, "", sep = " ")
+    cat("\n\n")
+    coefs2 <- cbind(
+      "Estimate" = object$coefficients * s0,
       "Std. Error" = se * s0,
       "z value" = tval,
       "Pr(>|z|)" = 2 * pnorm(-abs(tval))
     )
-    colnames(object$coefficients) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-    printCoefmat(object$coefficients, P.values = TRUE, has.Pvalue = TRUE, ...)
+    colnames(coefs2) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+    printCoefmat(coefs2, P.values = TRUE, has.Pvalue = TRUE, ...)
   }
+
+  # object$coefficients <- coefs
+  class(coefs) <- "summary.glmcat"
+  # return(object)
 
 }
 
@@ -126,7 +137,7 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #' @description Extract the number of observations from a GLMcat model.
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
-#' @rdname nobs.glmcat
+#' @rdname nobs
 #' @method nobs glmcat
 #' @export
 #' @usage \method{nobs}{glmcat}(object, ...)
@@ -208,7 +219,7 @@ drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
   ans <- matrix(nrow = ns + 1L, ncol = 2L,
                 dimnames =  list(c("<none>", scope), c("df", "AIC")))
   ans[1, ] <- AIC(object)
-  n0 <- nobs_glmcat(object, use.fallback = TRUE)
+  n0 <- nobs(object, use.fallback = TRUE)
   env <- environment(formula(object))
   for(i in seq_len(ns)) {
     tt <- scope[i]
@@ -246,7 +257,7 @@ drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
 
     }
     ans[i+1, ] <- AIC(nfit)
-    nnew <- nobs_glmcat(nfit, use.fallback = TRUE)
+    nnew <- nobs(nfit, use.fallback = TRUE)
     if(all(is.finite(c(n0, nnew))) && nnew != n0)
       stop("number of rows in use has changed: remove missing values?")
   }
@@ -285,7 +296,7 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
   ans <- matrix(nrow = ns + 1L, ncol = 2L,
                 dimnames = list(c("<none>", scope), c("df", "AIC")))
   ans[1L,  ] <- AIC(object)
-  n0 <- nobs_glmcat(object, use.fallback = TRUE)
+  n0 <- nobs(object, use.fallback = TRUE)
   # env <- environment(formula(object))
   for(i in seq_len(ns)) {
     tt <- scope[i]
@@ -327,7 +338,7 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
     }
 
     ans[i+1L, ] <- AIC(nfit)
-    nnew <- nobs_glmcat(nfit, use.fallback = TRUE)
+    nnew <- nobs(nfit, use.fallback = TRUE)
     if(all(is.finite(c(n0, nnew))) && nnew != n0)
       stop("number of rows in use has changed: remove missing values?")
   }
@@ -352,20 +363,21 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
 
 #' Stepwise for glmcat models
 #' @description Stepwise based on the AIC
-#' @rdname step_glmcat
+#' @rdname step.glmcat
 #' @param object a GLMcat model.
 #' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
-#' @param data the same dataset used for the model specified in object.
 #' @param direction the mode of the stepwise search.
 #' @param trace to print the process information.
 #' @param steps the maximum number of steps.
+#' @method step glmcat
+#' @usage \method{step}{glmcat}(object, scope, direction, trace, steps)
 #' @export
-step_glmcat <- function (object, data,
+step.glmcat <- function (object,
                          scope,
-                         direction = c("both", "backward",
-                                       "forward"),
+                         direction = c("both", "backward", "forward"),
                          trace = 1, steps = 1000)
 {
+  data <- object$model
   mydeviance <- function(x, ...) {
     dev <- deviance(x)
     if (!is.null(dev))
@@ -439,7 +451,7 @@ step_glmcat <- function (object, data,
   models <- vector("list", steps)
   # if (!is.null(keep))
   #   keep.list <- vector("list", steps)
-  n <- nobs_glmcat(object, use.fallback = TRUE)
+  n <- nobs(object, use.fallback = TRUE)
   fit <- object
   bAIC <- AIC(fit)
   edf <- length(attr(fit$terms,"term.labels"))
@@ -540,7 +552,7 @@ step_glmcat <- function (object, data,
 
     fit$terms <-   terms(formula(fit$formula), data = fit$data)
 
-    nnew <- nobs_glmcat(fit, use.fallback = TRUE)
+    nnew <- nobs(fit, use.fallback = TRUE)
     if (all(is.finite(c(n, nnew))) && nnew != n)
       stop("number of rows in use has changed: remove missing values?")
     Terms <- terms(fit)

@@ -99,3 +99,7 @@ predict_glmcat <- function(model_object, data, type) {
     .Call(`_GLMcat_predict_glmcat`, model_object, data, type)
 }
 
+Model_Matrix_or <- function(data, formula) {
+    .Call(`_GLMcat_Model_Matrix_or`, data, formula)
+}
+

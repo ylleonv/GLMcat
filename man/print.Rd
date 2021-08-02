@@ -4,12 +4,12 @@
 \alias{print.glmcat}
 \title{Print method for an "glmcat" object.}
 \usage{
-\method{print}{glmcat}(x, ...)
+\method{print}{glmcat}(object, ...)
 }
 \arguments{
-\item{...}{additional arguments affecting the summary produced.}
-
 \item{object}{an object of class \code{"glmcat"}.}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 \code{print} method for a fitted \code{glmcat} model object.

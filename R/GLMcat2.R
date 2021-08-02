@@ -21,18 +21,18 @@
 #' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
 #' }
 #' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
-
 #' @export
 glmcat2 <-
-  function(formula, data,
+  function(formula,
+           data,
            ratio = c("reference", "cumulative", "sequential","adjacent"),
-           cdf = c("logistic", "normal", "gumbel", "compertz", "cauchy", "laplace"),
+           cdf = c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace"),
            parallel = NA,
            categories_order = NA,
            ref_category = NA,
            threshold = c("standard", "symmetric", "equidistant"),
            control = list(),
-           normalization = NA,
+           normalization = 1,
            doFit = TRUE, na.action,
            contrasts,
            model = TRUE, ...)
@@ -49,6 +49,10 @@ glmcat2 <-
     #             ref_category = ref_category, threshold = threshold , control = control, normalization = normalization))
 
     fit_old[["model"]] <- model.frame(formula = formula,data)
+
+    fit_old$table_summary <- table_summary(fit_old)
+
+    fit_old <- fit_old[sort(names(fit_old))]
     class(fit_old) <- "glmcat"
 
     return(fit_old)
