@@ -83,9 +83,8 @@ GLMcat <- function(formula, data, ratio, cdf, parallel, categories_order, ref_ca
 #' @description GLMcat model predictions
 #' @param model_object a GLMcat model
 #' @param data a data frame with the predictor variables used in the GLMcat model.
-#' @param type The type of prediction to obtain. \code{"prob"} gives probabilities,
-#' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
-#' the linear predictor.
+#' @param type The type of prediction to obtain. \code{"prob"} gives probabilities
+#' and \code{"linear.predict"} gives the linear predictor.
 #' @rdname predict
 #' @name predict_glmcat
 #' @title predict.glmcat

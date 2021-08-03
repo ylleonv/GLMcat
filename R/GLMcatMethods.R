@@ -53,10 +53,24 @@ terms.glmcat <- function(object, ...) {
 #' @method predict glmcat
 #' @usage \method{predict}{glmcat}(object, newdata, type, ...)
 #' @export
-predict.glmcat <- function(object, newdata,
+predict.glmcat <- function(object,
+                           newdata,
                            type = c("prob", "linear.predictor")) {
-  if (missing(newdata)) newdata <- model.frame(object)
-  return(predict_glmcat(model_object = object,data = newdata,type = type))
+  if (missing(newdata)) {
+    # if (object$Function == "DiscreteCM"){
+    #   object1 <- object
+    #   formula1 <- paste(format(object1$formula),"+",object1$arguments$case_id,"+",
+    #                     object1$arguments$alternatives,sep = "")
+    #   object1$formula <- formula1
+    #   newdata <- model.frame(object1)
+    #   print(object1$formula)
+    #
+    # }else{
+    newdata <- model.frame(object)
+    # }
+  }
+
+  return(predict_glmcat(model_object = object, data = newdata, type = type))
 }
 
 

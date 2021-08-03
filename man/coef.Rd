@@ -4,7 +4,7 @@
 \alias{coef.glmcat}
 \title{Model coefficients}
 \usage{
-\method{coef}{glmcat}(object, na.rm = FALSE, ...)
+coef.glmcat(object, na.rm = FALSE, ...)
 }
 \arguments{
 \item{object}{a GLMcat model.}

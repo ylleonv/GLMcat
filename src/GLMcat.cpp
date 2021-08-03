@@ -643,9 +643,8 @@ List GLMcat(Formula formula,
 //' @description GLMcat model predictions
 //' @param model_object a GLMcat model
 //' @param data a data frame with the predictor variables used in the GLMcat model.
-//' @param type The type of prediction to obtain. \code{"prob"} gives probabilities,
-//' \code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
-//' the linear predictor.
+//' @param type The type of prediction to obtain. \code{"prob"} gives probabilities
+//' and \code{"linear.predict"} gives the linear predictor.
 //' @rdname predict
 //' @name predict_glmcat
 //' @title predict.glmcat
@@ -661,51 +660,48 @@ NumericMatrix predict_glmcat(List model_object,
                              String type
 ){
 
+  std::string ratio = model_object["ratio"];;
+  List cdf_list = model_object["cdf"];
   String function = model_object["Function"];
-  class cdf dist1;
-  // Environment base_env("package:base");
-  // Function my_rowSums = base_env["rowSums"];
   int N_cats = model_object["N_cats"];
+  int N = data.rows();
+  CharacterVector names_col;
+  List newdataList;
+  class cdf dist1;
   Eigen::MatrixXd coef = model_object["coefficients"];
 
-  List newdataList, cdf_list;
-  std::string ratio;
-  int N ;
-  CharacterVector names_col;
-
-
   if(function == "DiscreteCM"){
-    List arguments = model_object["arguments"];
     ratio = "reference";
-    cdf_list = model_object["cdf"];
     N = data.rows() / N_cats;
+    List arguments = model_object["arguments"];
     names_col = arguments["categories_order"];
     newdataList = dist1.select_data_nested(arguments["formula"],
-                                           arguments["case_id"],arguments["alternatives"],
-                                           arguments["reference"],arguments["alternative_specific"],
-                                           data,arguments["intercept"]
-                                             //   ,
-                                             // ratio
+                                           arguments["case_id"],
+                                           arguments["alternatives"],
+                                           arguments["reference"],
+                                           arguments["alternative_specific"],
+                                                                                                         data,arguments["intercept"]
     );
   }else{
-    String ratio1 = model_object["ratio"];
-    ratio = ratio1;
-    cdf_list = model_object["cdf"];
-    N = data.rows();
     names_col = model_object["categories_order"];
-    newdataList = dist1.All_pre_data_NEWDATA(model_object["formula"],
-                                             data,
-                                             model_object["categories_order"],
-                                                         model_object["parallel"],
-                                                                     N_cats);
+    newdataList = dist1.All_pre_data_or(model_object["formula"],
+                                        data,
+                                        model_object["categories_order"],
+                                                    model_object["parallel"],
+                                                                model_object["threshold"],
+                                                                            model_object["ratio"]);
   }
 
-  Eigen::MatrixXd Design_Matrix = newdataList["Design_Matrix"];
-  Eigen::MatrixXd predict_glmcated_eta;
-
-
+  MatrixXd X_EXT = newdataList["Design_Matrix"];
+  Eigen::MatrixXd predict_glmcat = X_EXT * coef;
+  NumericMatrix predict_glmcat1 = wrap(predict_glmcat);
+  NumericMatrix predict_glmcat2(N_cats-1, N ,
+                                predict_glmcat1.begin());
+  NumericMatrix predict_mat = transpose(predict_glmcat2);
   std::string cdf ;
+
   CharacterVector cdf_given = cdf_list[0];
+
 
   std::string cdf_1;
   if(cdf_given[0] == "NaN"){
@@ -714,7 +710,6 @@ NumericMatrix predict_glmcat(List model_object,
     std::string cdf2 = cdf_list[0];
     cdf = cdf2;
   }
-
   double freedom_degrees = 1;
   double mu = 0;
   if(cdf_list.size() == 2){
@@ -726,16 +721,13 @@ NumericMatrix predict_glmcat(List model_object,
   }
 
   Eigen::VectorXd pi;
-
-  Eigen::MatrixXd X_M_i;
   Eigen::MatrixXd pi_total = Eigen::MatrixXd::Zero(N,N_cats-1);
+  Eigen::MatrixXd predict_glmcated_eta;
+  Eigen::MatrixXd X_M_i;
 
   for (int i=0; i < N; i++){
-
-    X_M_i = Design_Matrix.block(i*(N_cats-1) , 0 , N_cats-1 , Design_Matrix.cols());
+    X_M_i = X_EXT.block(i*(N_cats-1) , 0 , N_cats-1 , X_EXT.cols());
     predict_glmcated_eta = X_M_i * coef;
-
-
     if(ratio == "reference"){
       ReferenceF ref;
       // Rcout << cdf << std::endl;
@@ -839,18 +831,12 @@ NumericMatrix predict_glmcat(List model_object,
   pi_total.conservativeResize(pi_total.rows() , N_cats);
   pi_total.col(N_cats-1) = Ones1 - cum_prob1;
 
-  NumericVector predict_glmcat;
-  NumericMatrix predict_mat;
-
   if(type == "prob"){
     predict_glmcat = pi_total;
     predict_mat = wrap(predict_glmcat);
     colnames(predict_mat) = names_col;
   }else if(type == "linear.predict"){
     names_col.erase(N_cats-1);
-    predict_glmcat = Design_Matrix * coef;
-    NumericMatrix predict_glmcat1( N_cats-1, pi_total.rows() , predict_glmcat.begin());
-    predict_mat = transpose(predict_glmcat1);
     colnames(predict_mat) = names_col;
   }else{
     Rcpp::stop("Unrecognized type parameter; options are: prob, linear.predict");

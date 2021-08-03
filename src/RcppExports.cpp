@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // Discrete_CM
-List Discrete_CM(Formula formula, String case_id, String alternatives, CharacterVector reference, CharacterVector alternative_specific, DataFrame data, List cdf, String intercept, double normalization, List control);
+List Discrete_CM(Formula formula, String case_id, String alternatives, CharacterVector reference, CharacterVector alternative_specific, DataFrame data, List cdf, String intercept, double normalization, Rcpp::List control);
 RcppExport SEXP _GLMcat_Discrete_CM(SEXP formulaSEXP, SEXP case_idSEXP, SEXP alternativesSEXP, SEXP referenceSEXP, SEXP alternative_specificSEXP, SEXP dataSEXP, SEXP cdfSEXP, SEXP interceptSEXP, SEXP normalizationSEXP, SEXP controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -26,7 +26,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type cdf(cdfSEXP);
     Rcpp::traits::input_parameter< String >::type intercept(interceptSEXP);
     Rcpp::traits::input_parameter< double >::type normalization(normalizationSEXP);
-    Rcpp::traits::input_parameter< List >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type control(controlSEXP);
     rcpp_result_gen = Rcpp::wrap(Discrete_CM(formula, case_id, alternatives, reference, alternative_specific, data, cdf, intercept, normalization, control));
     return rcpp_result_gen;
 END_RCPP

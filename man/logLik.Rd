@@ -4,7 +4,7 @@
 \alias{logLik.glmcat}
 \title{LogLikelihood glmcat models}
 \usage{
-\method{logLik}{glmcat}(object, ...)
+logLik.glmcat(object, ...)
 }
 \arguments{
 \item{object}{a GLMcat model.}

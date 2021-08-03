@@ -229,9 +229,9 @@ List cdf::All_pre_data_or(Formula formula,
   // Now order dataset with respect to the repsonse variables in the given order
   DataFrame df_tans = my_transpose(Design);
   DataFrame df_tans_2 = Design ;
-  NumericVector order_var_sel = my_order(df_tans_2[0]);
-  order_var_sel = order_var_sel - 1 ;
-  df_tans = df_tans[order_var_sel];
+  // NumericVector order_var_sel = my_order(df_tans_2[0]);
+  // order_var_sel = order_var_sel - 1 ;
+  // df_tans = df_tans[order_var_sel];
   df_tans_2 = my_transpose(df_tans);
   CharacterVector Levels = Cat_ref_or_L["levels"];
   int N_cats = Levels.length();
@@ -791,7 +791,7 @@ List Sort_DataFrame(DataFrame ModelMatrix,
     String var = names1(i);
     NumericVector order_var_sel = my_order(df_tans_2[var]);
     order_var_sel = order_var_sel - 1 ;
-    df_tans = df_tans[order_var_sel];
+    // df_tans = df_tans[order_var_sel]; # para el predict
     df_tans_2 = my_transpose(df_tans);
   }
   return List::create(

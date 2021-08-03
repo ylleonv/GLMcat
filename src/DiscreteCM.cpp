@@ -54,7 +54,7 @@ List Discrete_CM(Formula formula,
                  List cdf,
                  String intercept,
                  double normalization,
-                 List control
+                 Rcpp::List control
 ){
   // std::string cdf2 = cdf[0];
   //
@@ -372,22 +372,28 @@ List Discrete_CM(Formula formula,
     Convergence = "True";
   }
 
+  List cdf_list = List::create(
+    Named("cdf") = cdf_1,
+    Named("freedom_degrees") = freedom_degrees,
+    Named("mu") = mu
+
+  );
 
   List output_list_dis = List::create(
     Named("Function") = "DiscreteCM",
     Named("formula") = formula,
     Named("convergence") = Convergence,
     Named("ratio") = "reference",
-    Named("Nb. iterations") = iteration-1 ,
+    Named("iteration") = iteration-1 ,
     Named("coefficients") = BETA_2,
     Named("LogLikelihood") = LogLikIter(LogLikIter.rows() - 1),
-    Named("LogLikIter") =  LogLikIter,
+    // Named("LogLikIter") =  LogLikIter,
     Rcpp::Named("df of the model") = df,
     Named("X_M_i") =  X_M_i,
     Named("stderr") =  Std_Error,
     Named("N_cats") = K,
     Named("normalization_s0") =  s0,
-    Named("cdf") = cdf,
+    Named("cdf") = cdf_list,
     Named("nobs_glmcat") = N/K,
     Named("control") = control,
     Named("arguments") = List::create(Named("formula")= formula,Named("case_id")= case_id, Named("alternatives") = alternatives,

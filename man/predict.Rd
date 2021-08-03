@@ -14,9 +14,8 @@ predict_glmcat(model_object = NaN, data, type = "prob")
 
 \item{newdata}{optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.}
 
-\item{type}{The type of prediction to obtain. \code{"prob"} gives probabilities,
-\code{"cum.prob"} gives cumulative probabilities and \code{"linear.predict"} gives
-the linear predictor.}
+\item{type}{The type of prediction to obtain. \code{"prob"} gives probabilities
+and \code{"linear.predict"} gives the linear predictor.}
 
 \item{model_object}{a GLMcat model}
 
