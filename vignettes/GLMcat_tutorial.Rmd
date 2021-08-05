@@ -197,7 +197,7 @@ Another variation of the reference model is obtained at changing the cdf functio
 ```{r }
 mod3 <- GLMcat(
   formula = Level ~ Age, ref_category = "Very.severe",
-  data = DisturbedDreams, cdf = student.glmcat(df = 0.5)
+  data = DisturbedDreams, cdf = student_glmcat(df = 0.5)
 )
 summary(mod3)
 logLik(mod3)
@@ -339,10 +339,10 @@ If we have a preliminary idea of the coefficients of the model, we can specify a
 ```{r }
 cum_log_c <- GLMcat(
   formula = Level ~ Age,
-  cdf = student.glmcat(df = 0.8),
+  cdf = student_glmcat(df = 0.8),
   ratio = "cumulative",
   data = DisturbedDreams,
-  control = control.glmcat(beta_init = coef(cum_log_co))
+  control = glmcat_control(beta_init = coef(cum_log_co))
 )
 logLik(cum_log_c)
 summary(cum_log_c)

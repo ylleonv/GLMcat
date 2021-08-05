@@ -791,7 +791,8 @@ List Sort_DataFrame(DataFrame ModelMatrix,
     String var = names1(i);
     NumericVector order_var_sel = my_order(df_tans_2[var]);
     order_var_sel = order_var_sel - 1 ;
-    // df_tans = df_tans[order_var_sel]; # para el predict
+// # para el predict
+    df_tans = df_tans[order_var_sel];
     df_tans_2 = my_transpose(df_tans);
   }
   return List::create(

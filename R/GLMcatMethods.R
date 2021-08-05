@@ -80,46 +80,69 @@ predict.glmcat <- function(object,
 #' @rdname summary
 #' @method summary glmcat
 #' @export
-summary.glmcat <- function(object, ...) {
-  cat("\nFormula:\n")
-  print(object$formula)
-  print(object$table_summary)
-  cat("\n")
-  se <- object$stderr
-  s0 <- object$normalization_s0
-  tval <- object$coefficients / se
-
-  coefs <- cbind(
-    "Estimate" = object$coefficients,
-    "Std. Error" = se,
-    "z value" = tval,
-    "Pr(>|z|)" = 2 * pnorm(-abs(tval))
-  )
-
-  colnames(coefs) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-  # sum_ma <- object$coefficients
-  printCoefmat(coefs, P.values = TRUE, has.Pvalue = TRUE, ...)
-  ll <- logLik(object)
-  cat("\nLog-Likelihood:\n ", ll, " (df = ", attr(ll, "df"), ")", sep = "")
-  cat("\n\n")
-
-  if(s0 !=1 ){
-    cat("Normalized coefficients with s0 = ", s0, "", sep = " ")
-    cat("\n\n")
-    coefs2 <- cbind(
-      "Estimate" = object$coefficients * s0,
-      "Std. Error" = se * s0,
-      "z value" = tval,
-      "Pr(>|z|)" = 2 * pnorm(-abs(tval))
-    )
-    colnames(coefs2) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-    printCoefmat(coefs2, P.values = TRUE, has.Pvalue = TRUE, ...)
+summary.glmcat <- function(object, correlation = FALSE,...) {
+  vcov <- object$cov_beta
+  coefs <- matrix(NA, length(object$coefficients), 4,
+                  dimnames = list(names(object$coefficients),
+                                  c("Estimate", "Std. Error", "z value", "Pr(>|z|)")))
+  coefs[, 1] <- object$coefficients
+  if(!all(is.finite(vcov))) {
+    ## warning("Variance-covariance matrix of the parameters is not defined")
+    coefs[, 2:4] <- NA
+    if(correlation) warning("Correlation matrix is unavailable")
+  }
+  else {
+    # alias <- unlist(object$aliased)
+    coefs[, 2] <- sd <- sqrt(diag(vcov))
+    ## Cond is Inf if Hessian contains NaNs:
+    object$cond.H <-
+      if(any(is.na(object$Hessian))) Inf
+    else with(eigen(object$Hessian, symmetric=TRUE, only.values = TRUE),
+              abs(max(values) / min(values)))
+    coefs[, 3] <- coefs[, 1]/coefs[, 2]
+    coefs[, 4] <- 2 * pnorm(abs(coefs[, 3]),
+                            lower.tail=FALSE)
+    if(correlation)
+      object$correlation <- cov2cor(vcov)
   }
 
-  # object$coefficients <- coefs
-  class(coefs) <- "summary.glmcat"
-  # return(object)
+  rownames(coefs) <- rownames(object$coefficients)
 
+  object$coefficients <- coefs
+  class(object) <- "summary.glmcat"
+  object
+    # cat("\nFormula:\n")
+  # print(object$formula)
+  # print(object$table_summary)
+  # cat("\n")
+  # se <- object$stderr
+  # s0 <- object$normalization_s0
+  # tval <- object$coefficients / se
+  #
+  # coefs <- cbind(
+  #   "Estimate" = object$coefficients,
+  #   "Std. Error" = se,
+  #   "z value" = tval,
+  #   "Pr(>|z|)" = 2 * pnorm(-abs(tval))
+  # )
+  # colnames(coefs) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+  # printCoefmat(coefs, P.values = TRUE, has.Pvalue = TRUE, ...)
+  # ll <- logLik(object)
+  # cat("\nLog-Likelihood:\n ", ll, " (df = ", attr(ll, "df"), ")", sep = "")
+  # cat("\n\n")
+  # if(s0 !=1 ){
+  #   cat("Normalized coefficients with s0 = ", s0, "", sep = " ")
+  #   cat("\n\n")
+  #   coefs2 <- cbind(
+  #     "Estimate" = object$coefficients * s0,
+  #     "Std. Error" = se * s0,
+  #     "z value" = tval,
+  #     "Pr(>|z|)" = 2 * pnorm(-abs(tval))
+  #   )
+  #   colnames(coefs2) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
+  #   printCoefmat(coefs2, P.values = TRUE, has.Pvalue = TRUE, ...)
+  # }
+  # class(coefs) <- "summary.glmcat"
 }
 
 #' Model coefficients
@@ -164,6 +187,7 @@ nobs.glmcat <- function(object, ...) {
 #' @rdname logLik
 #' @param object a GLMcat model.
 #' @param ...	other arguments.
+#' @method logLik glmcat
 #' @export
 #' @examples
 #' data(DisturbedDreams)
@@ -183,12 +207,12 @@ logLik.glmcat <- function(object, ...) {
 
 #' control glmcat models
 #' @description Set control parameters for GLMcat models.
-#' @rdname control
+#' @rdname glmcat_control
 #' @param maxit the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.
 #' @param epsilon a double to change update the convergence criterion of GLMcat models.
 #' @param beta_init an appropiate sized vector for the initial iteration of the algorithm.
 #' @export
-control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
+glmcat_control <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   return(list("maxit" = maxit, "epsilon" = epsilon, "beta_init" = beta_init))
   # return(maxit)
 }
@@ -198,7 +222,7 @@ control.glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
 #' @rdname student
 #' @param df degrees_freedom
 #' @export
-student.glmcat <- function(df = 7) {
+student_glmcat <- function(df = 7) {
   return(list("cdf" = "student", "df" = df))
 }
 
@@ -251,7 +275,7 @@ drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
       if(length(object$parallel) == 0) {object$parallel <- NA}
       nfit <- GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
                      object$categories_order, object$ref_category,
-                     object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                     object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
                      object$normalization_s0)
     }else{
       object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
@@ -265,7 +289,7 @@ drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                           # object$categories_order,
                           intercept = object$arguments$intercept,
                           reference = object$arguments$reference,
-                          control.glmcat(object$control$maxit,
+                          glmcat_control(object$control$maxit,
                                          object$control$epsilon, object$control$beta_init),
                           normalization = object$normalization_s0)
 
@@ -332,7 +356,7 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
       # if(length(object$parallel) == 0) {object$parallel <- NA}
       nfit <- GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
                      object$categories_order, object$ref_category,
-                     object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                     object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
                      object$normalization_s0)
     }else{
       # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
@@ -346,7 +370,7 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                           alternatives = object$arguments$alternatives,
                           reference = object$arguments$reference,
                           intercept = object$arguments$intercept,
-                          control.glmcat(object$control$maxit,
+                          glmcat_control(object$control$maxit,
                                          object$control$epsilon, object$control$beta_init),
                           normalization = object$normalization_s0)
     }
@@ -377,8 +401,8 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
 
 #' Stepwise for glmcat models
 #' @description Stepwise based on the AIC
-#' @rdname step.glmcat
-#' @param object a GLMcat model.
+#' @rdname step
+#' @param object a glmcat model.
 #' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
 #' @param direction the mode of the stepwise search.
 #' @param trace to print the process information.
@@ -538,14 +562,14 @@ step.glmcat <- function (object,
 
     # fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
     #               object$categories_order, object$ref_category,
-    #               object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+    #               object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
     #               object$normalization_s0)
 
     fun_in = object$Function
     if(fun_in == "GLMcat"){
       fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
                     object$categories_order, object$ref_category,
-                    object$threshold, control.glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                    object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
                     object$normalization_s0)
     }else{
       # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
@@ -559,7 +583,7 @@ step.glmcat <- function (object,
                          alternatives = object$arguments$alternatives,
                          reference = object$arguments$reference,
                          intercept = object$arguments$intercept,
-                         control.glmcat(object$control$maxit,
+                         glmcat_control(object$control$maxit,
                                         object$control$epsilon, object$control$beta_init),
                          normalization = object$normalization_s0)
     }

@@ -11,9 +11,9 @@
 #' @export summary.glmcat
 #' @export coef.glmcat
 #' @export logLik.glmcat
-#' @export student.glmcat
+#' @export student_glmcat
 #' @export noncentralt.glmcat
-#' @export control.glmcat
+#' @export glmcat_control()
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom utils flush.console

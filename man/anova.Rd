@@ -2,9 +2,9 @@
 % Please edit documentation in R/anova.R
 \name{anova.glmcat}
 \alias{anova.glmcat}
-\title{Variance-Covariance Matrix for a Fitted glmcat Model Object}
+\title{Anova for a Fitted glmcat Model Object}
 \usage{
-\method{anova}{glmcat}(object, object2, type, ...)
+\method{anova}{glmcat}(object, ...)
 }
 \description{
 Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.

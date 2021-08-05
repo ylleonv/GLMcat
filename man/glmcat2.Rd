@@ -8,7 +8,7 @@ glmcat2(
   formula,
   data,
   ratio = c("reference", "cumulative", "sequential", "adjacent"),
-  cdf = c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace"),
+  cdf = "logistic",
   parallel = NA,
   categories_order = NA,
   ref_category = NA,

@@ -11,7 +11,7 @@ discrete_cm2(
   reference,
   alternative_specific,
   data,
-  cdf = c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace"),
+  cdf = "logistic",
   intercept = "standard",
   normalization = 1,
   control = list()

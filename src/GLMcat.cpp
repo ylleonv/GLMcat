@@ -442,6 +442,7 @@ List GLMcat(Formula formula,
   // Rcout << pimadef << std::endl;
 
   cov_beta = F_i_final.inverse();
+  // MatrixXd Hessian = -F_i_final;
   Std_Error = cov_beta.diagonal();
   Std_Error = Std_Error.array().sqrt() ;
 
@@ -603,6 +604,7 @@ List GLMcat(Formula formula,
     Named("iteration") = iteration,
     Named("ratio") = ratio,
     Named("convergence") = Convergence,
+    // Named("exp_variables") = names,
     Named("ref_category") = ref_category,
     Named("threshold") = threshold,
     Named("control") = control,
@@ -615,11 +617,11 @@ List GLMcat(Formula formula,
     // Rcpp::Named("pi_ma_vec") = pi_ma_vec,
     // Rcpp::Named("Y_init_vec") = Y_init_vec,
     // Rcpp::Named("dev_log") = dev_log,
-    Rcpp::Named("deviance") = deviance,
+    // Rcpp::Named("deviance") = deviance,
     // Rcpp::Named("residuals") = residuals,
     Named("LogLikelihood") = LogLik,
     // Named("mu_noncentralt") = mu,
-    // Named("Y_init") = Y_init,
+    Named("Hessian") = F_i_final,
     // Named("LogLikIter") = LogLikIter,
     Named("formula") = formula,
     Named("categories_order") = categories_order,
@@ -645,15 +647,8 @@ List GLMcat(Formula formula,
 //' @param data a data frame with the predictor variables used in the GLMcat model.
 //' @param type The type of prediction to obtain. \code{"prob"} gives probabilities
 //' and \code{"linear.predict"} gives the linear predictor.
-//' @rdname predict
+//' @rdname predict_glmcat
 //' @name predict_glmcat
-//' @title predict.glmcat
-//' @export
-//' @examples
-//' data(DisturbedDreams)
-//' mod1 <- GLMcat(formula = Level ~ Age,
-//' data = DisturbedDreams, cdf = "logistic")
-//' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 // [[Rcpp::export("predict_glmcat")]]
 NumericMatrix predict_glmcat(List model_object,
                              DataFrame data,

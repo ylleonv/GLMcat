@@ -85,15 +85,8 @@ GLMcat <- function(formula, data, ratio, cdf, parallel, categories_order, ref_ca
 #' @param data a data frame with the predictor variables used in the GLMcat model.
 #' @param type The type of prediction to obtain. \code{"prob"} gives probabilities
 #' and \code{"linear.predict"} gives the linear predictor.
-#' @rdname predict
+#' @rdname predict_glmcat
 #' @name predict_glmcat
-#' @title predict.glmcat
-#' @export
-#' @examples
-#' data(DisturbedDreams)
-#' mod1 <- GLMcat(formula = Level ~ Age,
-#' data = DisturbedDreams, cdf = "logistic")
-#' predict_glmcat(mod1, data = DisturbedDreams[1:5, ], type = "prob")
 predict_glmcat <- function(model_object, data, type) {
     .Call(`_GLMcat_predict_glmcat`, model_object, data, type)
 }

@@ -7,7 +7,7 @@
 \method{step}{glmcat}(object, scope, direction, trace, steps)
 }
 \arguments{
-\item{object}{a GLMcat model.}
+\item{object}{a glmcat model.}
 
 \item{scope}{defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.}
 

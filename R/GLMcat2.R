@@ -26,7 +26,7 @@ glmcat2 <-
   function(formula,
            data,
            ratio = c("reference", "cumulative", "sequential","adjacent"),
-           cdf = c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace"),
+           cdf = "logistic",
            parallel = NA,
            categories_order = NA,
            ref_category = NA,
@@ -37,16 +37,15 @@ glmcat2 <-
            contrasts,
            model = TRUE, ...)
   {
-    cdf <- match.arg(cdf)
+    # cdf <- match.arg(cdf)
+    # cdf <- match.arg(cdf, c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace", student_glmcat()))
     ratio <- match.arg(ratio)
     threshold <- match.arg(threshold)
     contrasts <- NULL
-    control <- do.call(control.glmcat, c(control, list(...)))
+    control <- do.call(glmcat_control, c(control, list(...)))
 
     fit_old <- GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
                       ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
-    # return(list(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
-    #             ref_category = ref_category, threshold = threshold , control = control, normalization = normalization))
 
     fit_old[["model"]] <- model.frame(formula = formula,data)
 
@@ -85,14 +84,14 @@ discrete_cm2 <-
     reference,
     alternative_specific,
     data ,
-    cdf = c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace"),
+    cdf = "logistic",
     intercept = "standard",
     normalization = 1,
     control = list() ){
 
-    cdf <- match.arg(cdf)
+    # cdf <- match.arg(cdf)
     intercept <- match.arg(intercept, c("standard","conditional"))
-    control <- do.call(control.glmcat, c(control, list()))
+    control <- do.call(glmcat_control, c(control, list()))
 
     fit_old <- Discrete_CM(formula = formula,
                            case_id = case_id,
