@@ -12,8 +12,8 @@
 #' @export coef.glmcat
 #' @export logLik.glmcat
 #' @export student_glmcat
-#' @export noncentralt.glmcat
-#' @export glmcat_control()
+#' @export noncentralt_glmcat
+#' @export glmcat_control
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importFrom utils flush.console

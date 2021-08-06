@@ -667,6 +667,7 @@ NumericMatrix predict_glmcat(List model_object,
 
   if(function == "DiscreteCM"){
     ratio = "reference";
+    String predict = "predict";
     N = data.rows() / N_cats;
     List arguments = model_object["arguments"];
     names_col = arguments["categories_order"];
@@ -675,7 +676,8 @@ NumericMatrix predict_glmcat(List model_object,
                                            arguments["alternatives"],
                                            arguments["reference"],
                                            arguments["alternative_specific"],
-                                                                                                         data,arguments["intercept"]
+                                           data,arguments["intercept"],
+                                           predict
     );
   }else{
     names_col = model_object["categories_order"];

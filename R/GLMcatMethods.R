@@ -232,7 +232,7 @@ student_glmcat <- function(df = 7) {
 #' @param df degrees_freedom
 #' @param mu non centrality parameter
 #' @export
-noncentralt.glmcat <- function(df = 7, mu = 0) {
+noncentralt_glmcat <- function(df = 7, mu = 0) {
   return(list("cdf" = "noncentralt", "df" = df, "mu" = mu))
 }
 

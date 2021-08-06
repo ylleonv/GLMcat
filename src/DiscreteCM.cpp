@@ -83,13 +83,16 @@ List Discrete_CM(Formula formula,
 
   class cdf dist1;
 
+  String predict = "no"; // To order the dataset
+
   List Full_M = dist1.select_data_nested(formula,
                                          case_id,
                                          alternatives,
                                          reference,
                                          alternative_specific,
                                          data,
-                                         intercept
+                                         intercept,
+                                         predict
                                            //   ,
                                            // ratio
   );

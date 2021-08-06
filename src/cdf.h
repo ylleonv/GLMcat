@@ -32,7 +32,8 @@ public:
                           CharacterVector ref_cat,
                           CharacterVector var_alt_specific,
                           DataFrame input_data,
-                          String intercept
+                          String intercept,
+                          String predict
                             //   ,
                             // String ratio
   );

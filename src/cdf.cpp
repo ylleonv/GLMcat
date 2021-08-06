@@ -761,7 +761,8 @@ List Sort_DataFrame(DataFrame ModelMatrix,
                     DataFrame InputData,
                     CharacterVector names,
                     String Choice_vec,
-                    CharacterVector Ref_cat) {
+                    CharacterVector Ref_cat,
+                    String predict) {
   // Order DATAFRAME ACCORDING TO VARIABLES GIVEN IN VECTOR NAMES
   // CBIND OF DATA SETS AND THEN ORDER ACCORDING TO VARIABLES
   Environment base_env("package:base");
@@ -791,10 +792,13 @@ List Sort_DataFrame(DataFrame ModelMatrix,
     String var = names1(i);
     NumericVector order_var_sel = my_order(df_tans_2[var]);
     order_var_sel = order_var_sel - 1 ;
-// # para el predict
-    df_tans = df_tans[order_var_sel];
+    // # para el predict
+    if(predict != "predict"){
+      df_tans = df_tans[order_var_sel];
+    }
     df_tans_2 = my_transpose(df_tans);
   }
+
   return List::create(
     _["df_tans_2"] = df_tans_2,
     _["Levels"] = Levels
@@ -830,7 +834,8 @@ List All_pre_data(Formula formula,
                   DataFrame input_data,
                   CharacterVector var_informatives,
                   String choice,
-                  CharacterVector Ref_cat){
+                  CharacterVector Ref_cat,
+                  String predict){
 
   // print(formula_entry(formula)["formula_model"]);
   // print(head1(Model_Matrix(input_data, formula_entry(formula)["formula_model"])));
@@ -840,7 +845,8 @@ List All_pre_data(Formula formula,
     input_data,
     var_informatives,
     choice,
-    Ref_cat);
+    Ref_cat,
+    predict);
 
   SEXP MA1 = Out_SM["df_tans_2"];
   CharacterVector Levels = Out_SM["Levels"];
@@ -1102,7 +1108,8 @@ List cdf::select_data_nested(Formula formula,
                              CharacterVector ref_cat,
                              CharacterVector var_alt_specific,
                              DataFrame input_data,
-                             String intercept
+                             String intercept,
+                             String predict
                                //   ,
                                // String ad_or_ref
 ) {
@@ -1129,7 +1136,8 @@ List cdf::select_data_nested(Formula formula,
                                 input_data,
                                 var_informatives,
                                 Response,
-                                ref_cat);
+                                ref_cat,
+                                predict);
 
   SEXP MA1 = Final_mat["data_output"];;
   DataFrame MA11 = Rcpp::as<DataFrame>(MA1);
