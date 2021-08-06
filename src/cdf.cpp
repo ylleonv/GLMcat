@@ -706,6 +706,9 @@ List formula_entry(Formula formula1){
   DataFrame Var_alt1 = Var_alt;
 
   DataFrame Var_alt2 = DataFrame::create(Named("Alternatives") = Alternatives, Named("Vars") = Vars);
+
+  // Rcout << formula2 << std::endl;
+
   return List::create(
     Named("Var_alt") = Var_alt,
     Named("Response") = res,

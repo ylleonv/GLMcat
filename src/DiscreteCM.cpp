@@ -5,46 +5,6 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
-//' Family of models for Discrete Choice
-//' @description Discrete choice model: Requires data in long form.
-//' For each individual (or decision maker), there are multiple observations (rows),
-//' one for each of the alternatives the individual could have chosen.
-//' We call the group of observations for an individual a “case”.
-//' Each case represents a single statistical observation although it comprises
-//' multiple observations.
-//' @title Discrete_CM
-//' @rdname Discrete_CM
-//' @name Discrete_CM
-//' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
-//' @param case_id a string with the name of the column that identifies each case.
-//' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
-//' @param reference a string indicating the reference category
-//' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
-//' @param data a dataframe (in a long format) object in R, with the dependent variable as factor.
-//' @param cdf
-//' \describe{
-//' \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
-//' \item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
-//' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
-//' }
-//' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
-//' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
-//' @param control
-//' \describe{
-//' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
-//' \item{\code{epsilon}:}{a double with to fix the epsilon value}
-//' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}
-//' }
-//' @examples
-//' library(GLMcat)
-//' data(TravelChoice)
-//' Discrete_CM(formula = choice ~ hinc + gc + invt,
-//' case_id = "indv",alternatives = "mode", reference = "air",
-//' data = TravelChoice,  alternative_specific = c("gc", "invt"),
-//' cdf = "logistic")
-//' @note For these models it is not allowed to exclude the intercept.
-//' @export
-// [[Rcpp::export("Discrete_CM")]]
 List Discrete_CM(Formula formula,
                  String case_id,
                  String alternatives,

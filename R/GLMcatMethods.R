@@ -70,6 +70,8 @@ predict.glmcat <- function(object,
     # }
   }
 
+  newdata[with(attributes(terms(object)), as.character(variables[response+1]))] <- object$categories_order[1]
+
   return(predict_glmcat(model_object = object, data = newdata, type = type))
 }
 

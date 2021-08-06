@@ -16,7 +16,7 @@ vignette: >
 
 In econometrics there is a wide variety of binary models with different functions, but none of them can be extended to the multivariate case because the differences of such random variables are not usually known. The very well known Random Utility models (RUM) don't have closed-form solutions, thus, for more than four categories ($J > 4$), these models are difficult to estimate. On the other side, Generalized Linear Models (GLM) have an analytic solution, which make it easier the estimation process, and there is a great flexibility at using different cdf functions for the link function. 
  
-Following the approach of @peyhardi_new for writing GLMs, qualitative choice models can be written as *(Reference, Logistic, Z)* models. The function `Discrete_CM` in the `GLMcat` package is available to implement these models.
+Following the approach of @peyhardi_new for writing GLMs, qualitative choice models can be written as *(Reference, Logistic, Z)* models. The function `glm_ref` in the `GLMcat` package is available to implement these models.
 
 
 ### Dataset
@@ -35,10 +35,10 @@ head(TravelChoice)
 str(TravelChoice)
 ```
 
-To execute the model proposed by @tutz_2011 (Example 8.4), we execute the `Discrete_CM ` function with the specific parameters as follows:
+To execute the model proposed by @tutz_2011 (Example 8.4), we execute the `glm_ref ` function with the specific parameters as follows:
 
 ```{r }
-exp_8.4 <- Discrete_CM(
+exp_8.4 <- glm_ref(
   formula = choice ~ hinc + gc + invt,
   case_id = "indv",
   alternatives = "mode",
@@ -54,7 +54,7 @@ According to @tutz_2011, the income seems to be influential for the preference o
 To replicate the results of @louviere_2000 we can use the following lines of code. Note that for the variables *hinc* and *psize* the effect is specified only for category *air*.
 
 ```{r }
-(constant_model <- Discrete_CM(
+(constant_model <- glm_ref(
   formula = choice ~ 1 ,
   case_id = "indv",
   alternatives = "mode",
@@ -63,7 +63,7 @@ To replicate the results of @louviere_2000 we can use the following lines of cod
   cdf = "logistic"
 ))
 
-(car_0 <- Discrete_CM(
+(car_0 <- glm_ref(
   formula = choice ~ hinc[air] + psize[air] + gc + ttme,
   case_id = "indv",
   alternatives = "mode",
@@ -77,7 +77,7 @@ To replicate the results of @louviere_2000 we can use the following lines of cod
 @PEYHARDI_choice demonstrated that the use of the reference category and the choice of the cumulative cdf function, highly affects the fit of the model. Through an experiment in which they used different reference categories as well as different cumulative cdf functions (including *Student* varying the degrees of freedom) they found that for this case, *car* as the reference category, and *Student(0.2)* will result in the best fit. 
 
 ```{r }
-mod_1 <- Discrete_CM(
+mod_1 <- glm_ref(
   formula = choice ~ hinc[air] + psize[air] + gc + ttme,
   case_id = "indv",
   alternatives = "mode",
@@ -90,7 +90,7 @@ logLik(mod_1)
 ```
 
 ```{r }
-mod_2 <- Discrete_CM(
+mod_2 <- glm_ref(
   formula = choice ~ hinc[air] + psize[air] + gc + ttme,
   case_id = "indv",
   alternatives = "mode",
@@ -103,7 +103,7 @@ logLik(mod_2)
 ```
 
 ```{r }
-mod_3 <- Discrete_CM(
+mod_3 <- glm_ref(
   formula = choice ~ hinc[air] + psize[air] + gc + ttme,
   case_id = "indv",
   alternatives = "mode",
@@ -116,7 +116,7 @@ logLik(mod_3)
 ```
 
 ```{r }
-mod_4 <- Discrete_CM(
+mod_4 <- glm_ref(
   formula = choice ~ hinc[air] + psize[air] + gc + ttme,
   case_id = "indv",
   alternatives = "mode",
@@ -132,7 +132,7 @@ The results are clearly in favour of the reference alternative $j_0 =car$ togeth
 
 ### Conclusion
 
-Until recently, only the logit and probit binary models were extended to the case of multinomial choices, resulting in the multinomial logit and the multinomial probit. The recently introduced family of reference models, defines a multivariate extension of any binary choice model, i.e. for any link function. The `GLMcat` library through the `Discrete_CM` function offers this whole range of models, as demonstrated in the example above.
+Until recently, only the logit and probit binary models were extended to the case of multinomial choices, resulting in the multinomial logit and the multinomial probit. The recently introduced family of reference models, defines a multivariate extension of any binary choice model, i.e. for any link function. The `GLMcat` library through the `glm_ref` function offers this whole range of models, as demonstrated in the example above.
 
 ### References
 
