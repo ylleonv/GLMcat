@@ -72,6 +72,7 @@ anova.glmcat <-
 
     }
     class(table) <- c("anova.glmcat", "data.frame")
+
     return(table)
   }
 

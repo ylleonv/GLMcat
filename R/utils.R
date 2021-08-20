@@ -1,5 +1,4 @@
 table_summary <- function(object, ...) {
-  # object <- mod_pol
   names <- c("ratio"," link", "nobs", "niter", "logLik")
   info <- data.frame("ratio" = object$ratio,
                "cdf" = object$cdf[1],

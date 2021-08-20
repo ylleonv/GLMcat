@@ -133,16 +133,10 @@ glm_ref <-
                            normalization = normalization,
                            control = control)
 
-    # a1= format("choice ~ hinc[air] + psize[air] + gc + ttme+indv+mode")
-
     formula1 <- paste(format(fit_old$formula),"+",fit_old$arguments$case_id,"+",
                       fit_old$arguments$alternatives,sep = "")
 
-
     fit_old$formula <- formula1
-
-    # print(formula1)
-
     fit_old[["model"]] <- model.frame(formula = gsub("\\[.*\\]","",as.character(formula1)),
                                       data)
 
@@ -152,4 +146,5 @@ glm_ref <-
     class(fit_old) <- "glmcat"
 
     return(fit_old)
+
   }

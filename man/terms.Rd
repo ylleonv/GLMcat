@@ -2,15 +2,13 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{terms.glmcat}
 \alias{terms.glmcat}
-\title{Terms for a Fitted glmcat Model Object}
+\title{Terms of a fitted \code{glmcat} model object.}
 \usage{
 \method{terms}{glmcat}(object, ...)
 }
 \arguments{
-\item{object}{an object of class \code{"glmcat"}.}
-
-\item{...}{additional arguments affecting the summary produced.}
+\item{object}{an object of class \code{glmcat}.}
 }
 \description{
-Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
+Returns the terms of a fitted \code{glmcat} model object.
 }

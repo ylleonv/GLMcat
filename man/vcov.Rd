@@ -2,14 +2,12 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{vcov.glmcat}
 \alias{vcov.glmcat}
-\title{Variance-Covariance Matrix for a Fitted glmcat Model Object}
+\title{Variance-Covariance Matrix for a fitted \code{glmcat} model object.}
 \usage{
 \method{vcov}{glmcat}(object, ...)
 }
 \arguments{
-\item{object}{an object of class \code{"glmcat"}.}
-
-\item{...}{additional arguments affecting the summary produced.}
+\item{object}{an object of class \code{glmcat}.}
 }
 \description{
 Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.

@@ -2,19 +2,21 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{predict.glmcat}
 \alias{predict.glmcat}
-\title{Predict Method for a Fitted glmcat Model Object}
+\title{Predict method for a a fitted \code{glmcat} model object.}
 \usage{
 \method{predict}{glmcat}(object, newdata, type, ...)
 }
 \arguments{
-\item{object}{an fitted object of class \code{"glmcat"}.}
+\item{object}{a fitted object of class \code{glmcat}.}
 
-\item{newdata}{optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.}
+\item{newdata}{optionally, a data frame in which to look for the variables involved in the model. If omitted, the fitted linear predictors are used.}
 
-\item{type}{the type of prediction required. The default is on the scale of the linear predictors; ' \code{"prob"} gives probabilities and \code{"linear.predictor"} gives predictions on the scale of thelinear predictor including the boundary categories.}
+\item{type}{the type of prediction required.
+The default is \code{"prob"} which gives the probabilities, the other option is
+\code{"linear.predictor"} which gives predictions on the scale of the linear predictor.}
 
 \item{...}{additional arguments affecting the predict produced.}
 }
 \description{
-Obtains predictions from a fitted \code{"glmcat"} object.
+Obtains predictions of a fitted \code{glmcat} model object.
 }

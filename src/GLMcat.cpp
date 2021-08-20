@@ -600,7 +600,6 @@ List GLMcat(Formula formula,
     Named("cdf") = cdf_list
     // Named("coverged") = true,
     // Named("freedom_degrees") = freedom_degrees,
-    // Named("normalization_s0") =  s0
   );
 
   output_list.attr("class") = "glmcat";

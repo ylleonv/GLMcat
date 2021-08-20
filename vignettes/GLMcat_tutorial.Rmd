@@ -110,7 +110,7 @@ For more information see the manual entry for the `DisturbedDreams` data: `help(
 
 ```{r , include = FALSE}
 # devtools::load_all()
-library(glmcat)
+library(GLMcat)
 ```
 
 ```{r}

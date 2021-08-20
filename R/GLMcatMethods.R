@@ -1,6 +1,6 @@
-#' Print method for an "glmcat" object.
+#' Print method for a fitted code{glmcat} model object.
 #' @description \code{print} method for a fitted \code{glmcat} model object.
-#' @param object an object of class \code{"glmcat"}.
+#' @param object an object of class \code{glmcat}.
 #' @param ... additional arguments affecting the summary produced.
 #' @rdname print
 #' @export
@@ -8,8 +8,6 @@ print.glmcat <- function(object, ...) {
   cat("\nFormula:\n")
   print(object$formula)
   print(object$table_summary)
-  # cat("\nRatio:\n")
-  # print(object$ratio)
   cat("\nCoefficients:\n")
   print(coef(object, with_baseline = FALSE))
   ll <- logLik(object)
@@ -18,10 +16,9 @@ print.glmcat <- function(object, ...) {
   invisible(object)
 }
 
-#' Variance-Covariance Matrix for a Fitted glmcat Model Object
+#' Variance-Covariance Matrix for a fitted \code{glmcat} model object.
 #' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
-#' @param object an object of class \code{"glmcat"}.
-#' @param ... additional arguments affecting the summary produced.
+#' @param object an object of class \code{glmcat}.
 #' @rdname vcov
 #' @method vcov glmcat
 #' @usage \method{vcov}{glmcat}(object, ...)
@@ -31,10 +28,9 @@ vcov.glmcat <- function(object, ...) {
   return(object$cov_beta)
 }
 
-#' Terms for a Fitted glmcat Model Object
-#' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
-#' @param object an object of class \code{"glmcat"}.
-#' @param ... additional arguments affecting the summary produced.
+#' Terms of a fitted \code{glmcat} model object.
+#' @description Returns the terms of a fitted \code{glmcat} model object.
+#' @param object an object of class \code{glmcat}.
 #' @rdname terms
 #' @method terms glmcat
 #' @usage \method{terms}{glmcat}(object, ...)
@@ -43,11 +39,13 @@ terms.glmcat <- function(object, ...) {
   return(terms(object$formula))
 }
 
-#' Predict Method for a Fitted glmcat Model Object
-#' @description Obtains predictions from a fitted \code{"glmcat"} object.
-#' @param object an fitted object of class \code{"glmcat"}.
-#' @param newdata optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.
-#' @param type the type of prediction required. The default is on the scale of the linear predictors; ' \code{"prob"} gives probabilities and \code{"linear.predictor"} gives predictions on the scale of thelinear predictor including the boundary categories.
+#' Predict method for a a fitted \code{glmcat} model object.
+#' @description Obtains predictions of a fitted \code{glmcat} model object.
+#' @param object a fitted object of class \code{glmcat}.
+#' @param newdata optionally, a data frame in which to look for the variables involved in the model. If omitted, the fitted linear predictors are used.
+#' @param type the type of prediction required.
+#' The default is \code{"prob"} which gives the probabilities, the other option is
+#' \code{"linear.predictor"} which gives predictions on the scale of the linear predictor.
 #' @param ... additional arguments affecting the predict produced.
 #' @rdname predict
 #' @method predict glmcat
@@ -55,7 +53,8 @@ terms.glmcat <- function(object, ...) {
 #' @export
 predict.glmcat <- function(object,
                            newdata,
-                           type = c("prob", "linear.predictor")) {
+                           type = c("prob", "linear.predict")) {
+  type <- match.arg(type, c("prob", "linear.predict"))
   if (missing(newdata)) {
     # if (object$Function == "DiscreteCM"){
     #   object1 <- object
@@ -75,6 +74,68 @@ predict.glmcat <- function(object,
   return(predict_glmcat(model_object = object, data = newdata, type = type))
 }
 
+#' Confidence intervals for parameters of a fitted \code{glmcat} model object.
+#' @description Computes confidence intervals from a fitted \code{glmcat} model object for all the parameters.
+#' @param object an fitted object of class \code{"glmcat"}.
+#' @param level the confidence level.
+#' @rdname confint
+#' @method confint glmcat
+#' @usage \method{confint}{glmcat}(object, level, ...)
+#' @export
+confint.glmcat <-
+  function(object, level = 0.95, ...)
+  {
+    stopifnot(is.numeric(level) && length(level) == 1 && level > 0 && level < 1)
+    lev <- (1 - level)/2
+    lev <- c(lev, 1 - lev)
+    pct <- paste(format(100 * lev, trim = TRUE, scientific = FALSE,  digits = 3), "%")
+    fac <- qnorm(lev)
+    coefs <- coef(object)
+    ses <- coef(summary(object))[, 2]
+    ci <- array(NA, dim = c(length(coefs), 2L), dimnames = list(names(coefs), pct))
+    ci[] <- cbind(coefs,coefs) + ses %o% fac
+    rownames(ci) <- rownames(coefs)
+    return(ci)
+  }
+
+# parallel_test <-
+#   function(object)
+#   {
+#
+#     response <- all.vars(object$formula)[1]
+#
+#     fit_0 <- glmcat(formula = object$formula,
+#                     data = object$model, ratio = object$ratio,
+#                     cdf = object$cdf, parallel = T,
+#                     categories_order = object$categories_order,
+#                     ref_category = object$ref_category, threshold = object$threshold ,
+#                     control = object$control, normalization = object$normalization_s0)
+#
+#     exp_var <- all.vars(object$formula)[-1]
+#
+#     fun_test <- function(exp_var_in){
+#       fit_c <- glmcat(formula = object$formula,
+#                       data = object$model, ratio = object$ratio,
+#                       cdf = object$cdf, parallel = exp_var_in,
+#                       categories_order = object$categories_order,
+#                       ref_category = object$ref_category, threshold = object$threshold ,
+#                       control = object$control, normalization = object$normalization_s0)
+#       a3 = invisible(capture.output(anova(fit_0,fit_c)[2,]))
+#       return(a3[length(a3)])
+#     }
+#
+#     suppressMessages(anova(fit_0,fit_c))
+#
+#     capture.output( suppressMessages( anova(fit_0,fit_c)[2,] )  )
+#
+#     data.frame(a3[length(a3)])
+#     lapply(exp_var, fun_test)
+#
+#     l2 <- data.frame(do.call(rbind, l1))
+#
+#     return(l2)
+#
+#   }
 
 #' Summarising \code{glmcat} Model Fits
 #' @description \code{summary} method for GLMcat objects.
@@ -82,12 +143,19 @@ predict.glmcat <- function(object,
 #' @rdname summary
 #' @method summary glmcat
 #' @export
-summary.glmcat <- function(object, correlation = FALSE,...) {
+summary.glmcat <- function(object, correlation = FALSE, normalized = FALSE,...) {
   vcov <- object$cov_beta
   coefs <- matrix(NA, length(object$coefficients), 4,
                   dimnames = list(names(object$coefficients),
                                   c("Estimate", "Std. Error", "z value", "Pr(>|z|)")))
   coefs[, 1] <- object$coefficients
+  if(normalized){
+    cat("Normalized coefficients with s0 = ",object$normalization_s0, "\n")
+    coefs <- matrix(NA, length(object$coefficients*object$normalization_s0), 4,
+                    dimnames = list(names(object$coefficients*object$normalization_s0),
+                                    c("Estimate", "Std. Error", "z value", "Pr(>|z|)")))
+    coefs[, 1] <- object$coefficients*object$normalization_s0
+  }
   if(!all(is.finite(vcov))) {
     ## warning("Variance-covariance matrix of the parameters is not defined")
     coefs[, 2:4] <- NA
@@ -113,7 +181,8 @@ summary.glmcat <- function(object, correlation = FALSE,...) {
   object$coefficients <- coefs
   class(object) <- "summary.glmcat"
   object
-    # cat("\nFormula:\n")
+
+  # cat("\nFormula:\n")
   # print(object$formula)
   # print(object$table_summary)
   # cat("\n")

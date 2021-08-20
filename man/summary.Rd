@@ -4,7 +4,7 @@
 \alias{summary.glmcat}
 \title{Summarising \code{glmcat} Model Fits}
 \usage{
-\method{summary}{glmcat}(object, correlation = FALSE, ...)
+\method{summary}{glmcat}(object, correlation = FALSE, normalized = FALSE, ...)
 }
 \arguments{
 \item{object}{an object of class \code{"glmcat"}.}
