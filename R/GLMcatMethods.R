@@ -1,55 +1,54 @@
-#' Print method for a fitted code{glmcat} model object.
+#' Print method for a fitted code{glmcat} model object
 #' @description \code{print} method for a fitted \code{glmcat} model object.
-#' @param object an object of class \code{glmcat}.
+#' @param x an object of class \code{glmcat}.
 #' @param ... additional arguments affecting the summary produced.
 #' @rdname print
 #' @export
-print.glmcat <- function(object, ...) {
+print.glmcat <- function(x, ...) {
   cat("\nFormula:\n")
-  print(object$formula)
-  print(object$table_summary)
+  print(x$formula)
+  print(x$table_summary)
   cat("\nCoefficients:\n")
-  print(coef(object, with_baseline = FALSE))
-  ll <- logLik(object)
+  print(coef(x, with_baseline = FALSE))
+  ll <- logLik(x)
   cat("\nLog-Likelihood:\n ", ll, " (df = ", attr(ll, "df"), ")", sep = "")
   cat("\n\n")
-  invisible(object)
+  invisible(x)
 }
 
-#' Variance-Covariance Matrix for a fitted \code{glmcat} model object.
+#' Variance-Covariance Matrix for a fitted \code{glmcat} model object
 #' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
 #' @param object an object of class \code{glmcat}.
 #' @rdname vcov
 #' @method vcov glmcat
-#' @usage \method{vcov}{glmcat}(object, ...)
+#' @usage \method{vcov}{glmcat}(object)
 #' @export
-vcov.glmcat <- function(object, ...) {
+vcov.glmcat <- function(object) {
   colnames(object$cov_beta) <- rownames(object$cov_beta) <- rownames(object$coefficients)
   return(object$cov_beta)
 }
 
-#' Terms of a fitted \code{glmcat} model object.
+#' Terms of a fitted \code{glmcat} model object
 #' @description Returns the terms of a fitted \code{glmcat} model object.
 #' @param object an object of class \code{glmcat}.
 #' @rdname terms
 #' @method terms glmcat
-#' @usage \method{terms}{glmcat}(object, ...)
+#' @usage \method{terms}{glmcat}(object)
 #' @export
-terms.glmcat <- function(object, ...) {
+terms.glmcat <- function(object) {
   return(terms(object$formula))
 }
 
-#' Predict method for a a fitted \code{glmcat} model object.
+#' Predict method for a a fitted \code{glmcat} model object
 #' @description Obtains predictions of a fitted \code{glmcat} model object.
 #' @param object a fitted object of class \code{glmcat}.
 #' @param newdata optionally, a data frame in which to look for the variables involved in the model. If omitted, the fitted linear predictors are used.
 #' @param type the type of prediction required.
 #' The default is \code{"prob"} which gives the probabilities, the other option is
 #' \code{"linear.predictor"} which gives predictions on the scale of the linear predictor.
-#' @param ... additional arguments affecting the predict produced.
 #' @rdname predict
 #' @method predict glmcat
-#' @usage \method{predict}{glmcat}(object, newdata, type, ...)
+#' @usage \method{predict}{glmcat}(object, newdata, type)
 #' @export
 predict.glmcat <- function(object,
                            newdata,
@@ -74,16 +73,16 @@ predict.glmcat <- function(object,
   return(predict_glmcat(model_object = object, data = newdata, type = type))
 }
 
-#' Confidence intervals for parameters of a fitted \code{glmcat} model object.
+#' Confidence intervals for parameters of a fitted \code{glmcat} model object
 #' @description Computes confidence intervals from a fitted \code{glmcat} model object for all the parameters.
-#' @param object an fitted object of class \code{"glmcat"}.
+#' @param object an fitted object of class \code{glmcat}.
 #' @param level the confidence level.
 #' @rdname confint
 #' @method confint glmcat
 #' @usage \method{confint}{glmcat}(object, level, ...)
 #' @export
 confint.glmcat <-
-  function(object, level = 0.95, ...)
+  function(object, parm = NULL, level = 0.95)
   {
     stopifnot(is.numeric(level) && length(level) == 1 && level > 0 && level < 1)
     lev <- (1 - level)/2
@@ -91,10 +90,22 @@ confint.glmcat <-
     pct <- paste(format(100 * lev, trim = TRUE, scientific = FALSE,  digits = 3), "%")
     fac <- qnorm(lev)
     coefs <- coef(object)
+    parnames <- rownames(coefs)
+    if(is.character(parm))
+      parm <- match(parm, parnames, nomatch = 0)
+    if(is.null(parm)){
+      parm = seq_len(length(coefs))
+    }
+    if(!all(parm %in% seq_len(length(coefs))))
+      stop("invalid 'parm' argument")
+    stopifnot(length(parm) > 0)
+
     ses <- coef(summary(object))[, 2]
     ci <- array(NA, dim = c(length(coefs), 2L), dimnames = list(names(coefs), pct))
     ci[] <- cbind(coefs,coefs) + ses %o% fac
     rownames(ci) <- rownames(coefs)
+
+    ci <- ci[parm,]
     return(ci)
   }
 
@@ -137,13 +148,15 @@ confint.glmcat <-
 #
 #   }
 
-#' Summarising \code{glmcat} Model Fits
-#' @description \code{summary} method for GLMcat objects.
-#' @param object an object of class \code{"glmcat"}.
+#' Summary method for a fitted \code{glmcat} model object
+#' @description Summary method for a fitted \code{glmcat} model object.
+#' @param object an fitted object of class \code{glmcat}.
+#' @param normalized if \code{normalized} is \code{TRUE} summary method yields the normalized coefficients.
+#' @param ... additional arguments affecting the summary produced.
 #' @rdname summary
 #' @method summary glmcat
 #' @export
-summary.glmcat <- function(object, correlation = FALSE, normalized = FALSE,...) {
+summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) {
   vcov <- object$cov_beta
   coefs <- matrix(NA, length(object$coefficients), 4,
                   dimnames = list(names(object$coefficients),
@@ -176,61 +189,22 @@ summary.glmcat <- function(object, correlation = FALSE, normalized = FALSE,...) 
       object$correlation <- cov2cor(vcov)
   }
 
+  coefs[, 1] <- object$coefficients
+
   rownames(coefs) <- rownames(object$coefficients)
 
   object$coefficients <- coefs
   class(object) <- "summary.glmcat"
   object
-
-  # cat("\nFormula:\n")
-  # print(object$formula)
-  # print(object$table_summary)
-  # cat("\n")
-  # se <- object$stderr
-  # s0 <- object$normalization_s0
-  # tval <- object$coefficients / se
-  #
-  # coefs <- cbind(
-  #   "Estimate" = object$coefficients,
-  #   "Std. Error" = se,
-  #   "z value" = tval,
-  #   "Pr(>|z|)" = 2 * pnorm(-abs(tval))
-  # )
-  # colnames(coefs) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-  # printCoefmat(coefs, P.values = TRUE, has.Pvalue = TRUE, ...)
-  # ll <- logLik(object)
-  # cat("\nLog-Likelihood:\n ", ll, " (df = ", attr(ll, "df"), ")", sep = "")
-  # cat("\n\n")
-  # if(s0 !=1 ){
-  #   cat("Normalized coefficients with s0 = ", s0, "", sep = " ")
-  #   cat("\n\n")
-  #   coefs2 <- cbind(
-  #     "Estimate" = object$coefficients * s0,
-  #     "Std. Error" = se * s0,
-  #     "z value" = tval,
-  #     "Pr(>|z|)" = 2 * pnorm(-abs(tval))
-  #   )
-  #   colnames(coefs2) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-  #   printCoefmat(coefs2, P.values = TRUE, has.Pvalue = TRUE, ...)
-  # }
-  # class(coefs) <- "summary.glmcat"
 }
 
-#' Model coefficients
-#' @description Extract model coefficients from a glmcat object.
-#' @param object a GLMcat model.
+#' Model coefficients of a fitted \code{glmcat} model object
+#' @description Returns the coefficient estimates of the fitted \code{glmcat} model object.
+#' @param object an fitted object of class \code{glmcat}.
 #' @param na.rm TRUE for NA coefficients to be removed, default is FALSE.
-#' @param ...	other arguments.
 #' @rdname coef
+#' @param ... additional arguments affecting the \code{coef} method.
 #' @export
-#' @examples
-#' data(DisturbedDreams)
-#' mod1 <- GLMcat(
-#'   formula = Level ~ Age,
-#'   ref_category = "Very.severe",
-#'   data = DisturbedDreams, cdf = "logistic"
-#' )
-#' coef(mod1)
 coef.glmcat <- function(object, na.rm = FALSE, ...) {
   if (na.rm) {
     coefs <- object$coefficients
@@ -241,34 +215,25 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
   }
 }
 
-#' Number of observations in a glmcat model
-#' @description Extract the number of observations from a GLMcat model.
-#' @param object a GLMcat model.
-#' @param ...	other arguments.
+#' Number of observations of a fitted \code{glmcat} model object
+#' @description Extract the number of observations of the fitted \code{glmcat} model object.
+#' @param object an fitted object of class \code{glmcat}.
+#' @param ... additional arguments affecting the \code{nobs} method.
 #' @rdname nobs
 #' @method nobs glmcat
 #' @export
-#' @usage \method{nobs}{glmcat}(object, ...)
-nobs.glmcat <- function(object, ...) {
+nobs.glmcat <- function(object,...) {
   return(object$nobs_glmcat)
 }
 
-#' LogLikelihood glmcat models
-#' @description Extract LogLikelihood for GLMcat models.
+#' Log-likelihood of a fitted \code{glmcat} model object
+#' @description Extract Log-likelihood of a fitted \code{glmcat} model object.
 #' @rdname logLik
-#' @param object a GLMcat model.
-#' @param ...	other arguments.
+#' @param object an fitted object of class \code{glmcat}.
+#' @param ... additional arguments affecting the loglik.
 #' @method logLik glmcat
 #' @export
-#' @examples
-#' data(DisturbedDreams)
-#' mod1 <- GLMcat(
-#'   formula = Level ~ Age,
-#'   categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-#'   data = DisturbedDreams, cdf = "logistic"
-#' )
-#' logLik(mod1)
-logLik.glmcat <- function(object, ...) {
+logLik.glmcat <- function(object,...) {
   structure(object$LogLikelihood,
             df = object$df, nobs_glmcat = object$nobs_glmcat,
             class = "logLik"
@@ -276,8 +241,8 @@ logLik.glmcat <- function(object, ...) {
 }
 
 
-#' control glmcat models
-#' @description Set control parameters for GLMcat models.
+#' Control parameters for \code{glmcat} models
+#' @description Set control parameters for \code{glmcat} models.
 #' @rdname glmcat_control
 #' @param maxit the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.
 #' @param epsilon a double to change update the convergence criterion of GLMcat models.
@@ -288,20 +253,20 @@ glmcat_control <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   # return(maxit)
 }
 
-#' student glmcat models
-#' @description Student distribution
-#' @rdname student
-#' @param df degrees_freedom
+#' Student's t distribution for the \code{glmcat} models
+#' @description Student's t distribution to use as the inverse link of the \code{glmcat} models.
+#' @rdname student_glmcat
+#' @param df degrees of freedom of Student's t distribution.
 #' @export
 student_glmcat <- function(df = 7) {
   return(list("cdf" = "student", "df" = df))
 }
 
-#' Noncentral t cdf for glmcat models
-#' @description Noncentral t cdf
-#' @rdname noncentralt
-#' @param df degrees_freedom
-#' @param mu non centrality parameter
+#' Noncentral t distribution for the \code{glmcat} models
+#' @description Noncentral t distribution to use as the inverse link of the \code{glmcat} models.
+#' @rdname noncentralt_glmcat
+#' @param df degrees of freedom of Student's t distribution.
+#' @param mu the non centrality parameter.
 #' @export
 noncentralt_glmcat <- function(df = 7, mu = 0) {
   return(list("cdf" = "noncentralt", "df" = df, "mu" = mu))
@@ -470,10 +435,10 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
   aod
 }
 
-#' Stepwise for glmcat models
-#' @description Stepwise based on the AIC
+#' Stepwise for a \code{glmcat} model object
+#' @description Stepwise for a \code{glmcat} model object based on the AIC.
 #' @rdname step
-#' @param object a glmcat model.
+#' @param object an fitted object of class \code{glmcat}.
 #' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
 #' @param direction the mode of the stepwise search.
 #' @param trace to print the process information.

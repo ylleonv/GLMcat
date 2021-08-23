@@ -2,12 +2,12 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{confint.glmcat}
 \alias{confint.glmcat}
-\title{Confidence intervals for parameters of a fitted \code{glmcat} model object.}
+\title{Confidence intervals for parameters of a fitted \code{glmcat} model object}
 \usage{
 \method{confint}{glmcat}(object, level, ...)
 }
 \arguments{
-\item{object}{an fitted object of class \code{"glmcat"}.}
+\item{object}{an fitted object of class \code{glmcat}.}
 
 \item{level}{the confidence level.}
 }

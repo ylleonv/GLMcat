@@ -15,9 +15,6 @@ glmcat(
   threshold = c("standard", "symmetric", "equidistant"),
   control = list(),
   normalization = 1,
-  doFit = TRUE,
-  na.action,
-  contrasts,
   model = TRUE,
   ...
 )
@@ -27,7 +24,7 @@ glmcat(
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{ratio}{a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.}
+\item{ratio}{a string indicating the ratio (equivantly to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
 \item{cdf}{\describe{
 \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
@@ -52,10 +49,10 @@ glmcat(
 \item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.}
 }
 \description{
-Families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio)
+Fit a model within the families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio).
 }
 \details{
-Families of models for categorical responses
+Fitting models for categorical responses
 }
 \examples{
 data(DisturbedDreams)

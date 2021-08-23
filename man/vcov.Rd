@@ -2,9 +2,9 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{vcov.glmcat}
 \alias{vcov.glmcat}
-\title{Variance-Covariance Matrix for a fitted \code{glmcat} model object.}
+\title{Variance-Covariance Matrix for a fitted \code{glmcat} model object}
 \usage{
-\method{vcov}{glmcat}(object, ...)
+\method{vcov}{glmcat}(object)
 }
 \arguments{
 \item{object}{an object of class \code{glmcat}.}

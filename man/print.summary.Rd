@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{print.summary.glmcat}
 \alias{print.summary.glmcat}
-\title{Summarising \code{glmcat} Model Fits}
+\title{Printing a fitted \code{glmcat} model object}
 \usage{
 \method{print}{summary.glmcat}(
   x,

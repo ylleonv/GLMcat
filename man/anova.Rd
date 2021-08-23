@@ -2,10 +2,13 @@
 % Please edit documentation in R/anova.R
 \name{anova.glmcat}
 \alias{anova.glmcat}
-\title{Anova for a Fitted glmcat Model Object}
+\title{Anova for a fitted \code{glmcat} model object}
 \usage{
 \method{anova}{glmcat}(object, ...)
 }
+\arguments{
+\item{object}{an object of class \code{"glmcat"}.}
+}
 \description{
-Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
+Compute an analysis of deviance table for one fitted \code{glmcat} model object.
 }

@@ -2,9 +2,9 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{terms.glmcat}
 \alias{terms.glmcat}
-\title{Terms of a fitted \code{glmcat} model object.}
+\title{Terms of a fitted \code{glmcat} model object}
 \usage{
-\method{terms}{glmcat}(object, ...)
+\method{terms}{glmcat}(object)
 }
 \arguments{
 \item{object}{an object of class \code{glmcat}.}

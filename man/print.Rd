@@ -2,12 +2,12 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{print.glmcat}
 \alias{print.glmcat}
-\title{Print method for a fitted code{glmcat} model object.}
+\title{Print method for a fitted code{glmcat} model object}
 \usage{
-\method{print}{glmcat}(object, ...)
+\method{print}{glmcat}(x, ...)
 }
 \arguments{
-\item{object}{an object of class \code{glmcat}.}
+\item{x}{an object of class \code{glmcat}.}
 
 \item{...}{additional arguments affecting the summary produced.}
 }

@@ -641,11 +641,11 @@ NumericMatrix predict_glmcat(List model_object,
     names_col = arguments["categories_order"];
     newdataList = dist1.select_data_nested(arguments["formula"],
                                            arguments["case_id"],
-                                           arguments["alternatives"],
-                                           arguments["reference"],
-                                           arguments["alternative_specific"],
-                                           data,arguments["intercept"],
-                                           predict
+                                                    arguments["alternatives"],
+                                                             arguments["reference"],
+                                                                      arguments["alternative_specific"],
+                                                                               data,arguments["intercept"],
+                                                                                             predict
     );
   }else{
     names_col = model_object["categories_order"];

@@ -2,7 +2,7 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{glmcat_control}
 \alias{glmcat_control}
-\title{control glmcat models}
+\title{Control parameters for \code{glmcat} models}
 \usage{
 glmcat_control(maxit = 25, epsilon = 1e-06, beta_init = NA)
 }
@@ -14,5 +14,5 @@ glmcat_control(maxit = 25, epsilon = 1e-06, beta_init = NA)
 \item{beta_init}{an appropiate sized vector for the initial iteration of the algorithm.}
 }
 \description{
-Set control parameters for GLMcat models.
+Set control parameters for \code{glmcat} models.
 }

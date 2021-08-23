@@ -2,15 +2,15 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{nobs.glmcat}
 \alias{nobs.glmcat}
-\title{Number of observations in a glmcat model}
+\title{Number of observations of a fitted \code{glmcat} model object}
 \usage{
 \method{nobs}{glmcat}(object, ...)
 }
 \arguments{
-\item{object}{a GLMcat model.}
+\item{object}{an fitted object of class \code{glmcat}.}
 
-\item{...}{other arguments.}
+\item{...}{additional arguments affecting the \code{nobs} method.}
 }
 \description{
-Extract the number of observations from a GLMcat model.
+Extract the number of observations of the fitted \code{glmcat} model object.
 }

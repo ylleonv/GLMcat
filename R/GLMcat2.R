@@ -1,10 +1,10 @@
-#' Families of models for categorical responses
-#' @description Families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio)
+#' Fitting models for categorical responses
+#' @description Fit a model within the families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio).
 #' @title glmcat
 #' @rdname glmcat
 #' @name glmcat
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
-#' @param ratio a string indicating the F cdf, options are: reference, adjacent, cumulative and sequential. Default value is reference.
+#' @param ratio a string indicating the ratio (equivantly to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.
 #' @param cdf
 #' \describe{
 #' \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
@@ -40,8 +40,8 @@ glmcat <-
            threshold = c("standard", "symmetric", "equidistant"),
            control = list(),
            normalization = 1,
-           doFit = TRUE, na.action,
-           contrasts,
+           # doFit = TRUE, na.action,
+           # contrasts,
            model = TRUE, ...)
   {
     # cdf <- match.arg(cdf)

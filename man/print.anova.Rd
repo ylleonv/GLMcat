@@ -2,7 +2,7 @@
 % Please edit documentation in R/anova.R
 \name{print.anova.glmcat}
 \alias{print.anova.glmcat}
-\title{Summarising \code{glmcat} Model Fits}
+\title{Printing Anova for \code{glmcat} model fits}
 \usage{
 \method{print}{anova.glmcat}(
   x,
@@ -12,7 +12,9 @@
 )
 }
 \arguments{
-\item{object}{an object of class \code{"glmcat"}.}
+\item{x}{an object of class \code{"glmcat"}.}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 \code{print.anova} method for GLMcat objects.

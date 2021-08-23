@@ -2,12 +2,12 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{step.glmcat}
 \alias{step.glmcat}
-\title{Stepwise for glmcat models}
+\title{Stepwise for a \code{glmcat} model object}
 \usage{
 \method{step}{glmcat}(object, scope, direction, trace, steps)
 }
 \arguments{
-\item{object}{a glmcat model.}
+\item{object}{an fitted object of class \code{glmcat}.}
 
 \item{scope}{defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.}
 
@@ -18,5 +18,5 @@
 \item{steps}{the maximum number of steps.}
 }
 \description{
-Stepwise based on the AIC
+Stepwise for a \code{glmcat} model object based on the AIC.
 }

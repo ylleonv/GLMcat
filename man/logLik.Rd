@@ -2,24 +2,15 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{logLik.glmcat}
 \alias{logLik.glmcat}
-\title{LogLikelihood glmcat models}
+\title{Log-likelihood of a fitted \code{glmcat} model object}
 \usage{
 \method{logLik}{glmcat}(object, ...)
 }
 \arguments{
-\item{object}{a GLMcat model.}
+\item{object}{an fitted object of class \code{glmcat}.}
 
-\item{...}{other arguments.}
+\item{...}{additional arguments affecting the loglik.}
 }
 \description{
-Extract LogLikelihood for GLMcat models.
-}
-\examples{
-data(DisturbedDreams)
-mod1 <- GLMcat(
-  formula = Level ~ Age,
-  categories_order = c("Not.severe", "Severe.1", "Severe.2", "Very.severe"),
-  data = DisturbedDreams, cdf = "logistic"
-)
-logLik(mod1)
+Extract Log-likelihood of a fitted \code{glmcat} model object.
 }

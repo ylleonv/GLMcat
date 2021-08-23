@@ -10,7 +10,7 @@ table_summary <- function(object, ...) {
   return(info)
 }
 
-#' Summarising \code{glmcat} Model Fits
+#' Printing a fitted \code{glmcat} model object
 #' @description \code{print.summary} method for GLMcat objects.
 #' @param object an object of class \code{"glmcat"}.
 #' @rdname print.summary

@@ -2,13 +2,13 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{student_glmcat}
 \alias{student_glmcat}
-\title{student glmcat models}
+\title{Student's t distribution for the \code{glmcat} models}
 \usage{
 student_glmcat(df = 7)
 }
 \arguments{
-\item{df}{degrees_freedom}
+\item{df}{degrees of freedom of Student's t distribution.}
 }
 \description{
-Student distribution
+Student's t distribution to use as the inverse link of the \code{glmcat} models.
 }

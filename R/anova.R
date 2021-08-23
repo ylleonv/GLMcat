@@ -13,8 +13,9 @@ anova_1 <- function(exp_names,vcov_beta,beta, L3){
   # }
 }
 
-#' Anova for a Fitted glmcat Model Object
-#' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
+#' Anova for a fitted \code{glmcat} model object
+#' @description Compute an analysis of deviance table for one fitted \code{glmcat} model object.
+#' @param object an object of class \code{"glmcat"}.
 #' @rdname anova
 #' @method anova glmcat
 #' @usage \method{anova}{glmcat}(object, ...)
@@ -77,15 +78,18 @@ anova.glmcat <-
   }
 
 
-#' Summarising \code{glmcat} Model Fits
+#' Printing Anova for \code{glmcat} model fits
 #' @description \code{print.anova} method for GLMcat objects.
-#' @param object an object of class \code{"glmcat"}.
+#' @param x an object of class \code{"glmcat"}.
+#' @param ... additional arguments affecting the summary produced.
 #' @rdname print.anova
 #' @method print anova.glmcat
 #' @export
 print.anova.glmcat <-
-  function(x, digits=max(getOption("digits") - 2, 3),
-           signif.stars=getOption("show.signif.stars"), ...)
+  function(x,
+           digits=max(getOption("digits") - 2, 3),
+           signif.stars=getOption("show.signif.stars"),
+           ...)
   {
     if (!is.null(heading <- attr(x, "heading")))
       cat(heading, "\n")

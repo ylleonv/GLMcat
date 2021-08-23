@@ -2,26 +2,17 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{coef.glmcat}
 \alias{coef.glmcat}
-\title{Model coefficients}
+\title{Model coefficients of a fitted \code{glmcat} model object}
 \usage{
-coef.glmcat(object, na.rm = FALSE, ...)
+\method{coef}{glmcat}(object, na.rm = FALSE, ...)
 }
 \arguments{
-\item{object}{a GLMcat model.}
+\item{object}{an fitted object of class \code{glmcat}.}
 
 \item{na.rm}{TRUE for NA coefficients to be removed, default is FALSE.}
 
-\item{...}{other arguments.}
+\item{...}{additional arguments affecting the \code{coef} method.}
 }
 \description{
-Extract model coefficients from a glmcat object.
-}
-\examples{
-data(DisturbedDreams)
-mod1 <- GLMcat(
-  formula = Level ~ Age,
-  ref_category = "Very.severe",
-  data = DisturbedDreams, cdf = "logistic"
-)
-coef(mod1)
+Returns the coefficient estimates of the fitted \code{glmcat} model object.
 }
