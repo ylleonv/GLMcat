@@ -1,9 +1,9 @@
 #' Print method for a fitted code{glmcat} model object
 #' @description \code{print} method for a fitted \code{glmcat} model object.
 #' @param x an object of class \code{glmcat}.
-#' @param ... additional arguments affecting the summary produced.
+#' @param ... additional arguments.
 #' @rdname print
-#' @export
+#' @exportS3Method
 print.glmcat <- function(x, ...) {
   cat("\nFormula:\n")
   print(x$formula)
@@ -19,41 +19,56 @@ print.glmcat <- function(x, ...) {
 #' Variance-Covariance Matrix for a fitted \code{glmcat} model object
 #' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
 #' @param object an object of class \code{glmcat}.
+#' @param ... additional arguments.
 #' @rdname vcov
 #' @method vcov glmcat
-#' @usage \method{vcov}{glmcat}(object)
-#' @export
-vcov.glmcat <- function(object) {
+#' @usage \method{vcov}{glmcat}(object,...)
+#' @exportS3Method
+vcov.glmcat <- function(object,...) {
   colnames(object$cov_beta) <- rownames(object$cov_beta) <- rownames(object$coefficients)
   return(object$cov_beta)
 }
 
 #' Terms of a fitted \code{glmcat} model object
 #' @description Returns the terms of a fitted \code{glmcat} model object.
-#' @param object an object of class \code{glmcat}.
+#' @param x an object of class \code{glmcat}.
+#' @param ... additional arguments.
 #' @rdname terms
 #' @method terms glmcat
-#' @usage \method{terms}{glmcat}(object)
-#' @export
-terms.glmcat <- function(object) {
-  return(terms(object$formula))
+#' @usage \method{terms}{glmcat}(x, ...)
+#' @exportS3Method
+terms.glmcat <- function(x,...) {
+  return(terms(x$formula))
 }
 
 #' Predict method for a a fitted \code{glmcat} model object
 #' @description Obtains predictions of a fitted \code{glmcat} model object.
 #' @param object a fitted object of class \code{glmcat}.
 #' @param newdata optionally, a data frame in which to look for the variables involved in the model. If omitted, the fitted linear predictors are used.
+# #' @param se.fit should standard errors of the predictions be provided? Not applicable and ignored when \code{type = "class"}.
+# #' @param interval should confidence intervals for the predictions be provided?  Not applicable and ignored when \code{type = "class"}.
+# #' @param level the confidence level.
 #' @param type the type of prediction required.
+#' The default is \code{"prob"} which gives the probabilities, the other option is
+#' \code{"linear.predictor"} which gives predictions on the scale of the linear predictor.
+# #' @param na.action function determining what should be done with missing values in \code{newdata}. The default is to predict \code{NA}.
+#' @param ... further arguments.
 #' The default is \code{"prob"} which gives the probabilities, the other option is
 #' \code{"linear.predictor"} which gives predictions on the scale of the linear predictor.
 #' @rdname predict
 #' @method predict glmcat
-#' @usage \method{predict}{glmcat}(object, newdata, type)
-#' @export
+#' @usage \method{predict}{glmcat}(object, newdata, type, ...)
+#' @exportS3Method
 predict.glmcat <- function(object,
                            newdata,
-                           type = c("prob", "linear.predict")) {
-  type <- match.arg(type, c("prob", "linear.predict"))
+                           # se.fit = FALSE,
+                           # interval = FALSE,
+                           # level = 0.95,
+                           type = c("prob", "linear.predictor"),
+                           # na.action = na.pass,
+                           ...){
+  if (missing(type)) { type <- "prob" }
+  type <- match.arg(type, c("prob", "linear.predictor"))
   if (missing(newdata)) {
     # if (object$Function == "DiscreteCM"){
     #   object1 <- object
@@ -70,19 +85,21 @@ predict.glmcat <- function(object,
 
   newdata[with(attributes(terms(object)), as.character(variables[response+1]))] <- object$categories_order[1]
 
-  return(predict_glmcat(model_object = object, data = newdata, type = type))
+  return(.predict_glmcat(model_object = object, data = newdata, type = type))
 }
 
 #' Confidence intervals for parameters of a fitted \code{glmcat} model object
 #' @description Computes confidence intervals from a fitted \code{glmcat} model object for all the parameters.
 #' @param object an fitted object of class \code{glmcat}.
+#' @param parm a numeric or character vector indicating which regression coefficients should be displayed
 #' @param level the confidence level.
-#' @rdname confint
+#' @param ... other parameters.
+#' @rdname confint.glmcat
 #' @method confint glmcat
-#' @usage \method{confint}{glmcat}(object, level, ...)
-#' @export
+#' @usage \method{confint}{glmcat}(object, parm, level, ...)
+#' @exportS3Method
 confint.glmcat <-
-  function(object, parm = NULL, level = 0.95)
+  function(object, parm = NULL, level = 0.95, ...)
   {
     stopifnot(is.numeric(level) && length(level) == 1 && level > 0 && level < 1)
     lev <- (1 - level)/2
@@ -109,53 +126,16 @@ confint.glmcat <-
     return(ci)
   }
 
-# parallel_test <-
-#   function(object)
-#   {
-#
-#     response <- all.vars(object$formula)[1]
-#
-#     fit_0 <- glmcat(formula = object$formula,
-#                     data = object$model, ratio = object$ratio,
-#                     cdf = object$cdf, parallel = T,
-#                     categories_order = object$categories_order,
-#                     ref_category = object$ref_category, threshold = object$threshold ,
-#                     control = object$control, normalization = object$normalization_s0)
-#
-#     exp_var <- all.vars(object$formula)[-1]
-#
-#     fun_test <- function(exp_var_in){
-#       fit_c <- glmcat(formula = object$formula,
-#                       data = object$model, ratio = object$ratio,
-#                       cdf = object$cdf, parallel = exp_var_in,
-#                       categories_order = object$categories_order,
-#                       ref_category = object$ref_category, threshold = object$threshold ,
-#                       control = object$control, normalization = object$normalization_s0)
-#       a3 = invisible(capture.output(anova(fit_0,fit_c)[2,]))
-#       return(a3[length(a3)])
-#     }
-#
-#     suppressMessages(anova(fit_0,fit_c))
-#
-#     capture.output( suppressMessages( anova(fit_0,fit_c)[2,] )  )
-#
-#     data.frame(a3[length(a3)])
-#     lapply(exp_var, fun_test)
-#
-#     l2 <- data.frame(do.call(rbind, l1))
-#
-#     return(l2)
-#
-#   }
 
 #' Summary method for a fitted \code{glmcat} model object
 #' @description Summary method for a fitted \code{glmcat} model object.
 #' @param object an fitted object of class \code{glmcat}.
 #' @param normalized if \code{normalized} is \code{TRUE} summary method yields the normalized coefficients.
+#' @param correlation TRUE to print the Correlation Matrix.
 #' @param ... additional arguments affecting the summary produced.
 #' @rdname summary
 #' @method summary glmcat
-#' @export
+#' @exportS3Method
 summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) {
   vcov <- object$cov_beta
   coefs <- matrix(NA, length(object$coefficients), 4,
@@ -204,7 +184,7 @@ summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) 
 #' @param na.rm TRUE for NA coefficients to be removed, default is FALSE.
 #' @rdname coef
 #' @param ... additional arguments affecting the \code{coef} method.
-#' @export
+#' @exportS3Method
 coef.glmcat <- function(object, na.rm = FALSE, ...) {
   if (na.rm) {
     coefs <- object$coefficients
@@ -221,7 +201,7 @@ coef.glmcat <- function(object, na.rm = FALSE, ...) {
 #' @param ... additional arguments affecting the \code{nobs} method.
 #' @rdname nobs
 #' @method nobs glmcat
-#' @export
+#' @exportS3Method
 nobs.glmcat <- function(object,...) {
   return(object$nobs_glmcat)
 }
@@ -232,7 +212,7 @@ nobs.glmcat <- function(object,...) {
 #' @param object an fitted object of class \code{glmcat}.
 #' @param ... additional arguments affecting the loglik.
 #' @method logLik glmcat
-#' @export
+#' @exportS3Method
 logLik.glmcat <- function(object,...) {
   structure(object$LogLikelihood,
             df = object$df, nobs_glmcat = object$nobs_glmcat,
@@ -445,7 +425,7 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
 #' @param steps the maximum number of steps.
 #' @method step glmcat
 #' @usage \method{step}{glmcat}(object, scope, direction, trace, steps)
-#' @export
+#' @exportS3Method
 step.glmcat <- function (object,
                          scope,
                          direction = c("both", "backward", "forward"),

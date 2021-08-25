@@ -4,15 +4,12 @@
 \alias{print.anova.glmcat}
 \title{Printing Anova for \code{glmcat} model fits}
 \usage{
-\method{print}{anova.glmcat}(
-  x,
-  digits = max(getOption("digits") - 2, 3),
-  signif.stars = getOption("show.signif.stars"),
-  ...
-)
+\method{print}{anova.glmcat}(x, digits = max(getOption("digits") - 2, 3), ...)
 }
 \arguments{
 \item{x}{an object of class \code{"glmcat"}.}
+
+\item{digits}{the number of digits in the printed table.}
 
 \item{...}{additional arguments affecting the summary produced.}
 }

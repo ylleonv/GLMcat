@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{an object of class \code{"glmcat"}.}
+
+\item{...}{additional arguments.}
 }
 \description{
 Compute an analysis of deviance table for one fitted \code{glmcat} model object.

@@ -4,7 +4,7 @@
 \alias{predict.glmcat}
 \title{Predict method for a a fitted \code{glmcat} model object}
 \usage{
-\method{predict}{glmcat}(object, newdata, type)
+\method{predict}{glmcat}(object, newdata, type, ...)
 }
 \arguments{
 \item{object}{a fitted object of class \code{glmcat}.}
@@ -12,6 +12,10 @@
 \item{newdata}{optionally, a data frame in which to look for the variables involved in the model. If omitted, the fitted linear predictors are used.}
 
 \item{type}{the type of prediction required.
+The default is \code{"prob"} which gives the probabilities, the other option is
+\code{"linear.predictor"} which gives predictions on the scale of the linear predictor.}
+
+\item{...}{further arguments.
 The default is \code{"prob"} which gives the probabilities, the other option is
 \code{"linear.predictor"} which gives predictions on the scale of the linear predictor.}
 }

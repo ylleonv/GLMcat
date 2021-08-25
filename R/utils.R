@@ -12,16 +12,19 @@ table_summary <- function(object, ...) {
 
 #' Printing a fitted \code{glmcat} model object
 #' @description \code{print.summary} method for GLMcat objects.
-#' @param object an object of class \code{"glmcat"}.
-#' @rdname print.summary
+#' @param x an object of class \code{"glmcat"}.
+#' @param digits the number of digits in the printed table.
+#' @param ... additional arguments affecting the summary produced.
 #' @method print summary.glmcat
 #' @export
 print.summary.glmcat <-
   function(x, digits = max(3, getOption("digits") - 3),
-           signif.stars = getOption("show.signif.stars"), ...)
+           ...)
   {
     # x <- glmcat_wine_3
     # cat("formula:", x$formula, fill=TRUE)
+    signif.stars <- getOption("show.signif.stars")
+
     print(x$formula)
     print(x$table_summary)
 

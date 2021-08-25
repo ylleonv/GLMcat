@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{an object of class \code{glmcat}.}
 
-\item{...}{additional arguments affecting the summary produced.}
+\item{...}{additional arguments.}
 }
 \description{
 \code{print} method for a fitted \code{glmcat} model object.

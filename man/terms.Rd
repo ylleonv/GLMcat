@@ -4,10 +4,12 @@
 \alias{terms.glmcat}
 \title{Terms of a fitted \code{glmcat} model object}
 \usage{
-\method{terms}{glmcat}(object)
+\method{terms}{glmcat}(x, ...)
 }
 \arguments{
-\item{object}{an object of class \code{glmcat}.}
+\item{x}{an object of class \code{glmcat}.}
+
+\item{...}{additional arguments.}
 }
 \description{
 Returns the terms of a fitted \code{glmcat} model object.

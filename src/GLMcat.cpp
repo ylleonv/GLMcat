@@ -8,7 +8,7 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
-
+// [[Rcpp::export(.GLMcat)]]
 List GLMcat(Formula formula,
             DataFrame data,
             std::string ratio,
@@ -609,15 +609,8 @@ List GLMcat(Formula formula,
 
 
 
-//' Prediction based on GLMcat models
-//' @description GLMcat model predictions
-//' @param model_object a GLMcat model
-//' @param data a data frame with the predictor variables used in the GLMcat model.
-//' @param type The type of prediction to obtain. \code{"prob"} gives probabilities
-//' and \code{"linear.predict"} gives the linear predictor.
-//' @rdname predict_glmcat
-//' @name predict_glmcat
-// [[Rcpp::export("predict_glmcat")]]
+
+// [[Rcpp::export(.predict_glmcat)]]
 NumericMatrix predict_glmcat(List model_object,
                              DataFrame data,
                              String type
@@ -800,35 +793,35 @@ NumericMatrix predict_glmcat(List model_object,
     predict_glmcat = pi_total;
     predict_mat = wrap(predict_glmcat);
     colnames(predict_mat) = names_col;
-  }else if(type == "linear.predict"){
+  }else if(type == "linear.predictor"){
     names_col.erase(N_cats-1);
     colnames(predict_mat) = names_col;
   }else{
-    Rcpp::stop("Unrecognized type parameter; options are: prob, linear.predict");
+    Rcpp::stop("Unrecognized type parameter; options are: prob, linear.predictor");
   }
   return predict_mat;
 }
 
 
-RCPP_MODULE(GLMcatmodule){
-  Rcpp::function("GLMcat", &GLMcat,
-                 List::create(_["formula"],
-                              _["data"],
-                               _["ratio"] = "reference",
-                               _["cdf"] = R_NaN,
-                               _["parallel"] = CharacterVector::create(NA_STRING),
-                               _["categories_order"] = CharacterVector::create(NA_STRING),
-                               _["ref_category"] = CharacterVector::create(NA_STRING),
-                               _["threshold"] = "standard",
-                               _["control"] = R_NaN,
-                               _["normalization"] = 1.0
-                 ),
-                 "GLMcat models");
-
-  Rcpp::function("predict_glmcat", &predict_glmcat,
-                 List::create(_["model_object"] = R_NaN,
-                              _["data"],
-                               _["type"] = "prob"
-                 ),
-                 "GLMcat model predictions");
-}
+// RCPP_MODULE(GLMcatmodule){
+//   Rcpp::function("GLMcat", &GLMcat,
+//                  List::create(_["formula"],
+//                               _["data"],
+//                                _["ratio"] = "reference",
+//                                _["cdf"] = R_NaN,
+//                                _["parallel"] = CharacterVector::create(NA_STRING),
+//                                _["categories_order"] = CharacterVector::create(NA_STRING),
+//                                _["ref_category"] = CharacterVector::create(NA_STRING),
+//                                _["threshold"] = "standard",
+//                                _["control"] = R_NaN,
+//                                _["normalization"] = 1.0
+//                  ),
+//                  "GLMcat models");
+//
+//   Rcpp::function("predict_glmcat", &predict_glmcat,
+//                  List::create(_["model_object"] = R_NaN,
+//                               _["data"],
+//                                _["type"] = "prob"
+//                  ),
+//                  "GLMcat model predictions");
+// }

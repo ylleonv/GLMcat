@@ -5,6 +5,8 @@ using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
 
+
+// [[Rcpp::export(.Discrete_CM)]]
 List Discrete_CM(Formula formula,
                  String case_id,
                  String alternatives,
@@ -362,7 +364,7 @@ List Discrete_CM(Formula formula,
     Named("control") = control,
     Named("arguments") = List::create(Named("formula")= formula,Named("case_id")= case_id, Named("alternatives") = alternatives,
           Named("reference") = reference, Named("alternative_specific") = alternative_specific, Named("intercept") = intercept,
-                 Named("categories_order") = categories_order)
+                Named("categories_order") = categories_order)
   );
 
 
@@ -370,19 +372,19 @@ List Discrete_CM(Formula formula,
   return output_list_dis;
 }
 
-RCPP_MODULE(Discrete_CMmodule){
-  Rcpp::function("Discrete_CM", &Discrete_CM,
-                 List::create(_["formula"] = R_NaN,
-                              _["case_id"] = "a",
-                              _["alternatives"] = "a",
-                              _["reference"] = R_NaN,
-                              _["alternative_specific"] = CharacterVector::create( NA_STRING),
-                              _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
-                              _["cdf"] = R_NaN,
-                              _["intercept"] = "standard",
-                              _["normalization"] = 1.0,
-                              _["control"] = R_NaN
-                 ),
-                 "Discrete Choice Model");
-
-}
+// RCPP_MODULE(Discrete_CMmodule){
+//   Rcpp::function("Discrete_CM", &Discrete_CM,
+//                  List::create(_["formula"] = R_NaN,
+//                               _["case_id"] = "a",
+//                               _["alternatives"] = "a",
+//                               _["reference"] = R_NaN,
+//                               _["alternative_specific"] = CharacterVector::create( NA_STRING),
+//                               _["data"] = NumericVector::create( 1, NA_REAL, R_NaN, R_PosInf, R_NegInf),
+//                               _["cdf"] = R_NaN,
+//                               _["intercept"] = "standard",
+//                               _["normalization"] = 1.0,
+//                               _["control"] = R_NaN
+//                  ),
+//                  "Discrete Choice Model");
+//
+// }

@@ -4,12 +4,16 @@
 \alias{confint.glmcat}
 \title{Confidence intervals for parameters of a fitted \code{glmcat} model object}
 \usage{
-\method{confint}{glmcat}(object, level, ...)
+\method{confint}{glmcat}(object, parm, level, ...)
 }
 \arguments{
 \item{object}{an fitted object of class \code{glmcat}.}
 
+\item{parm}{a numeric or character vector indicating which regression coefficients should be displayed}
+
 \item{level}{the confidence level.}
+
+\item{...}{other parameters.}
 }
 \description{
 Computes confidence intervals from a fitted \code{glmcat} model object for all the parameters.

@@ -11,6 +11,8 @@
 
 \item{normalized}{if \code{normalized} is \code{TRUE} summary method yields the normalized coefficients.}
 
+\item{correlation}{TRUE to print the Correlation Matrix.}
+
 \item{...}{additional arguments affecting the summary produced.}
 }
 \description{

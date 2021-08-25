@@ -23,6 +23,7 @@
 #' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
 #' }
 #' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
+#' @param ... additional arguments.
 #' @export
 #' @examples
 #' data(DisturbedDreams)
@@ -41,8 +42,8 @@ glmcat <-
            control = list(),
            normalization = 1,
            # doFit = TRUE, na.action,
-           # contrasts,
-           model = TRUE, ...)
+           # contrasts, model = TRUE,
+           ...)
   {
     # cdf <- match.arg(cdf)
     # cdf <- match.arg(cdf, c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace", student_glmcat()))
@@ -51,7 +52,7 @@ glmcat <-
     contrasts <- NULL
     control <- do.call(glmcat_control, c(control, list(...)))
 
-    fit_old <- GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
+    fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
                       ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
     fit_old[["model"]] <- model.frame(formula = formula,data)
@@ -122,7 +123,7 @@ glm_ref <-
 
     # if(is.null(alternative_specific)){alternative_specific <- NA}
 
-    fit_old <- Discrete_CM(formula = formula,
+    fit_old <- .Discrete_CM(formula = formula,
                            case_id = case_id,
                            alternatives = alternatives,
                            reference = reference,

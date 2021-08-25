@@ -15,7 +15,6 @@ glmcat(
   threshold = c("standard", "symmetric", "equidistant"),
   control = list(),
   normalization = 1,
-  model = TRUE,
   ...
 )
 }
@@ -47,6 +46,8 @@ glmcat(
 }}
 
 \item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.}
+
+\item{...}{additional arguments.}
 }
 \description{
 Fit a model within the families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio).

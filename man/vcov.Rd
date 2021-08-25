@@ -4,10 +4,12 @@
 \alias{vcov.glmcat}
 \title{Variance-Covariance Matrix for a fitted \code{glmcat} model object}
 \usage{
-\method{vcov}{glmcat}(object)
+\method{vcov}{glmcat}(object,...)
 }
 \arguments{
 \item{object}{an object of class \code{glmcat}.}
+
+\item{...}{additional arguments.}
 }
 \description{
 Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.

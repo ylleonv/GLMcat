@@ -16,10 +16,11 @@ anova_1 <- function(exp_names,vcov_beta,beta, L3){
 #' Anova for a fitted \code{glmcat} model object
 #' @description Compute an analysis of deviance table for one fitted \code{glmcat} model object.
 #' @param object an object of class \code{"glmcat"}.
+#' @param ... additional arguments.
 #' @rdname anova
 #' @method anova glmcat
 #' @usage \method{anova}{glmcat}(object, ...)
-#' @export
+#' @exportS3Method
 anova.glmcat <-
   function(object, ...)
   {
@@ -81,6 +82,7 @@ anova.glmcat <-
 #' Printing Anova for \code{glmcat} model fits
 #' @description \code{print.anova} method for GLMcat objects.
 #' @param x an object of class \code{"glmcat"}.
+#' @param digits the number of digits in the printed table.
 #' @param ... additional arguments affecting the summary produced.
 #' @rdname print.anova
 #' @method print anova.glmcat
@@ -88,11 +90,13 @@ anova.glmcat <-
 print.anova.glmcat <-
   function(x,
            digits=max(getOption("digits") - 2, 3),
-           signif.stars=getOption("show.signif.stars"),
+
            ...)
   {
     if (!is.null(heading <- attr(x, "heading")))
       cat(heading, "\n")
+
+    signif.stars <- getOption("show.signif.stars")
 
     printCoefmat(x, digits=digits,
                  signif.stars=signif.stars,

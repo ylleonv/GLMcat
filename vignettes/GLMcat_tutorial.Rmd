@@ -168,9 +168,10 @@ It is possible to do predictions in `glmcat` using the function `predict_glmcat`
 set.seed(13)
 ind <- sample(x = 1:nrow(DisturbedDreams), size = 3)
 # Probabilities
+
 predict(mod_ref_log_c, newdata = DisturbedDreams[ind, ], type = "prob")
 # Linear predictor
-predict(mod_ref_log_c, newdata = DisturbedDreams[ind, ], type = "linear.predict")
+predict(mod_ref_log_c, newdata = DisturbedDreams[ind, ], type = "linear.predictor")
 ```
 
 Now we illustrate how to predict in a set of new observations. Suppose we want to predict the severity of dreams for 3 individuals whose ages are *5, 9.5* and *15* respectively:

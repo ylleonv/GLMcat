@@ -4,15 +4,14 @@
 \alias{print.summary.glmcat}
 \title{Printing a fitted \code{glmcat} model object}
 \usage{
-\method{print}{summary.glmcat}(
-  x,
-  digits = max(3, getOption("digits") - 3),
-  signif.stars = getOption("show.signif.stars"),
-  ...
-)
+\method{print}{summary.glmcat}(x, digits = max(3, getOption("digits") - 3), ...)
 }
 \arguments{
-\item{object}{an object of class \code{"glmcat"}.}
+\item{x}{an object of class \code{"glmcat"}.}
+
+\item{digits}{the number of digits in the printed table.}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 \code{print.summary} method for GLMcat objects.
