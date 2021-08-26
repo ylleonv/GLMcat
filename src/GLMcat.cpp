@@ -111,10 +111,14 @@ List GLMcat(Formula formula,
 
   if((ratio == "cumulative" && explanatory_complete[0] == "(Intercept)") && threshold == "standard"){
     int qm = Q/2;
-    IntegerVector seqvec = seq(-qm,Q-qm-1); // kind of symmetric around 0
+    // Rcout << qm << std::endl;
+    // qm_vec = std::vector<int> vec(Q-1, qm);
+    IntegerVector seqvec = seq(1,Q) ; // kind of symmetric around 0
+    // Rcout << seqvec  << std::endl;
     NumericVector seqvec2 = as<NumericVector>(seqvec);
+    seqvec2 = seqvec2 - qm;
     Eigen::Map<Eigen::VectorXd> seqvec1 = as<Eigen::Map<Eigen::VectorXd> >(seqvec2);
-    // Rcout << BETA.size() << std::endl;
+    // Rcout << seqvec1 << std::endl;
     BETA.block(0, 0 , Q , 1) = seqvec1;
     // Rcout << BETA << std::endl;
   }
@@ -348,15 +352,14 @@ List GLMcat(Formula formula,
     }
 
     //
-    //     Rcout << iteration << std::endl;
-    //     Rcout << LogLik << std::endl;
+    // Rcout << iteration << std::endl;
+    // Rcout << LogLik << std::endl;
 
     LogLikIter.conservativeResize(iteration+2, 1);
     LogLikIter(iteration+1) = LogLik;
     Stop_criteria = (abs(LogLikIter(iteration+1) - LogLikIter(iteration))) / (epsilon + (abs(LogLikIter(iteration+1)))) ;
     VectorXd beta_old = BETA;
 
-    //     Rcout << LogLik << std::endl;
     // MatrixXd inverse;
     FullPivLU<MatrixXd> lu(F_i);
     bool invertible = lu.isInvertible();
