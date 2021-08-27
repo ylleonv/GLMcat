@@ -50,7 +50,7 @@ glmcat <-
     ratio <- match.arg(ratio)
     threshold <- match.arg(threshold)
     contrasts <- NULL
-    control <- do.call(glmcat_control, c(control, list(...)))
+    control <- do.call(control_glmcat, c(control, list(...)))
 
     fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
                       ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
@@ -118,7 +118,7 @@ glm_ref <-
 
     # cdf <- match.arg(cdf)
     intercept <- match.arg(intercept, c("standard","conditional"))
-    control <- do.call(glmcat_control, c(control, list()))
+    control <- do.call(control_glmcat, c(control, list()))
 
 
     # if(is.null(alternative_specific)){alternative_specific <- NA}

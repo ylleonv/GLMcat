@@ -169,7 +169,7 @@ summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) 
       object$correlation <- cov2cor(vcov)
   }
 
-  coefs[, 1] <- object$coefficients
+  # coefs[, 1] <- object$coefficients
 
   rownames(coefs) <- rownames(object$coefficients)
 
@@ -220,15 +220,28 @@ logLik.glmcat <- function(object,...) {
   )
 }
 
+#' Extract AIC from a fitted \code{glmcat} model object
+#' @description Method to compute the (generalized) Akaike An Information Criterion for a fitted object of class \code{glmcat}.
+#' @rdname extractAIC
+#' @param fit an fitted object of class \code{glmcat}.
+#' @param ... further arguments (currently unused in base R).
+#' @method extractAIC glmcat
+#' @exportS3Method
+extractAIC.glmcat <- function(fit, ...) {
+  scale = 0
+  k = 2
+  edf <- fit$df
+  c(edf, -2*fit$LogLikelihood + k * edf)
+}
 
 #' Control parameters for \code{glmcat} models
 #' @description Set control parameters for \code{glmcat} models.
-#' @rdname glmcat_control
+#' @rdname control_glmcat
 #' @param maxit the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.
 #' @param epsilon a double to change update the convergence criterion of GLMcat models.
 #' @param beta_init an appropiate sized vector for the initial iteration of the algorithm.
 #' @export
-glmcat_control <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
+control_glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   return(list("maxit" = maxit, "epsilon" = epsilon, "beta_init" = beta_init))
   # return(maxit)
 }
@@ -289,14 +302,14 @@ drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
     if(fun_in == "GLMcat"){
       object$parallel <- object$parallel[object$parallel != tt]
       if(length(object$parallel) == 0) {object$parallel <- NA}
-      nfit <- GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
+      nfit <- .GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
                      object$categories_order, object$ref_category,
-                     object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                     object$threshold, control_glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
                      object$normalization_s0)
     }else{
       object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
       if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
-      nfit <- Discrete_CM(formula = nfit,
+      nfit <- .Discrete_CM(formula = nfit,
                           data = data,
                           cdf = object$cdf,
                           case_id = object$arguments$case_id,
@@ -305,7 +318,7 @@ drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                           # object$categories_order,
                           intercept = object$arguments$intercept,
                           reference = object$arguments$reference,
-                          glmcat_control(object$control$maxit,
+                          control_glmcat(object$control$maxit,
                                          object$control$epsilon, object$control$beta_init),
                           normalization = object$normalization_s0)
 
@@ -370,14 +383,14 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
     if(fun_in == "GLMcat"){
       # object$parallel <- object$parallel[object$parallel != tt]
       # if(length(object$parallel) == 0) {object$parallel <- NA}
-      nfit <- GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
+      nfit <- .GLMcat(nfit, data, object$ratio, object$cdf, object$parallel,
                      object$categories_order, object$ref_category,
-                     object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                     object$threshold, control_glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
                      object$normalization_s0)
     }else{
       # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
       # if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
-      nfit <- Discrete_CM(formula = nfit,
+      nfit <- .Discrete_CM(formula = nfit,
                           data = data,
                           cdf = object$cdf,
                           alternative_specific = object$arguments$alternative_specific,
@@ -386,7 +399,7 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                           alternatives = object$arguments$alternatives,
                           reference = object$arguments$reference,
                           intercept = object$arguments$intercept,
-                          glmcat_control(object$control$maxit,
+                          control_glmcat(object$control$maxit,
                                          object$control$epsilon, object$control$beta_init),
                           normalization = object$normalization_s0)
     }
@@ -417,13 +430,13 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
 
 #' Stepwise for a \code{glmcat} model object
 #' @description Stepwise for a \code{glmcat} model object based on the AIC.
-#' @rdname step
 #' @param object an fitted object of class \code{glmcat}.
 #' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
 #' @param direction the mode of the stepwise search.
 #' @param trace to print the process information.
 #' @param steps the maximum number of steps.
 #' @method step glmcat
+#' @rdname step
 #' @usage \method{step}{glmcat}(object, scope, direction, trace, steps)
 #' @exportS3Method
 step.glmcat <- function (object,
@@ -578,19 +591,19 @@ step.glmcat <- function (object,
 
     # fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
     #               object$categories_order, object$ref_category,
-    #               object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
+    #               object$threshold, control_glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
     #               object$normalization_s0)
 
     fun_in = object$Function
     if(fun_in == "GLMcat"){
-      fit <- GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
+      fit <- .GLMcat(form1, data, object$ratio, object$cdf, object$parallel,
                     object$categories_order, object$ref_category,
-                    object$threshold, glmcat_control(object$control$maxit, object$control$epsilon, object$control$beta_init),
+                    object$threshold, control_glmcat(object$control$maxit, object$control$epsilon, object$control$beta_init),
                     object$normalization_s0)
     }else{
       # object$arguments$alternative_specific <- object$arguments$alternative_specific[object$arguments$alternative_specific != tt]
       # if(length(object$arguments$alternative_specific) == 0) {object$arguments$alternative_specific <- NA}
-      fit <- Discrete_CM(formula = form1,
+      fit <- .Discrete_CM(formula = form1,
                          data = data,
                          cdf = object$cdf,
                          alternative_specific = object$arguments$alternative_specific,
@@ -599,7 +612,7 @@ step.glmcat <- function (object,
                          alternatives = object$arguments$alternatives,
                          reference = object$arguments$reference,
                          intercept = object$arguments$intercept,
-                         glmcat_control(object$control$maxit,
+                         control_glmcat(object$control$maxit,
                                         object$control$epsilon, object$control$beta_init),
                          normalization = object$normalization_s0)
     }

@@ -9,7 +9,7 @@
 # #' @export logLik.glmcat
 # #' @export student_glmcat
 # #' @export noncentralt_glmcat
-# #' @export glmcat_control
+# #' @export control_glmcat
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp evalCpp
 #' @importFrom utils flush.console

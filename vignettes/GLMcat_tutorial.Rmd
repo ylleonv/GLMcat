@@ -343,7 +343,7 @@ cum_log_c <- glmcat(
   cdf = student_glmcat(df = 0.8),
   ratio = "cumulative",
   data = DisturbedDreams,
-  control = glmcat_control(beta_init = coef(cum_log_co))
+  control = control_glmcat(beta_init = coef(cum_log_co))
 )
 logLik(cum_log_c)
 summary(cum_log_c)
