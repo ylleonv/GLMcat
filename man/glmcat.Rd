@@ -8,7 +8,7 @@ glmcat(
   formula,
   data,
   ratio = c("reference", "cumulative", "sequential", "adjacent"),
-  cdf = "logistic",
+  cdf = list(),
   parallel = NA,
   categories_order = NA,
   ref_category = NA,
@@ -26,9 +26,13 @@ glmcat(
 \item{ratio}{a string indicating the ratio (equivantly to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
 \item{cdf}{\describe{
-\item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
-\item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
-\item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
+The inverse distribution function to be used as part of the link function.
+If the distribution has no parameters to specify then it should be entered as a
+string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
+If there are parameters to specify then a list must be entered,
+so far this would only be the case for Student's distribution which would be
+\code{list("student", df=2)},
+and for the non-central distribution of student, \code{list("noncentralt", df=2, mu=1)},
 }}
 
 \item{parallel}{a character vector indicating the name of the variables with a parallel effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".}

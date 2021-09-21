@@ -3,7 +3,7 @@ table_summary <- function(object, ...) {
   info <- data.frame("ratio" = object$ratio,
                "cdf" = object$cdf[1],
                "nobs" = object$nobs,
-               "niter" = paste("(", object$iteration, ")", sep=""),
+               "niter" = object$iteration,
                "logLik" = object$LogLikelihood,
                row.names = "Model info:"
     )

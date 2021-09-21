@@ -248,7 +248,8 @@ List cdf::All_pre_data_or(Formula formula,
   // Rcout << any_alternative_specific << std::endl;
   // Rcout << parallel_effect << std::endl;
 
-  if((parallel_effect[0] == "TRUE" || parallel_effect[0] == "NA") && (parallel_effect.size() == 1)){ // Asumme parallel design
+  // Assume parallel design
+  if((parallel_effect[0] == "TRUE" || parallel_effect[0] == "NA") && (parallel_effect.size() == 1)){
     // Rcout << parallel_effect.size() << std::endl;
     // if(parallel_effect[0] == "TRUE" && (parallel_effect.size() ==1)){
     parallel_effect = colnames_final_m;
@@ -1428,7 +1429,10 @@ double Gompertz::pdf_gompertz(const double& value) const
   // double _mu = 0.0;
   // double _sigma = 1.0;
 
-  return exp(1+value-exp(value)) ; }
+  // return exp(1+value-exp(value)) ; }
+  // return exp(value-(exp(value)-1)) ; }
+  // return exp(value)*( exp(-(exp(value)-1)) ) ; }
+  return (exp(value-exp(value))) ; }
 
 // double Gompertz::cdf_gompertz(const double& value) const
 // {
@@ -1441,7 +1445,8 @@ double Gompertz::cdf_gompertz(const double& value) const
 {
   // double _mu = 0.0;
   // double _sigma = 1.0;
-  return  1 - exp(-(exp(value))); }
+  // return  1 - exp(-(exp(value)-1)); }
+  return(1-exp(-exp(value)));}
 
 double Gompertz::qdf_gompertz(const double& value) const
 {

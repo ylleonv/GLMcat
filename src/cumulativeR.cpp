@@ -48,6 +48,15 @@ Eigen::VectorXd CumulativeR::inverse_gompertz(const Eigen::VectorXd& eta) const
   return in_open_corner(ordered_pi);
 }
 
+// Eigen::VectorXd CumulativeR::inverse_gompertz(const Eigen::VectorXd& eta) const
+// {
+//   Eigen::VectorXd ordered_pi( eta.size() );
+//   ordered_pi[0] = cdf_gompertz( eta(0) );
+//   for(int j=1; j<eta.size(); ++j)
+//   { ordered_pi[j] = cdf_gompertz( eta(j) ) - cdf_gompertz( eta(j-1) ); }
+//   return in_open_corner(ordered_pi);
+// }
+
 Eigen::VectorXd CumulativeR::inverse_student(const Eigen::VectorXd& eta, const double& freedom_degrees) const
 {
   Eigen::VectorXd ordered_pi( eta.size() );
@@ -106,6 +115,16 @@ Eigen::MatrixXd CumulativeR::inverse_derivative_student(const Eigen::VectorXd& e
   { F_1(j,j) = pdf_student( eta(j) , freedom_degrees); }
   return (F_1 * R);
 }
+
+// Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& eta) const
+// {
+//   Eigen::MatrixXd R = Eigen::MatrixXd::Identity(eta.rows(), eta.rows());
+//   R.block(0, 1, eta.rows()-1, eta.rows()-1) -= Eigen::MatrixXd::Identity(eta.rows() -1, eta.rows()-1);
+//   Eigen::MatrixXd F_1 = Eigen::MatrixXd::Zero(eta.rows(),eta.rows());
+//   for(int j=0; j<eta.rows(); ++j)
+//   { F_1(j,j) = pdf_gompertz( eta(j) ); }
+//   return (F_1 * R);
+// }
 
 Eigen::MatrixXd CumulativeR::inverse_derivative_gompertz(const Eigen::VectorXd& eta) const
 {

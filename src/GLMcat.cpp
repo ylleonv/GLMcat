@@ -109,19 +109,20 @@ List GLMcat(Formula formula,
   // cout << epsilon << std::endl;
 
 
-  if((ratio == "cumulative" && explanatory_complete[0] == "(Intercept)") && threshold == "standard"){
-    int qm = Q/2;
-    // Rcout << qm << std::endl;
-    // qm_vec = std::vector<int> vec(Q-1, qm);
-    IntegerVector seqvec = seq(1,Q) ; // kind of symmetric around 0
-    // Rcout << seqvec  << std::endl;
-    NumericVector seqvec2 = as<NumericVector>(seqvec);
-    seqvec2 = seqvec2 - qm;
-    Eigen::Map<Eigen::VectorXd> seqvec1 = as<Eigen::Map<Eigen::VectorXd> >(seqvec2);
-    // Rcout << seqvec1 << std::endl;
-    BETA.block(0, 0 , Q , 1) = seqvec1;
-    // Rcout << BETA << std::endl;
-  }
+  // Initialization cumulative special ascending intercepts, it generated some problems
+  // if((ratio == "cumulative" && explanatory_complete[0] == "(Intercept)") && threshold == "standard"){
+  //   int qm = Q/2;
+  //   // Rcout << qm << std::endl;
+  //   // qm_vec = std::vector<int> vec(Q-1, qm);
+  //   IntegerVector seqvec = seq(1,Q) ; // kind of symmetric around 0
+  //   // Rcout << seqvec  << std::endl;
+  //   NumericVector seqvec2 = as<NumericVector>(seqvec);
+  //   seqvec2 = seqvec2 - qm;
+  //   Eigen::Map<Eigen::VectorXd> seqvec1 = as<Eigen::Map<Eigen::VectorXd> >(seqvec2);
+  //   // Rcout << seqvec1 << std::endl;
+  //   BETA.block(0, 0 , Q , 1) = seqvec1;
+  //   Rcout << BETA << std::endl;
+  // }
 
   if(beta_init.length() >= 2 ){
     BETA = as<Eigen::Map<Eigen::VectorXd> >(beta_init);
@@ -575,7 +576,7 @@ List GLMcat(Formula formula,
     Named("stderr") = Std_Error,
     Named("iteration") = iteration,
     Named("ratio") = ratio,
-    Named("convergence") = Convergence,
+    // Named("convergence") = Convergence,
     // Named("exp_variables") = names,
     Named("ref_category") = ref_category,
     Named("threshold") = threshold,
@@ -594,7 +595,7 @@ List GLMcat(Formula formula,
     Named("LogLikelihood") = LogLik,
     // Named("mu_noncentralt") = mu,
     Named("Hessian") = F_i_final,
-    // Named("LogLikIter") = LogLikIter,
+    Named("LogLikIter") = LogLikIter,
     Named("formula") = formula,
     Named("categories_order") = categories_order,
     Named("parallel") = parallel,

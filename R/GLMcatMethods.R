@@ -16,6 +16,18 @@ print.glmcat <- function(x, ...) {
   invisible(x)
 }
 
+#' Plot method for a fitted code{glmcat} model object
+#' @description \code{plot} of the log-likelihood profile for a fitted \code{glmcat} model object.
+#' @param x an object of class \code{glmcat}.
+#' @param ... additional arguments.
+#' @rdname plot
+#' @exportS3Method
+plot.glmcat <- function(x, ...) {
+  log_iter <- x$LogLikIter
+  plot(log_iter[-1],main = "Log-likelihood profile", xlab = "Iteration", ylab = "Log-likelihood")
+}
+
+
 #' Variance-Covariance Matrix for a fitted \code{glmcat} model object
 #' @description Returns the variance-covariance matrix of the main parameters of a fitted \code{glmcat} model object.
 #' @param object an object of class \code{glmcat}.
@@ -246,24 +258,24 @@ control_glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   # return(maxit)
 }
 
-#' Student's t distribution for the \code{glmcat} models
-#' @description Student's t distribution to use as the inverse link of the \code{glmcat} models.
-#' @rdname student_glmcat
-#' @param df degrees of freedom of Student's t distribution.
-#' @export
-student_glmcat <- function(df = 7) {
-  return(list("cdf" = "student", "df" = df))
-}
-
-#' Noncentral t distribution for the \code{glmcat} models
-#' @description Noncentral t distribution to use as the inverse link of the \code{glmcat} models.
-#' @rdname noncentralt_glmcat
-#' @param df degrees of freedom of Student's t distribution.
-#' @param mu the non centrality parameter.
-#' @export
-noncentralt_glmcat <- function(df = 7, mu = 0) {
-  return(list("cdf" = "noncentralt", "df" = df, "mu" = mu))
-}
+#' #' Student's t distribution for the \code{glmcat} models
+#' #' @description Student's t distribution to use as the inverse link of the \code{glmcat} models.
+#' #' @rdname student_glmcat
+#' #' @param df degrees of freedom of Student's t distribution.
+#' #' @export
+#' student_glmcat <- function(df = 7) {
+#'   return(list("cdf" = "student", "df" = df))
+#' }
+#'
+#' #' Noncentral t distribution for the \code{glmcat} models
+#' #' @description Noncentral t distribution to use as the inverse link of the \code{glmcat} models.
+#' #' @rdname noncentralt_glmcat
+#' #' @param df degrees of freedom of Student's t distribution.
+#' #' @param mu the non centrality parameter.
+#' #' @export
+#' noncentralt_glmcat <- function(df = 7, mu = 0) {
+#'   return(list("cdf" = "noncentralt", "df" = df, "mu" = mu))
+#' }
 
 safe_pchisq <- function(q, df, ...) {
   df[df <= 0] <- NA

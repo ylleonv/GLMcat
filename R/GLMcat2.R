@@ -7,9 +7,13 @@
 #' @param ratio a string indicating the ratio (equivantly to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.
 #' @param cdf
 #' \describe{
-#' \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
-#' \item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
-#' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
+#' The inverse distribution function to be used as part of the link function.
+#' If the distribution has no parameters to specify then it should be entered as a
+#' string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
+#' If there are parameters to specify then a list must be entered,
+#' so far this would only be the case for Student's distribution which would be
+#' \code{list("student", df=2)},
+#' and for the non-central distribution of student, \code{list("noncentralt", df=2, mu=1)},
 #' }
 #' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
 #' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
@@ -34,7 +38,8 @@ glmcat <-
   function(formula,
            data,
            ratio = c("reference", "cumulative", "sequential","adjacent"),
-           cdf = "logistic",
+           # cdf = "logistic",
+           cdf = list(),
            parallel = NA,
            categories_order = NA,
            ref_category = NA,
@@ -45,12 +50,18 @@ glmcat <-
            # contrasts, model = TRUE,
            ...)
   {
-    # cdf <- match.arg(cdf)
-    # cdf <- match.arg(cdf, c("logistic", "normal", "gumbel", "gompertz", "cauchy", "laplace", student_glmcat()))
+    if(length(cdf)==0){cdf[[1]] = "logistic"}
+    cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",
+                               "laplace", "student", "noncentralt"))
     ratio <- match.arg(ratio)
     threshold <- match.arg(threshold)
     contrasts <- NULL
     control <- do.call(control_glmcat, c(control, list(...)))
+
+    # Default for reference ratio should be the complete design
+    if(ratio == "reference" && is.na(parallel)){
+      parallel = F
+    }
 
     fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
                       ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
@@ -73,8 +84,8 @@ glmcat <-
 #' Each case represents a single statistical observation although it comprises
 #' multiple observations.
 #' @title Discrete_CM
-#' @rdname glm_ref
-#' @name glm_ref
+#' @rdname discrete_cm
+#' @name discrete_cm
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
 #' @param case_id a string with the name of the column that identifies each case.
 #' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
@@ -83,9 +94,13 @@ glmcat <-
 #' @param data a dataframe (in a long format) object in R, with the dependent variable as factor.
 #' @param cdf
 #' \describe{
-#' \item{\code{cdf}:}{a string indicating the F cdf, options are: logistic, normal, cauchy, student (any df), noncentralt, gompertz, gumbel and laplace.}
-#' \item{\code{df}:}{an integer with the degrees of freedom of the 'cdf'}
-#' \item{\code{mu}:}{an integer with the mu parameter of the 'cdf'}
+#' The inverse distribution function to be used as part of the link function.
+#' If the distribution has no parameters to specify then it should be entered as a
+#' string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
+#' If there are parameters to specify then a list must be entered,
+#' so far this would only be the case for Student's distribution which would be
+#' \code{list("student", df=2)},
+#' and for the non-central distribution of student, \code{list("noncentralt", df=2, mu=1)},
 #' }
 #' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 #' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
@@ -97,13 +112,13 @@ glmcat <-
 #' @examples
 #' library(GLMcat)
 #' data(TravelChoice)
-#' glm_ref(formula = choice ~ hinc + gc + invt,
+#' discrete_cm(formula = choice ~ hinc + gc + invt,
 #' case_id = "indv",alternatives = "mode", reference = "air",
 #' data = TravelChoice,  alternative_specific = c("gc", "invt"),
 #' cdf = "logistic")
 #' @note For these models it is not allowed to exclude the intercept.
 #' @export
-glm_ref <-
+discrete_cm <-
   function(
     formula,
     case_id,
@@ -111,12 +126,15 @@ glm_ref <-
     reference,
     alternative_specific = NA,
     data ,
-    cdf = "logistic",
+    cdf = list(),
     intercept = "standard",
     normalization = 1,
     control = list() ){
 
-    # cdf <- match.arg(cdf)
+    if(length(cdf)==0){cdf[[1]] = "logistic"}
+    cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",
+                                      "laplace", "student", "noncentralt"))
+
     intercept <- match.arg(intercept, c("standard","conditional"))
     control <- do.call(control_glmcat, c(control, list()))
 
