@@ -54,7 +54,11 @@ and for the non-central distribution of student, \code{list("noncentralt", df=2,
 \item{...}{additional arguments.}
 }
 \description{
-Fit a model within the families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio).
+Estimate generalized linear models implemented under the unified
+specification ( ratio,cdf,Z\) where \code{ratio} represents the ratio of probabilities
+(reference, cumulative, adjacent, or sequential), \code{cdf} the cumulative distribution function
+for the linkage, and Z the design matrix which must be specified through the \code{parallel}
+and the \code{threshold} arguments.
 }
 \details{
 Fitting models for categorical responses
@@ -64,4 +68,7 @@ data(DisturbedDreams)
 ref_log_com <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
     ref_category = "Very.severe",
     cdf = "logistic", ratio = "reference")
+}
+\references{
+\insertRef{peyhardi_new}
 }
