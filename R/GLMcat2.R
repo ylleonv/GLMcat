@@ -4,11 +4,11 @@
 #' (reference, cumulative, adjacent, or sequential), \code{cdf} the cumulative distribution function
 #' for the linkage, and Z the design matrix which must be specified through the \code{parallel}
 #' and the \code{threshold} arguments.
-#' @title glmcat
+#' @title Generalized linear models for categorical responses
 #' @rdname glmcat
 #' @name glmcat
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
-#' @param ratio a string indicating the ratio (equivantly to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.
+#' @param ratio a string indicating the ratio (equivalently to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.
 #' @param cdf
 #' \describe{
 #' The inverse distribution function to be used as part of the link function.
@@ -28,7 +28,7 @@
 #' \describe{
 #' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
 #' \item{\code{epsilon}:}{a double to change update the convergence criterion of GLMcat models.}
-#' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
+#' \item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm.}
 #' }
 #' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
 #' @param ... additional arguments.
@@ -89,7 +89,7 @@ glmcat <-
 #' one for each of the alternatives the individual could have chosen.
 #' A group of observations of the same individual is a “case”.
 #' Remark that each case represents a single statistical observation although it comprises multiple observations.
-#' @title Discrete_CM
+#' @title Discrete Choice Models
 #' @rdname discrete_cm
 #' @name discrete_cm
 #' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
@@ -114,7 +114,7 @@ glmcat <-
 #' \describe{
 #' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
 #' \item{\code{epsilon}:}{a double with to fix the epsilon value}
-#' \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}}
+#' \item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm}}
 #' @examples
 #' library(GLMcat)
 #' data(TravelChoice)

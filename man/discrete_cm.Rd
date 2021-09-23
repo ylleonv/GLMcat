@@ -2,7 +2,7 @@
 % Please edit documentation in R/GLMcat2.R
 \name{discrete_cm}
 \alias{discrete_cm}
-\title{Discrete_CM}
+\title{Discrete Choice Models}
 \usage{
 discrete_cm(
   formula,
@@ -47,7 +47,7 @@ and for the non-central distribution of student, \code{list("noncentralt", df=2,
 \item{control}{\describe{
 \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
 \item{\code{epsilon}:}{a double with to fix the epsilon value}
-\item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}}}
+\item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm}}}
 }
 \description{
 Fit discrete choice models which require data in long form.

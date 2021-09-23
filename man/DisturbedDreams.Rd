@@ -21,6 +21,6 @@ Boy's disturbed dreams benchmark dataset drawn from a study that cross-classifie
 data(DisturbedDreams)
 }
 \references{
-Maxwell, A.E. (1961) \emph{Analysing qualitative data}, Methuen London, 73.
+Maxwell, A.E. (1961) \emph{Analyzing qualitative data}, Methuen London, 73.
 }
 \keyword{datasets}

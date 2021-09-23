@@ -14,7 +14,7 @@
 #' @keywords datasets
 #'
 #' @references
-#' Maxwell, A.E. (1961) \emph{Analysing qualitative data}, Methuen London, 73.
+#' Maxwell, A.E. (1961) \emph{Analyzing qualitative data}, Methuen London, 73.
 #' @examples
 #' data(DisturbedDreams)
 "DisturbedDreams"

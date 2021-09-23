@@ -255,9 +255,9 @@ extractAIC.glmcat <- function(fit, ...) {
 #' Control parameters for \code{glmcat} models
 #' @description Set control parameters for \code{glmcat} models.
 #' @rdname control_glmcat
-#' @param maxit the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.
+#' @param maxit the maximum number of the Fisher's Scoring Algorithm iterations. Defaults to 25.
 #' @param epsilon a double to change update the convergence criterion of GLMcat models.
-#' @param beta_init an appropiate sized vector for the initial iteration of the algorithm.
+#' @param beta_init an appropriate sized vector for the initial iteration of the algorithm.
 #' @export
 control_glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   return(list("maxit" = maxit, "epsilon" = epsilon, "beta_init" = beta_init))

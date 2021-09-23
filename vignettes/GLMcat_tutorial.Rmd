@@ -104,7 +104,7 @@ All the classical models for categorical response data, can be written as an *(r
 
 ### Family of reference models
 
-We used the 223 observations of the *boy's disturbed dreams* benchmark dataset drawn from a study that cross-classified boys by their age *x* and the severity of their disturbed dreams *y* [@maxwell1961analysing]. The data is available as the object `DisturbedDreams` in the package `glmcat`. 
+We used the 223 observations of the *boy's disturbed dreams* benchmark dataset drawn from a study that cross-classified boys by their age *x* and the severity of their disturbed dreams *y* [@maxwell1961Analyzing]. The data is available as the object `DisturbedDreams` in the package `glmcat`. 
 
 For more information see the manual entry for the `DisturbedDreams` data: `help(DisturbedDreams)`.
 

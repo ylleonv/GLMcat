@@ -7,11 +7,11 @@
 control_glmcat(maxit = 25, epsilon = 1e-06, beta_init = NA)
 }
 \arguments{
-\item{maxit}{the maximum number of the Fisher's Scorng Algorithm iterations. Defaults to 25.}
+\item{maxit}{the maximum number of the Fisher's Scoring Algorithm iterations. Defaults to 25.}
 
 \item{epsilon}{a double to change update the convergence criterion of GLMcat models.}
 
-\item{beta_init}{an appropiate sized vector for the initial iteration of the algorithm.}
+\item{beta_init}{an appropriate sized vector for the initial iteration of the algorithm.}
 }
 \description{
 Set control parameters for \code{glmcat} models.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/GLMcat2.R
 \name{glmcat}
 \alias{glmcat}
-\title{glmcat}
+\title{Generalized linear models for categorical responses}
 \usage{
 glmcat(
   formula,
@@ -23,7 +23,7 @@ glmcat(
 
 \item{data}{a dataframe object in R, with the dependent variable as factor.}
 
-\item{ratio}{a string indicating the ratio (equivantly to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.}
+\item{ratio}{a string indicating the ratio (equivalently to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.}
 
 \item{cdf}{\describe{
 The inverse distribution function to be used as part of the link function.
@@ -46,7 +46,7 @@ and for the non-central distribution of student, \code{list("noncentralt", df=2,
 \item{control}{\describe{
 \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
 \item{\code{epsilon}:}{a double to change update the convergence criterion of GLMcat models.}
-\item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm.}
+\item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm.}
 }}
 
 \item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.}
