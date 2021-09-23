@@ -34,7 +34,8 @@
 #' @param ... additional arguments.
 #' @export
 #' @references
-#'  \insertAllCited{}
+#'  Peyhardi J, Trottier C, Guédon Y (2015). “A new specification of generalized linear models
+#'  for categorical responses.” \emph{Biometrika}, 102(4), 889–906. doi:10.1093/biomet/asv042.
 #' @examples
 #' data(DisturbedDreams)
 #' ref_log_com <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
