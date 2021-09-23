@@ -1,6 +1,6 @@
 #' Fitting models for categorical responses
 #' @description Estimate generalized linear models implemented under the unified
-#' specification ( ratio,cdf,Z\) where \code{ratio} represents the ratio of probabilities
+#' specification ( ratio,cdf,Z) where \code{ratio} represents the ratio of probabilities
 #' (reference, cumulative, adjacent, or sequential), \code{cdf} the cumulative distribution function
 #' for the linkage, and Z the design matrix which must be specified through the \code{parallel}
 #' and the \code{threshold} arguments.
@@ -34,7 +34,7 @@
 #' @param ... additional arguments.
 #' @export
 #' @references
-#' \insertRef{peyhardi_new}
+#'  \insertAllCited{}
 #' @examples
 #' data(DisturbedDreams)
 #' ref_log_com <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
@@ -83,12 +83,11 @@ glmcat <-
   }
 
 #' Family of models for Discrete Choice
-#' @description Discrete choice model: Requires data in long form.
+#' @description Fit discrete choice models which require data in long form.
 #' For each individual (or decision maker), there are multiple observations (rows),
 #' one for each of the alternatives the individual could have chosen.
-#' We call the group of observations for an individual a “case”.
-#' Each case represents a single statistical observation although it comprises
-#' multiple observations.
+#' A group of observations of the same individual is a “case”.
+#' Remark that each case represents a single statistical observation although it comprises multiple observations.
 #' @title Discrete_CM
 #' @rdname discrete_cm
 #' @name discrete_cm

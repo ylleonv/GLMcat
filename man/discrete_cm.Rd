@@ -50,12 +50,11 @@ and for the non-central distribution of student, \code{list("noncentralt", df=2,
 \item{\code{beta_init}:}{an appropiate sized vector for the initial iteration of the algorithm}}}
 }
 \description{
-Discrete choice model: Requires data in long form.
+Fit discrete choice models which require data in long form.
 For each individual (or decision maker), there are multiple observations (rows),
 one for each of the alternatives the individual could have chosen.
-We call the group of observations for an individual a “case”.
-Each case represents a single statistical observation although it comprises
-multiple observations.
+A group of observations of the same individual is a “case”.
+Remark that each case represents a single statistical observation although it comprises multiple observations.
 }
 \details{
 Family of models for Discrete Choice
