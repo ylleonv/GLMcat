@@ -1,5 +1,9 @@
 #' Fitting models for categorical responses
-#' @description Fit a model within the families of models for categorical responses (reference, adjacent, sequential, and cumulative ratio).
+#' @description Estimate generalized linear models implemented under the unified
+#' specification ( ratio,cdf,Z\) where \code{ratio} represents the ratio of probabilities
+#' (reference, cumulative, adjacent, or sequential), \code{cdf} the cumulative distribution function
+#' for the linkage, and Z the design matrix which must be specified through the \code{parallel}
+#' and the \code{threshold} arguments.
 #' @title glmcat
 #' @rdname glmcat
 #' @name glmcat
@@ -29,6 +33,8 @@
 #' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
 #' @param ... additional arguments.
 #' @export
+#' @references
+#' \insertRef{peyhardi_new}
 #' @examples
 #' data(DisturbedDreams)
 #' ref_log_com <- glmcat(formula = Level ~ Age, data = DisturbedDreams,

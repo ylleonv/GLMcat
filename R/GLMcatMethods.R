@@ -25,6 +25,7 @@ print.glmcat <- function(x, ...) {
 plot.glmcat <- function(x, ...) {
   log_iter <- x$LogLikIter
   plot(log_iter[-1],main = "Log-likelihood profile", xlab = "Iteration", ylab = "Log-likelihood")
+  lines(log_iter[-1])
 }
 
 
@@ -153,14 +154,19 @@ summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) 
   coefs <- matrix(NA, length(object$coefficients), 4,
                   dimnames = list(names(object$coefficients),
                                   c("Estimate", "Std. Error", "z value", "Pr(>|z|)")))
+
   coefs[, 1] <- object$coefficients
+  coefs[, 2] <- sd <- sqrt(diag(vcov))
+
   if(normalized){
     cat("Normalized coefficients with s0 = ",object$normalization_s0, "\n")
     coefs <- matrix(NA, length(object$coefficients*object$normalization_s0), 4,
                     dimnames = list(names(object$coefficients*object$normalization_s0),
                                     c("Estimate", "Std. Error", "z value", "Pr(>|z|)")))
     coefs[, 1] <- object$coefficients*object$normalization_s0
+    coefs[, 2] <- sd <- sqrt(diag(vcov))*object$normalization_s0
   }
+
   if(!all(is.finite(vcov))) {
     ## warning("Variance-covariance matrix of the parameters is not defined")
     coefs[, 2:4] <- NA
@@ -168,7 +174,7 @@ summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) 
   }
   else {
     # alias <- unlist(object$aliased)
-    coefs[, 2] <- sd <- sqrt(diag(vcov))
+
     ## Cond is Inf if Hessian contains NaNs:
     object$cond.H <-
       if(any(is.na(object$Hessian))) Inf

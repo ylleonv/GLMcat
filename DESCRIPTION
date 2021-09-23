@@ -18,7 +18,8 @@ LinkingTo:
 Imports: 
     Rcpp,
     stats,
-    stringr
+    stringr,
+    Rdpack
 Suggests: 
     knitr,
     rmarkdown,
@@ -29,3 +30,4 @@ Suggests:
     gtools,
     tidyr
 VignetteBuilder: knitr
+RdMacros: Rdpack
