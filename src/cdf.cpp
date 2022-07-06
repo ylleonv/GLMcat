@@ -20,6 +20,8 @@ cdf::cdf(void) {
   // Rcout << "cdf is being created" << endl;
 }
 
+
+
 // std::string cdf::concatenate(std::string x, std::string level)
 // {
 //   return (x + " " +level);
@@ -307,15 +309,36 @@ List cdf::All_pre_data_or(Formula formula,
   parallel_effect = f_c(parallel_effect1,names_factors);
   // Rcout << parallel_effect << std::endl;
 
+  if (any_alternative_specific[0]) {
+  for(int indi = 0 ; indi < parallel_effect.length(); indi++){
+    String var_1 = parallel_effect[indi];
+    string victor = var_1;
+    const char* ccx = victor.c_str();
+    if(df_tans_2.containsElementNamed(ccx)){
+    }else{
+      parallel_effect.erase(indi);
+    }
+  }}
+
+  // Rcout << parallel_effect << std::endl;
+
   NumericVector x(colnames_final_m.length());
   if (any_alternative_specific[0]) {
     // x(colnames_final_m.length());
     for(int indi = 0 ; indi < parallel_effect.length(); indi++){
       String var_1 = parallel_effect[indi];
+      // if(df_tans_2.containsElementNamed(ccx)){
       int indi_var = df_tans_2.findName(var_1);
+      // Rcout << "is_na_ref4" << std::endl;
       x[indi_var] = indi_var;
+      // }else{
+      // parallel_effect.erase(indi_var);
+      // Rcout << "is_na_ref3" << std::endl;
+      // }
     }
+    // print(colnames_final_m);
     colnames_final_m = colnames_final_m[x==0]; // Case where there no parallel effects
+    // print(colnames_final_m);
   }
 
   // Rcout << "is_na_ref4" << std::endl;
@@ -324,34 +347,6 @@ List cdf::All_pre_data_or(Formula formula,
   // Y EXTEND
   NumericVector Response = df_tans_2[0];
   NumericMatrix Response_EXT = to_dummy1(Response, Levels);
-  // X EXTEND
-  // print(colnames_final_m);
-  // Rcout << "parallel_effect" << std::endl;
-  // print(parallel_effect);
-
-  // CharacterVector covariates_names = M_matrix["covariates_names"];
-  // CharacterVector factor_var = names_f(sapply_f(input_data[covariates_names], is_factor));
-  // Rcout << "factor_var" << std::endl;
-  // Rcout << factor_var << std::endl;
-  // DataFrame a1 = df_new1[factor_var];
-  // // print(a1);
-  // List n_levels_1 = lapply_f(a1, n_levels);
-  // // print(n_levels_1);
-  // LogicalVector out(n_levels_1.length());
-  // int a5;
-  // CharacterVector fac1;
-  // for(int i = 0; i <n_levels_1.length(); ++i){
-  //   a5 = n_levels_1[i];
-  //   if( a5 == 2 ){
-  //     fac1.push_back(factor_var[i]);
-  //   };
-  // }
-  // DataFrame a2 = df_new1[fac1];
-  // // print(a2);
-  //
-  // a2 = sapply_f(a2, as_numeric);
-  // a1[fac1] = a2;
-
 
 
   DataFrame DF_complete_effect = df_tans_2[colnames_final_m];
@@ -412,16 +407,10 @@ List cdf::All_pre_data_or(Formula formula,
       X_EXT_COMPLETE_1.block(0,0,X_EXT_COMPLETE_int.rows(),X_EXT_COMPLETE_int.cols()) = X_EXT_COMPLETE_int;
       X_EXT_COMPLETE_1.block(0,X_EXT_COMPLETE_int.cols(),X_EXT_COMPLETE_res.rows(),X_EXT_COMPLETE_res.cols()) = X_EXT_COMPLETE_res;
 
-      // print(head1(X_EXT_COMPLETE_1));
       X_EXT_COMPLETE = X_EXT_COMPLETE_1;
 
       colnames_final_m.erase(0);
 
-      // Rcout << Sim_int  << std::endl;
-      //
-      // X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
-      // colnames_final_m.erase(0);
-      // Rcout << X_EXT_COMPLETE  << std::endl;
     }else{ //standard
       X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
       colnames_final_m.erase(0);
@@ -429,34 +418,21 @@ List cdf::All_pre_data_or(Formula formula,
   }else{ // caso not cum
     X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), Iden_Q1).eval();
     colnames_final_m.erase(0);
-    // Rcout << X_EXT_COMPLETE  << std::endl;
   }
-  // print(head1(X_EXT_COMPLETE));
 
   Eigen::MatrixXd Design_Matrix;
 
 
+  // print(parallel_effect);
 
   if (any_alternative_specific[0]) { // para las proporcionales
-    // Rcout << "proportinal" << std::endl;
     DataFrame DF_parallel_effect = df_tans_2[parallel_effect];
     NumericMatrix Pre_DF_parallel1 = internal::convert_using_rfunction(DF_parallel_effect, "as.matrix");
     Eigen::Map<Eigen::MatrixXd> Pre_DF_parallel2 = as<Eigen::Map<Eigen::MatrixXd> >(Pre_DF_parallel1);
     Eigen::MatrixXd Pre_DF_parallel = Pre_DF_parallel2;
     Eigen::VectorXd Ones = Eigen::VectorXd::Ones(N_cats-1);
     Eigen::MatrixXd X_EXT_parallel = Eigen::kroneckerProduct(Pre_DF_parallel, Ones).eval();
-    // Rcout << X_EXT_parallel << std::endl;
-    // TENGO QUE PONER EL IF ACA
-    // if (ratio == "cumulative"){
-    //   if (threshold == "equidistant"){
-    //     NumericMatrix tJac = my_cbind(1, seq_len(categories_order.length() -1 )-1 );
-    //     Eigen::Map<Eigen::MatrixXd> tJac2 = as<Eigen::Map<Eigen::MatrixXd> >(tJac);
-    //     // Rcout << tJac2 << std::endl;
-    //     X_EXT_COMPLETE = Eigen::kroneckerProduct(Pre_Design.rightCols(DF_complete_effect.cols() - 1), tJac2).eval();
-    //     // Rcout << X_EXT_COMPLETE << std::endl;
-    //     colnames_final_m.erase(0);
-    //   }
-    // }
+
     Design_Matrix.conservativeResize(X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()+X_EXT_parallel.cols());
     Design_Matrix.block(0,0,X_EXT_COMPLETE.rows(),X_EXT_COMPLETE.cols()) = X_EXT_COMPLETE;
     Design_Matrix.block(0,X_EXT_COMPLETE.cols(),X_EXT_COMPLETE.rows(),X_EXT_parallel.cols()) = X_EXT_parallel;

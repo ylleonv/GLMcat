@@ -31,6 +31,7 @@
 #' \item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm.}
 #' }
 #' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
+#' @param na.action argument to handle missing data, available options are na.omit, na.fail, and na.exclude. It comes from the stats library and does not include the na.pass option.
 #' @param ... additional arguments.
 #' @export
 #' @references
@@ -53,10 +54,19 @@ glmcat <-
            threshold = c("standard", "symmetric", "equidistant"),
            control = list(),
            normalization = 1,
+           na.action = "na.omit",
            # doFit = TRUE, na.action,
            # contrasts, model = TRUE,
            ...)
   {
+
+    check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
+    if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
+
+    check_ordered <- is.ordered(model.frame(formula = formula, data)[,1])
+    if ( check_ordered == F & ratio != "reference") { warning( "The response variable is not defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
+    if ( check_ordered == T & ratio == "reference") { warning( "The response variable is defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
+
     if(length(cdf)==0){cdf[[1]] = "logistic"}
     cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",
                                "laplace", "student", "noncentralt"))
@@ -70,10 +80,20 @@ glmcat <-
       parallel = F
     }
 
+    na.action <- match.arg(na.action, c("na.omit", "na.fail", "na.exclude"))
+    if(na.action == "na.omit"){
+      data <- na.omit(data)
+    }else if (na.action == "na.fail"){
+      data <- na.fail(data)
+    }else if (na.action == "na.exclude"){
+      data <- na.exclude(data)
+    }
+
     fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
                       ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
-    fit_old[["model"]] <- model.frame(formula = formula,data)
+    fit_old[["model"]] <- model.frame(formula = formula, data)
+    fit_old[["data"]] <- data
 
     fit_old$table_summary <- table_summary(fit_old)
 
@@ -110,6 +130,7 @@ glmcat <-
 #' }
 #' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
 #' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
+#' @param na.action argument to handle missing data, available options are na.omit, na.fail, and na.exclude. It comes from the stats library and does not include the na.pass option.
 #' @param control
 #' \describe{
 #' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
@@ -135,7 +156,21 @@ discrete_cm <-
     cdf = list(),
     intercept = "standard",
     normalization = 1,
-    control = list() ){
+    control = list(),
+    na.action = "na.omit"){
+
+    check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
+    if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
+
+
+    na.action <- match.arg(na.action, c("na.omit", "na.fail", "na.exclude"))
+    if(na.action == "na.omit"){
+      data <- na.omit(data)
+    }else if (na.action == "na.fail"){
+      data <- na.fail(data)
+    }else if (na.action == "na.exclude"){
+      data <- na.exclude(data)
+    }
 
     if(length(cdf)==0){cdf[[1]] = "logistic"}
     cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",

@@ -443,7 +443,7 @@ step.glmcat <- function (object,
                          direction = c("both", "backward", "forward"),
                          trace = 1, steps = 1000)
 {
-  data <- object$model
+  data <- object$data
   mydeviance <- function(x, ...) {
     dev <- deviance(x)
     if (!is.null(dev))
