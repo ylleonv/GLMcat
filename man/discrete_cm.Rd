@@ -14,7 +14,8 @@ discrete_cm(
   cdf = list(),
   intercept = "standard",
   normalization = 1,
-  control = list()
+  control = list(),
+  na.action = "na.omit"
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ and for the non-central distribution of student, \code{list("noncentralt", df=2,
 \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
 \item{\code{epsilon}:}{a double with to fix the epsilon value}
 \item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm}}}
+
+\item{na.action}{argument to handle missing data, available options are na.omit, na.fail, and na.exclude. It comes from the stats library and does not include the na.pass option.}
 }
 \description{
 Fit discrete choice models which require data in long form.

@@ -15,6 +15,7 @@ glmcat(
   threshold = c("standard", "symmetric", "equidistant"),
   control = list(),
   normalization = 1,
+  na.action = "na.omit",
   ...
 )
 }
@@ -50,6 +51,8 @@ and for the non-central distribution of student, \code{list("noncentralt", df=2,
 }}
 
 \item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.}
+
+\item{na.action}{argument to handle missing data, available options are na.omit, na.fail, and na.exclude. It comes from the stats library and does not include the na.pass option.}
 
 \item{...}{additional arguments.}
 }

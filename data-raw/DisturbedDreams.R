@@ -4,10 +4,13 @@ disturbed_dreams <- read.csv("~/Desktop/Test package/data/Severity of Disturbed 
 
 # Wide to long
 library(tidyr)
-dreams_d1 <- gather(dreams_d, Level, Total, Not.severe:Very.severe)
+dreams_d1 <- gather(disturbed_dreams, Level, Total, Not.severe:Very.severe)
 
 # Grouped to ungrouped
 library(vcdExtra)
-disturbed_dreams <- expand.dft(disturbed_dreams, freq = "Total")
+DisturbedDreams <- expand.dft(dreams_d1, freq = "Total")
 
-# usethis::use_data("disturbed_dreams")
+DisturbedDreams$Level <- as.ordered(DisturbedDreams$Level)
+
+
+# usethis::use_data(DisturbedDreams, compress = "bzip2", overwrite = TRUE)

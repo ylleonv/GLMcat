@@ -159,8 +159,8 @@ discrete_cm <-
     control = list(),
     na.action = "na.omit"){
 
-    check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
-    if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
+    # check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
+    # if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
 
 
     na.action <- match.arg(na.action, c("na.omit", "na.fail", "na.exclude"))

@@ -18,14 +18,16 @@ LinkingTo:
 Imports: 
     Rcpp,
     stats,
-    stringr
+    stringr,
+    ordinal
 Suggests: 
     knitr,
     rmarkdown,
-    testthat,
+    testthat (>= 3.0.0),
     dplyr,
     ggplot2,
     gridExtra,
     gtools,
     tidyr
 VignetteBuilder: knitr
+Config/testthat/edition: 3

@@ -108,7 +108,7 @@ We used the 223 observations of the *boy's disturbed dreams* benchmark dataset d
 
 For more information see the manual entry for the `DisturbedDreams` data: `help(DisturbedDreams)`.
 
-```{r , include = FALSE}
+```{r }
 # devtools::load_all()
 library(GLMcat)
 ```
@@ -121,6 +121,7 @@ summary(DisturbedDreams)
 We will fit the model $(Reference, Logistic, Complete)$ to the `DisturbedDreams` data using the function `glmcat`. We save the fitted `glmcat` model in the object `mod_ref_log_c` and we print it by simply typing its name:
 
 ```{r }
+DisturbedDreams$Level <- as.factor(as.character(DisturbedDreams$Level))
 mod_ref_log_c <- glmcat(
   formula = Level ~ Age, ratio = "reference",
   cdf = "logistic", ref_category = "Very.severe",
