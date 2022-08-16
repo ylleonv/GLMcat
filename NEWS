@@ -1,7 +1,12 @@
-This file documents updates and changes in package GLMcat since version
-2022.08-16
+This file documents updates and changes in package GLMcat since version 0.2.4
 
-09-23-2021:
+16-08-2022:
 - Documentation update.
 - New functionality for the step method.
 - Adding options to deal with NAs.
+
+23-09-2021:
+- Documentation update.
+- Added plot, anova, and step methods.
+- Added coefficients normalization option for models.
+- Changed the default design option for the family of reference models, now it is "complete". While for the cumulative, sequential and adjacent families, the default continues to be "parallel".

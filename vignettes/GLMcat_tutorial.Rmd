@@ -186,23 +186,25 @@ Now we illustrate how to predict in a set of new observations. Suppose we want t
 Assume that we are interested in making the effect of the predictor variable parallel, to that end, we type the name of the predictor variable as the input for the parameter `parallel`. The model to fit corresponds to the triplet *(Reference, Logistic, parallel)*:
 
 ```{r }
-mod2 <- glmcat(
-  formula = Level ~ Age, cdf = "logistic",
-  parallel = "Age", ref_category = "Very.severe",
-  data = DisturbedDreams
-)
-summary(mod2)
-logLik(mod2)
+# DisturbedDreams$Level <- as.factor(as.character(DisturbedDreams$Level))
+# mod2 <- glmcat(
+#   formula = Level ~ Age, cdf = "logistic",
+#   parallel = "Age", ref_category = "Very.severe",
+#   data = DisturbedDreams
+# )
+# summary(mod2)
+# logLik(mod2)
 ```
 
 Another variation of the reference model is obtained at changing the cdf function. Let's now fit the model *(Reference, Student (0.5), Complete)*:
 ```{r }
-mod3 <- glmcat(
-  formula = Level ~ Age, ref_category = "Very.severe",
-  data = DisturbedDreams, cdf = list("student",0.5)
-)
-summary(mod3)
-logLik(mod3)
+# DisturbedDreams$Level <- as.factor(as.character(DisturbedDreams$Level))
+# mod3 <- glmcat(
+#   formula = Level ~ Age, ref_category = "Very.severe",
+#   data = DisturbedDreams, cdf = list("student",0.5)
+# )
+# summary(mod3)
+# logLik(mod3)
 ```
 
 
