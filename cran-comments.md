@@ -3,7 +3,7 @@
 * ubuntu 20.04.2 (on travis-ci), R 4.0.3
 * win-builder (devel)
 
-Hello, I hereby submit version 0.2.4 of the GLMcat package
+Hello, I hereby submit version 0.2.5 of the GLMcat package
  
 There was 1 NOTE:
      installed size is 20.9Mb

@@ -10,6 +10,7 @@
 # #' @export student_glmcat
 # #' @export noncentralt_glmcat
 # #' @export control_glmcat
+# #' @export step.glmcat
 #' @useDynLib GLMcat, .registration = TRUE
 #' @importFrom Rcpp sourceCpp evalCpp
 #' @importFrom utils flush.console

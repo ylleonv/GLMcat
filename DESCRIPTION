@@ -1,6 +1,6 @@
 Package: GLMcat
 Title: Generalized Linear Models for Categorical Responses
-Version: 0.2.4
+Version: 0.2.5
 Authors@R: 
     c(person(given = "Lorena", family = "León",role = c("aut", "cre"), email = "ylorenaleonv@gmail.com"),
     person(given = "Jean", family = "Peyhardi", email = "jean.peyhardi@umontpellier.fr", role = "aut"),
