@@ -60,14 +60,18 @@ glmcat <-
            ...)
   {
 
-    print("cambio1")
+
+    if(length(ratio)==0){
+      print("cambio2")
+      stop("The ratio was not specified and is required. Please specify one among the options: cumulative, sequential, adjacent, or reference.")
+    }
 
     check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
-    if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
+    if ( check_ordered == FALSE ) { warning( "The response variable is not defined as a categorical variable" ) }
 
     check_ordered <- is.ordered(model.frame(formula = formula, data)[,1])
-    if ( check_ordered == F & ratio != "reference") { warning( "The response variable is not defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
-    if ( check_ordered == T & ratio == "reference") { warning( "The response variable is defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
+    if ( check_ordered == FALSE & ratio != "reference") { warning( "The response variable is not defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
+    if ( check_ordered == TRUE & ratio == "reference") { warning( "The response variable is defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
 
     if(length(cdf)==0){cdf[[1]] = "logistic"}
     cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",
