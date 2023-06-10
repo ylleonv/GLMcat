@@ -4,6 +4,7 @@
 #include "sequentialR.h"
 #include "cumulativeR.h"
 
+
 using namespace std;
 using namespace Rcpp ;
 using namespace Eigen;
@@ -19,6 +20,8 @@ List GLMcat(Formula formula,
             std::string threshold,
             Rcpp::List control,
             double normalization){
+
+  Rcpp::Rcout << "Debugging information: 1" << std::endl;
 
   // If not cdf given, assume logistic as default
   CharacterVector cdf_given = cdf[0];
@@ -45,6 +48,8 @@ List GLMcat(Formula formula,
     categories_order = ref_category; // take ref_cat
   }
 
+  Rcpp::Rcout << "Debugging information: 2" << std::endl;
+
   if((ratio != "cumulative") && (threshold != "standard")){
     Rcpp::stop("Unrecognized threshold restriction; for reference, adjacent and sequential ratio the only valid option is standard");
   }
@@ -55,7 +60,9 @@ List GLMcat(Formula formula,
 
   class cdf dist1;
   const int N = data.nrows() ; // Number of observations
-  // Rcout << parallel << std::endl;
+  Rcout << "parallel" << std::endl;
+
+  Rcpp::Rcout << "Debugging information: 3" << std::endl;
 
   List Full_M = dist1.All_pre_data_or(formula,
                                       data,
@@ -63,6 +70,8 @@ List GLMcat(Formula formula,
                                       parallel,
                                       threshold,
                                       ratio);
+
+  Rcpp::Rcout << "Debugging information: 4" << std::endl;
 
   MatrixXd Y_init = Full_M["Response_EXT"];
   MatrixXd X_EXT = Full_M["Design_Matrix"];
@@ -72,6 +81,8 @@ List GLMcat(Formula formula,
   CharacterVector explanatory_complete = Full_M["Complete_effects"];
   // Rcout << explanatory_complete << std::endl;
   int N_cats = Full_M["N_cats"];
+
+  Rcpp::Rcout << "Debugging information: a" << std::endl;
 
   int P_c = explanatory_complete.length();
   int P_p = 0;
@@ -84,11 +95,15 @@ List GLMcat(Formula formula,
   BETA2 = Eigen::MatrixXd::Zero(X_EXT.cols(),1);
   Eigen::VectorXd BETA3 = BETA2;
 
+  Rcpp::Rcout << "Debugging information: b" << std::endl;
+
   Eigen::MatrixXd BETA = BETA2;
 
   NumericVector beta_init;
   double epsilon;
   int iterations_us;
+
+  Rcpp::Rcout << "Debugging information: 75" << std::endl;
 
   if(control.size() > 1){
 
@@ -129,9 +144,10 @@ List GLMcat(Formula formula,
   }
 
 
+  Rcpp::Rcout << "Debugging information: 5" << std::endl;
   std::string Convergence = "False";
 
-  int iteration = 0;
+  int iteration = 1.0;
   double Stop_criteria = 1.0;
   MatrixXd X_M_i ;
   VectorXd Y_M_i ;
@@ -156,12 +172,12 @@ List GLMcat(Formula formula,
 
   double qp , s0 = 1;
 
-  Environment base_base7("package:base");
-  Function my_solve = base_base7["solve"];
+  Rcpp::Rcout << "Debugging information: solv" << std::endl;
+  Rcpp::Rcout << "Debugging information: 6" << std::endl;
 
   // while ((Stop_criteria>(epsilon / N))){
   while ((Stop_criteria>(epsilon / N)) & (iteration <= (iterations_us ))){
-    // Rcout << Stop_criteria << std::endl;
+    Rcout << Stop_criteria << std::endl;
 
     MatrixXd Score_i = MatrixXd::Zero(BETA.rows(),1);
     MatrixXd F_i = MatrixXd::Zero(BETA.rows(), BETA.rows());
@@ -293,6 +309,8 @@ List GLMcat(Formula formula,
         }
       }
 
+
+      Rcpp::Rcout << "Debugging information: 7" << std::endl;
 
       Cov_i = MatrixXd(pi.asDiagonal()) - (pi*pi.transpose());
 
@@ -518,6 +536,8 @@ List GLMcat(Formula formula,
   // Normalization of parameters
 
   // double qp , s0;
+
+  Rcpp::Rcout << "Debugging information: 8" << std::endl;
 
   if((normalization != 1) & (cdf_1 != "logistic")){
 

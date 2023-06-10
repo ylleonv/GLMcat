@@ -11,7 +11,7 @@
 #' @param ratio a string indicating the ratio (equivalently to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.
 #' @param cdf
 #' \describe{
-#' The inverse distribution function to be used as part of the link function.
+#' The inverse borra distribution function to be used as part of the link function.
 #' If the distribution has no parameters to specify then it should be entered as a
 #' string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
 #' If there are parameters to specify then a list must be entered,
