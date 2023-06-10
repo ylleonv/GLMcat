@@ -1,0 +1,12 @@
+^doc$
+^Meta$
+^.*\.Rproj$
+^\.Rproj\.user$
+^cran-comments\.md$
+^data-raw
+^\.travis\.yml$
+^data-raw$
+^README\.Rmd$
+^README.html
+^LICENSE\.md$
+^CRAN-RELEASE$
