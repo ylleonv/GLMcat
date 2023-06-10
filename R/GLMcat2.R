@@ -11,7 +11,7 @@
 #' @param ratio a string indicating the ratio (equivalently to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.
 #' @param cdf
 #' \describe{
-#' The inverse borra distribution function to be used as part of the link function.
+#' The inverse distribution function to be used as part of the link function.
 #' If the distribution has no parameters to specify then it should be entered as a
 #' string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
 #' If there are parameters to specify then a list must be entered,
@@ -60,6 +60,8 @@ glmcat <-
            ...)
   {
 
+    print("cambio1")
+
     check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
     if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
 
@@ -69,7 +71,7 @@ glmcat <-
 
     if(length(cdf)==0){cdf[[1]] = "logistic"}
     cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",
-                               "laplace", "student", "noncentralt"))
+                                      "laplace", "student", "noncentralt"))
     ratio <- match.arg(ratio)
     threshold <- match.arg(threshold)
     contrasts <- NULL
@@ -90,7 +92,7 @@ glmcat <-
     }
 
     fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
-                      ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+                       ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
     fit_old[["model"]] <- model.frame(formula = formula, data)
     fit_old[["data"]] <- data
@@ -183,15 +185,15 @@ discrete_cm <-
     # if(is.null(alternative_specific)){alternative_specific <- NA}
 
     fit_old <- .Discrete_CM(formula = formula,
-                           case_id = case_id,
-                           alternatives = alternatives,
-                           reference = reference,
-                           alternative_specific = alternative_specific,
-                           data = data,
-                           cdf = cdf,
-                           intercept = intercept,
-                           normalization = normalization,
-                           control = control)
+                            case_id = case_id,
+                            alternatives = alternatives,
+                            reference = reference,
+                            alternative_specific = alternative_specific,
+                            data = data,
+                            cdf = cdf,
+                            intercept = intercept,
+                            normalization = normalization,
+                            control = control)
 
     formula1 <- paste(format(fit_old$formula),"+",fit_old$arguments$case_id,"+",
                       fit_old$arguments$alternatives,sep = "")
