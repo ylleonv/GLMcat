@@ -60,8 +60,7 @@ glmcat <-
            ...)
   {
 
-
-    if(length(ratio)==0){
+    if(missing(ratio)){
       print("cambio2")
       stop("The ratio was not specified and is required. Please specify one among the options: cumulative, sequential, adjacent, or reference.")
     }
