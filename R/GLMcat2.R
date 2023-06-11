@@ -7,32 +7,26 @@
 #' @title Generalized linear models for categorical responses
 #' @rdname glmcat
 #' @name glmcat
-#' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model.
-#' @param ratio a string indicating the ratio (equivalently to the family) options are: reference, adjacent, cumulative and sequential. Default value is reference.
-#' @param cdf
-#' \describe{
-#' The inverse distribution function to be used as part of the link function.
-#' If the distribution has no parameters to specify then it should be entered as a
-#' string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
-#' If there are parameters to specify then a list must be entered,
-#' so far this would only be the case for Student's distribution which would be
-#' \code{list("student", df=2)},
-#' and for the non-central distribution of student, \code{list("noncentralt", df=2, mu=1)},
-#' }
-#' @param categories_order a character vector indicating the incremental order of the categories: c("a", "b", "c"); a<b<c. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative and sequential ratio.
-#' @param ref_category a string indicating the reference category. Proper option for models with reference ratio.
-#' @param parallel a character vector indicating the name of the variables with a parallel effect. If variable is categorical, specify the name and the level of the variable as a string "namelevel".
-#' @param data a dataframe object in R, with the dependent variable as factor.
-#' @param threshold restriction to impose on the thresholds, options are: standard, equidistant or symmetric (Valid only for the cumulative ratio).
-#' @param control
-#' \describe{
-#' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
-#' \item{\code{epsilon}:}{a double to change update the convergence criterion of GLMcat models.}
-#' \item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm.}
-#' }
-#' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
-#' @param na.action argument to handle missing data, available options are na.omit, na.fail, and na.exclude. It comes from the stats library and does not include the na.pass option.
+#' @param formula formula a symbolic description of the model to be fit. An expression of the form `y ~ predictors` is interpreted as a specification that the response `y` is modeled by a linear predictor specified by `predictors`.
+#' @param ratio a string indicating the ratio (equivalently to the family) options are: reference, adjacent, cumulative and sequential.  It is mandatory for the user to specify the desired ratio option as there is no default value.
+#' @param cdf The inverse distribution function to be used as part of the link function.
+#'   - If the distribution has no parameters to specify, then it should be entered as a string indicating the name, e.g., `cdf = "normal"`. The default value is `cdf = "logistic"`.
+#'   - If there are parameters to specify, then a list must be entered. For example, for Student's distribution: `cdf = list("student", df=2)`. For the non-central distribution of Student: `cdf = list("noncentralt", df=2, mu=1)`.
+#' @param categories_order a character vector indicating the incremental order of the categories, e.g., `c("a", "b", "c")` for `a < b < c`. Alphabetical order is assumed by default. Order is relevant for adjacent, cumulative, and sequential ratio.
+#' @param ref_category a string indicating the reference category. This option is suitable for models with reference ratio.
+#' @param parallel a character vector indicating the name of the variables with a parallel effect. If a variable is categorical, specify the name and the level of the variable as a string, e.g., `"namelevel"`.
+#' @param data a dataframe object in R, with the dependent variable as a factor.
+#' @param threshold a restriction to impose on the thresholds. Options are: `standard`, `equidistant`, or `symmetric`. This is valid only for the cumulative ratio.
+#' @param control a list of control parameters for the estimation algorithm.
+#'   - `maxit`: The maximum number of iterations for the Fisher scoring algorithm.
+#'   - `epsilon`: A double to change the convergence criterion of GLMcat models.
+#'   - `beta_init`: An appropriately sized vector for the initial iteration of the algorithm.
+#' @param normalization the quantile to use for the normalization of the estimated coefficients when the logistic distribution is used as the base cumulative distribution function.
+#' @param na.action an argument to handle missing data. Available options are `na.omit`, `na.fail`, and `na.exclude`. It does not include the `na.pass` option.
 #' @param ... additional arguments.
+#'
+#' @details This function fits generalized linear models for categorical responses using the unified specification framework introduced by Peyhardi, Trottier, and Guédon (2015).
+#'
 #' @export
 #' @references
 #'  Peyhardi J, Trottier C, Guédon Y (2015). “A new specification of generalized linear models
@@ -42,6 +36,9 @@
 #' ref_log_com <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
 #'     ref_category = "Very.severe",
 #'     cdf = "logistic", ratio = "reference")
+#' @seealso
+#' \code{\link{summary.glmcat}}
+#' @keywords generalized linear model, categorical variables
 glmcat <-
   function(formula,
            data,
@@ -61,7 +58,7 @@ glmcat <-
   {
 
     if(missing(ratio)){
-      print("cambio2")
+      # print("cambio2")
       stop("The ratio was not specified and is required. Please specify one among the options: cumulative, sequential, adjacent, or reference.")
     }
 
