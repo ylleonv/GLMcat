@@ -14,3 +14,8 @@
 \description{
 \code{print} method for a fitted \code{glmcat} model object.
 }
+\examples{
+model <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
+                ref_category = "Very.severe", ratio = "cumulative")
+print(model)
+}

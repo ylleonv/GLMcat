@@ -19,57 +19,73 @@ discrete_cm(
 )
 }
 \arguments{
-\item{formula}{a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.}
+\item{formula}{a symbolic description of the model to be fit.
+An expression of the form y ~ predictors is interpreted as a specification
+that the response y is modeled by a linear predictor specified symbolically by model.
+A particularity for the formula is that for the case-specific variables,
+the user can define a specific effect for a category (in the parameter `alternative_specific`).}
 
 \item{case_id}{a string with the name of the column that identifies each case.}
 
-\item{alternatives}{a string with the name of the column that identifies the vector of alternatives the individual could have chosen.}
+\item{alternatives}{a string with the name of the column that identifies
+the vector of alternatives the individual could have chosen.}
 
-\item{reference}{a string indicating the reference category}
+\item{reference}{a string indicating the reference category.}
 
-\item{alternative_specific}{a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.}
+\item{alternative_specific}{a character vector with the name of the explanatory variables
+that are different for each case, these are the alternative-specific variables.
+By default, the case-specific variables are the explanatory variables
+that are not identified here but are part of the formula.}
 
-\item{data}{a dataframe (in a long format) object in R, with the dependent variable as factor.}
+\item{data}{a dataframe (in long format) object in R, with the dependent variable as a factor.}
 
-\item{cdf}{\describe{
-The inverse distribution function to be used as part of the link function.
-If the distribution has no parameters to specify then it should be entered as a
-string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
-If there are parameters to specify then a list must be entered,
-so far this would only be the case for Student's distribution which would be
-\code{list("student", df=2)},
-and for the non-central distribution of student, \code{list("noncentralt", df=2, mu=1)},
-}}
+\item{cdf}{a parameter specifying the inverse distribution function to be used as part of the link function.
+If the distribution has no parameters to specify, it should be entered as a string indicating the name.
+The default value is 'logistic'. If there are parameters to specify, a list must be entered.
+For example, for Student's distribution, it would be `list("student", df=2)`.
+For the non-central distribution of Student, it would be `list("noncentralt", df=2, mu=1)`.}
 
-\item{intercept}{if "conditional" then the design will be equivalent to the conditional logit model}
+\item{intercept}{if set to "conditional", the design will be equivalent to the conditional logit model.}
 
-\item{normalization}{the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.}
+\item{normalization}{the quantile to use for the normalization of the estimated coefficients
+where the logistic distribution is used as the base cumulative distribution function.}
 
-\item{control}{\describe{
-\item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
-\item{\code{epsilon}:}{a double with to fix the epsilon value}
-\item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm}}}
+\item{control}{a list specifying additional control parameters.
+- `maxit`: the maximum number of iterations for the Fisher scoring algorithm.
+- `epsilon`: a double value to fix the epsilon value.
+- `beta_init`: an appropriately sized vector for the initial iteration of the algorithm.}
 
-\item{na.action}{argument to handle missing data, available options are na.omit, na.fail, and na.exclude. It comes from the stats library and does not include the na.pass option.}
+\item{na.action}{an argument to handle missing data.
+Available options are na.omit, na.fail, and na.exclude.
+It comes from the stats library and does not include the na.pass option.}
 }
 \description{
-Fit discrete choice models which require data in long form.
+Family of models for Discrete Choice. Fits discrete choice models which require data in long form.
 For each individual (or decision maker), there are multiple observations (rows),
 one for each of the alternatives the individual could have chosen.
-A group of observations of the same individual is a “case”.
-Remark that each case represents a single statistical observation although it comprises multiple observations.
+A group of observations of the same individual is a "case".
+It is important to note that each case represents a single statistical observation
+although it comprises multiple observations.
 }
 \details{
 Family of models for Discrete Choice
 }
 \note{
-For these models it is not allowed to exclude the intercept.
+For these models, it is not allowed to exclude the intercept.
 }
 \examples{
 library(GLMcat)
 data(TravelChoice)
+
 discrete_cm(formula = choice ~ hinc + gc + invt,
-case_id = "indv",alternatives = "mode", reference = "air",
-data = TravelChoice,  alternative_specific = c("gc", "invt"),
-cdf = "logistic")
+            case_id = "indv", alternatives = "mode", reference = "air",
+            data = TravelChoice,
+            cdf = "logistic")
+
+#' Model with alternative specific effects for gc and invt:
+discrete_cm(formula = choice ~ hinc + gc + invt,
+            case_id = "indv", alternatives = "mode", reference = "air",
+            data = TravelChoice, alternative_specific = c("gc", "invt"),
+            cdf = "logistic")
+
 }

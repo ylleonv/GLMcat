@@ -3,6 +3,10 @@
 #' @param x an object of class \code{glmcat}.
 #' @param ... additional arguments.
 #' @rdname print
+#' @examples
+#' model <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
+#'                 ref_category = "Very.severe", ratio = "cumulative")
+#' print(model)
 #' @exportS3Method
 print.glmcat <- function(x, ...) {
   cat("\nFormula:\n")
@@ -141,14 +145,20 @@ confint.glmcat <-
 
 
 #' Summary method for a fitted \code{glmcat} model object
-#' @description Summary method for a fitted \code{glmcat} model object.
-#' @param object an fitted object of class \code{glmcat}.
-#' @param normalized if \code{normalized} is \code{TRUE} summary method yields the normalized coefficients.
-#' @param correlation TRUE to print the Correlation Matrix.
+#' @description Summary method for a fitted `glmcat` model object.
+#' @param object an fitted object of class `glmcat`.
+#' @param normalized if `TRUE`, the summary method yields the normalized coefficients.
+#' @param correlation if `TRUE`, prints the correlation matrix.
 #' @param ... additional arguments affecting the summary produced.
 #' @rdname summary
 #' @method summary glmcat
 #' @exportS3Method
+#' @examples
+#' mod1 <- discrete_cm(formula = choice ~ hinc + gc + invt,
+#'                     case_id = "indv", alternatives = "mode", reference = "air",
+#'                     data = TravelChoice,  alternative_specific = c("gc", "invt"),
+#'                     cdf = "normal", normalization = 0.8)
+#' summary(mod1, normalized = TRUE)
 summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) {
   vcov <- object$cov_beta
   coefs <- matrix(NA, length(object$coefficients), 4,
@@ -157,7 +167,7 @@ summary.glmcat <- function(object, normalized = FALSE, correlation = FALSE,...) 
 
   coefs[, 1] <- object$coefficients
   coefs[, 2] <- sd <- sqrt(diag(vcov))
-
+  # Check if normalized coefficients are requested
   if(normalized){
     cat("Normalized coefficients with s0 = ",object$normalization_s0, "\n")
     coefs <- matrix(NA, length(object$coefficients*object$normalization_s0), 4,
@@ -244,6 +254,10 @@ logLik.glmcat <- function(object,...) {
 #' @param fit an fitted object of class \code{glmcat}.
 #' @param ... further arguments (currently unused in base R).
 #' @method extractAIC glmcat
+#' @examples
+#' model <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
+#'                 ref_category = "Very.severe", ratio = "cumulative")
+#' extractAIC(model)
 #' @exportS3Method
 extractAIC.glmcat <- function(fit, ...) {
   scale = 0
@@ -264,11 +278,27 @@ control_glmcat <- function(maxit = 25, epsilon = 1e-06, beta_init = NA) {
   # return(maxit)
 }
 
+# Computes the lower tail probability of the chi-square distribution
+# with non-negative degrees of freedom, replacing non-positive values
+# of degrees of freedom with NA.
+# Parameters:
+# - q: quantiles
+# - df: degrees of freedom
+# - ...: additional arguments passed to the pchisq function
 safe_pchisq <- function(q, df, ...) {
   df[df <= 0] <- NA
   pchisq(q = q, df = df, ...)
 }
 
+# Performs single term deletions from a model object and returns the resulting analysis of deviance table.
+# Parameters:
+# - object: a model object
+# - scope: a character vector specifying the terms to be dropped from the model
+# - data: a data frame or matrix containing the data
+# - scale: a numeric value specifying the scale parameter
+# - test: a character string specifying the test type ("none" or "Chisq")
+# - trace: a logical value indicating whether to display trace information
+# - ...: additional arguments
 drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                   trace = FALSE,  ...)
 {
@@ -346,6 +376,10 @@ drop2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
   aod
 }
 
+# Performs single term additions to a model object and returns the resulting analysis of deviance table.
+# Parameters:
+# - object: a model object
+# - scope: a character vector specifying the terms to be added to the model
 add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
                  trace = FALSE, ...)
 {

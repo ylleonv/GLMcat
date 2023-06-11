@@ -14,3 +14,8 @@
 \description{
 Method to compute the (generalized) Akaike An Information Criterion for a fitted object of class \code{glmcat}.
 }
+\examples{
+model <- glmcat(formula = Level ~ Age, data = DisturbedDreams,
+                ref_category = "Very.severe", ratio = "cumulative")
+extractAIC(model)
+}

@@ -56,23 +56,29 @@ glmcat <-
            # contrasts, model = TRUE,
            ...)
   {
-
+    # Check if the ratio argument is missing
     if(missing(ratio)){
-      # print("cambio2")
       stop("The ratio was not specified and is required. Please specify one among the options: cumulative, sequential, adjacent, or reference.")
     }
 
+    # Check if the response variable is defined as a categorical variable
     check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
     if ( check_ordered == FALSE ) { warning( "The response variable is not defined as a categorical variable" ) }
 
+    # Check if the response variable is defined as an ordered variable
     check_ordered <- is.ordered(model.frame(formula = formula, data)[,1])
     if ( check_ordered == FALSE & ratio != "reference") { warning( "The response variable is not defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
     if ( check_ordered == TRUE & ratio == "reference") { warning( "The response variable is defined as an ordered variable. Recall that the the reference ratio is appropiate for nominal responses, while for ordinal responses the ratios to use are cumulative, sequential or adjacent." ) }
 
+    # Set the default value for cdf
     if(length(cdf)==0){cdf[[1]] = "logistic"}
+
+    # Match the value of cdf to a valid option
     cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",
                                       "laplace", "student", "noncentralt"))
     ratio <- match.arg(ratio)
+
+    # Set the default value for threshold
     threshold <- match.arg(threshold)
     contrasts <- NULL
     control <- do.call(control_glmcat, c(control, list(...)))
@@ -82,6 +88,7 @@ glmcat <-
       parallel = F
     }
 
+    # Set the na.action based on the specified option
     na.action <- match.arg(na.action, c("na.omit", "na.fail", "na.exclude"))
     if(na.action == "na.omit"){
       data <- na.omit(data)
@@ -91,11 +98,15 @@ glmcat <-
       data <- na.exclude(data)
     }
 
+    # Call the GLMcat C++ function
     fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
                        ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
+    # Store the model frame and data in the fit_old object
     fit_old[["model"]] <- model.frame(formula = formula, data)
     fit_old[["data"]] <- data
+
+    # Generate the table summary
 
     fit_old$table_summary <- table_summary(fit_old)
 
@@ -106,46 +117,63 @@ glmcat <-
   }
 
 #' Family of models for Discrete Choice
-#' @description Fit discrete choice models which require data in long form.
+#' @description Family of models for Discrete Choice. Fits discrete choice models which require data in long form.
 #' For each individual (or decision maker), there are multiple observations (rows),
 #' one for each of the alternatives the individual could have chosen.
-#' A group of observations of the same individual is a “case”.
-#' Remark that each case represents a single statistical observation although it comprises multiple observations.
+#' A group of observations of the same individual is a "case".
+#' It is important to note that each case represents a single statistical observation
+#' although it comprises multiple observations.
+#'
 #' @title Discrete Choice Models
 #' @rdname discrete_cm
 #' @name discrete_cm
-#' @param formula a symbolic description of the model to be fit. An expression of the form y ~ predictors is interpreted as a specification that the response y is modelled by a linear predictor specified symbolically by model. A particularity for the formula is that for the case-specific variables, the user can define a specific effect for a category.
+#'
+#' @param formula a symbolic description of the model to be fit.
+#'   An expression of the form y ~ predictors is interpreted as a specification
+#'   that the response y is modeled by a linear predictor specified symbolically by model.
+#'   A particularity for the formula is that for the case-specific variables,
+#'   the user can define a specific effect for a category (in the parameter `alternative_specific`).
 #' @param case_id a string with the name of the column that identifies each case.
-#' @param alternatives a string with the name of the column that identifies the vector of alternatives the individual could have chosen.
-#' @param reference a string indicating the reference category
-#' @param alternative_specific a character vector with the name of the explanatory variables that are different for each case, these are the alternative specific variables. By default, the case specific variables are the explanatory variables that are not identify in here, but that are part of the formula.
-#' @param data a dataframe (in a long format) object in R, with the dependent variable as factor.
-#' @param cdf
-#' \describe{
-#' The inverse distribution function to be used as part of the link function.
-#' If the distribution has no parameters to specify then it should be entered as a
-#' string indicating the name, e.g., \code{cdf = "normal"}, the default value is \code{cdf = "logistic"}.
-#' If there are parameters to specify then a list must be entered,
-#' so far this would only be the case for Student's distribution which would be
-#' \code{list("student", df=2)},
-#' and for the non-central distribution of student, \code{list("noncentralt", df=2, mu=1)},
-#' }
-#' @param intercept if "conditional" then the design will be equivalent to the conditional logit model
-#' @param normalization the quantile to use for the normalization of the estimated coefficients where the logistic distribution is used as the base cumulative distribution function.
-#' @param na.action argument to handle missing data, available options are na.omit, na.fail, and na.exclude. It comes from the stats library and does not include the na.pass option.
-#' @param control
-#' \describe{
-#' \item{\code{maxit}:}{the maximum number of iterations for the Fisher scoring algorithm.}
-#' \item{\code{epsilon}:}{a double with to fix the epsilon value}
-#' \item{\code{beta_init}:}{an appropriate sized vector for the initial iteration of the algorithm}}
+#' @param alternatives a string with the name of the column that identifies
+#'   the vector of alternatives the individual could have chosen.
+#' @param reference a string indicating the reference category.
+#' @param alternative_specific a character vector with the name of the explanatory variables
+#'   that are different for each case, these are the alternative-specific variables.
+#'   By default, the case-specific variables are the explanatory variables
+#'   that are not identified here but are part of the formula.
+#' @param data a dataframe (in long format) object in R, with the dependent variable as a factor.
+#' @param cdf a parameter specifying the inverse distribution function to be used as part of the link function.
+#'   If the distribution has no parameters to specify, it should be entered as a string indicating the name.
+#'   The default value is 'logistic'. If there are parameters to specify, a list must be entered.
+#'   For example, for Student's distribution, it would be `list("student", df=2)`.
+#'   For the non-central distribution of Student, it would be `list("noncentralt", df=2, mu=1)`.
+#' @param intercept if set to "conditional", the design will be equivalent to the conditional logit model.
+#' @param normalization the quantile to use for the normalization of the estimated coefficients
+#'   where the logistic distribution is used as the base cumulative distribution function.
+#' @param na.action an argument to handle missing data.
+#'   Available options are na.omit, na.fail, and na.exclude.
+#'   It comes from the stats library and does not include the na.pass option.
+#' @param control a list specifying additional control parameters.
+#'   - `maxit`: the maximum number of iterations for the Fisher scoring algorithm.
+#'   - `epsilon`: a double value to fix the epsilon value.
+#'   - `beta_init`: an appropriately sized vector for the initial iteration of the algorithm.
+#'
 #' @examples
 #' library(GLMcat)
 #' data(TravelChoice)
+#'
 #' discrete_cm(formula = choice ~ hinc + gc + invt,
-#' case_id = "indv",alternatives = "mode", reference = "air",
-#' data = TravelChoice,  alternative_specific = c("gc", "invt"),
-#' cdf = "logistic")
-#' @note For these models it is not allowed to exclude the intercept.
+#'             case_id = "indv", alternatives = "mode", reference = "air",
+#'             data = TravelChoice,
+#'             cdf = "logistic")
+#'
+#' #' Model with alternative specific effects for gc and invt:
+#' discrete_cm(formula = choice ~ hinc + gc + invt,
+#'             case_id = "indv", alternatives = "mode", reference = "air",
+#'             data = TravelChoice, alternative_specific = c("gc", "invt"),
+#'             cdf = "logistic")
+#'
+#' @note For these models, it is not allowed to exclude the intercept.
 #' @export
 discrete_cm <-
   function(
@@ -164,7 +192,7 @@ discrete_cm <-
     # check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
     # if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
 
-
+    # Set the na.action based on the specified option
     na.action <- match.arg(na.action, c("na.omit", "na.fail", "na.exclude"))
     if(na.action == "na.omit"){
       data <- na.omit(data)
@@ -174,16 +202,19 @@ discrete_cm <-
       data <- na.exclude(data)
     }
 
+    # Set the default value for cdf
     if(length(cdf)==0){cdf[[1]] = "logistic"}
+    # Match the value of cdf to a valid option
     cdf[[1]] <- match.arg(cdf[[1]], c("logistic", "normal", "gumbel", "gompertz", "cauchy",
                                       "laplace", "student", "noncentralt"))
 
+    # Match the value of intercept to a valid option
     intercept <- match.arg(intercept, c("standard","conditional"))
     control <- do.call(control_glmcat, c(control, list()))
 
 
     # if(is.null(alternative_specific)){alternative_specific <- NA}
-
+    # Run the Discrete Choice Modeling C++ function
     fit_old <- .Discrete_CM(formula = formula,
                             case_id = case_id,
                             alternatives = alternatives,

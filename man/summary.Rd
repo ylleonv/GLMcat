@@ -7,14 +7,21 @@
 \method{summary}{glmcat}(object, normalized = FALSE, correlation = FALSE, ...)
 }
 \arguments{
-\item{object}{an fitted object of class \code{glmcat}.}
+\item{object}{an fitted object of class `glmcat`.}
 
-\item{normalized}{if \code{normalized} is \code{TRUE} summary method yields the normalized coefficients.}
+\item{normalized}{if `TRUE`, the summary method yields the normalized coefficients.}
 
-\item{correlation}{TRUE to print the Correlation Matrix.}
+\item{correlation}{if `TRUE`, prints the correlation matrix.}
 
 \item{...}{additional arguments affecting the summary produced.}
 }
 \description{
-Summary method for a fitted \code{glmcat} model object.
+Summary method for a fitted `glmcat` model object.
+}
+\examples{
+mod1 <- discrete_cm(formula = choice ~ hinc + gc + invt,
+                    case_id = "indv", alternatives = "mode", reference = "air",
+                    data = TravelChoice,  alternative_specific = c("gc", "invt"),
+                    cdf = "normal", normalization = 0.8)
+summary(mod1, normalized = TRUE)
 }
