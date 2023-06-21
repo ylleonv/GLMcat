@@ -61,6 +61,11 @@ glmcat <-
       stop("The ratio was not specified and is required. Please specify one among the options: cumulative, sequential, adjacent, or reference.")
     }
 
+    # check_categorical <- is.factor(model.frame(formula = formula, data)[, 1])
+    # if (!check_categorical) {
+    #   warning("The response variable is not defined as a categorical variable.")
+    # }
+
     # Check if the response variable is defined as a categorical variable
     check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
     if ( check_ordered == FALSE ) { warning( "The response variable is not defined as a categorical variable" ) }
@@ -189,6 +194,12 @@ discrete_cm <-
     control = list(),
     na.action = "na.omit"){
 
+    # check_categorical <- is.factor(model.frame(formula = formula, data)[, 1])
+    # if (!check_categorical) {
+    #   warning("The response variable is not defined as a categorical variable.")
+    # }
+
+
     # check_ordered <- is.factor(model.frame(formula = formula, data)[,1])
     # if ( check_ordered == F ) { warning( "The response variable is not defined as a categorical variable" ) }
 
@@ -201,6 +212,11 @@ discrete_cm <-
     }else if (na.action == "na.exclude"){
       data <- na.exclude(data)
     }
+
+    if (normalization <= 0) {
+      stop("Error: 'normalization' must be a positive integer.")
+    }
+
 
     # Set the default value for cdf
     if(length(cdf)==0){cdf[[1]] = "logistic"}

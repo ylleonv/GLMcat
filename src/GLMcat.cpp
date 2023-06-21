@@ -45,6 +45,11 @@ List GLMcat(Formula formula,
     categories_order = ref_category; // take ref_cat
   }
 
+// Validate normalization
+  // if (normalization <= 0) {
+  //   stop("Error: 'normalization' must be a positive integer.")
+  // }
+
   if((ratio != "cumulative") && (threshold != "standard")){
     Rcpp::stop("Unrecognized threshold restriction; for reference, adjacent and sequential ratio the only valid option is standard");
   }
