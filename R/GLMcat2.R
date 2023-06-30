@@ -104,11 +104,12 @@ glmcat <-
       data <- na.exclude(data)
     }
 
+    cdf_sel <- cdf
 
-   if(find_nu == TRUE) {
+    if(find_nu == TRUE) {
       # Estimate the models with Student link where ν = 1 and ν = 8
-     cdf_1 <- list("student",1)
-     cdf_8 <- list("student",8)
+      cdf_1 <- list("student",1)
+      cdf_8 <- list("student",8)
       model_1 <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_1, parallel = parallel, categories_order = categories_order,
                          ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
