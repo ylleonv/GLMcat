@@ -52,6 +52,7 @@ glmcat <-
            control = list(),
            normalization = 1,
            na.action = "na.omit",
+           find_nu = FALSE,
            # doFit = TRUE, na.action,
            # contrasts, model = TRUE,
            ...)
@@ -103,9 +104,56 @@ glmcat <-
       data <- na.exclude(data)
     }
 
+
+   if(find_nu == TRUE) {
+      # Estimate the models with Student link where ν = 1 and ν = 8
+     cdf_1 <- list("student",1)
+     cdf_8 <- list("student",8)
+      model_1 <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_1, parallel = parallel, categories_order = categories_order,
+                         ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+
+      model_8 <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_8, parallel = parallel, categories_order = categories_order,
+                         ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+
+
+      # Check if lν=8 > lν=1
+      if (model_8$log_likelihood > model_1$log_likelihood) {
+        # Estimate the log-likelihood lp of a binary model with the probit link
+        model_p <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = "probit", parallel = parallel, categories_order = categories_order,
+                           ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+
+        # Check if lp > lν=8
+        if (model_p$log_likelihood > model_8$log_likelihood) {
+          # Use the probit link
+          cdf_sel <- "probit"
+        } else {
+          # Use the logit link
+          cdf_sel <- "logit"
+        }
+      } else {
+        # Use optimize() to find the best ν ∈ (0.25, 1) of the Student CDF
+        optimize_likelihood <- function(nu) {
+          model_nu <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = list("student", nu), parallel = parallel, categories_order = categories_order,
+                              ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+
+          -model_nu$log_likelihood
+        }
+
+        opt_result <- optimize(optimize_likelihood, interval = c(0.25, 1))
+        best_nu <- opt_result$minimum
+
+        # Use the best ν found
+        cdf_sel <- list("student", best_nu)
+      }
+      print(cdf_sel)
+      return(cdf_sel)
+    }
+
     # Call the GLMcat C++ function
-    fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf, parallel = parallel, categories_order = categories_order,
+    fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_sel, parallel = parallel, categories_order = categories_order,
                        ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+
+    cdf <- cdf_sel
 
     # Store the model frame and data in the fit_old object
     fit_old[["model"]] <- model.frame(formula = formula, data)
