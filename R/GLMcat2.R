@@ -106,7 +106,7 @@ glmcat <-
 
     cdf_sel <- cdf
 
-    if(find_nu == TRUE) {
+    cdf_sel1 <- if(find_nu == TRUE) {
       # Estimate the models with Student link where ν = 1 and ν = 8
       cdf_1 <- list("student", 1)
       cdf_8 <- list("student", 8)
@@ -151,6 +151,7 @@ glmcat <-
       return(cdf_sel)
     }
 
+    cdf_sel <- cdf_sel1
     # Call the GLMcat C++ function
     fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_sel, parallel = parallel, categories_order = categories_order,
                        ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
