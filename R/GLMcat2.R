@@ -239,11 +239,11 @@ discrete_cm <-
     alternative_specific = NA,
     data ,
     cdf = list(),
-    find_nu = FALSE,
     intercept = "standard",
     normalization = 1,
     control = list(),
-    na.action = "na.omit"){
+    na.action = "na.omit",
+    find_nu = FALSE){
 
     # check_categorical <- is.factor(model.frame(formula = formula, data)[, 1])
     # if (!check_categorical) {
@@ -287,7 +287,6 @@ discrete_cm <-
       # Estimate the models with Student link where ν = 1 and ν = 8
       cdf_1 <- list("student", 1)
       cdf_8 <- list("student", 8)
-
       model_1 <- .Discrete_CM(formula = formula,
                               case_id = case_id,
                               alternatives = alternatives,
@@ -298,7 +297,6 @@ discrete_cm <-
                               intercept = intercept,
                               normalization = normalization,
                               control = control)
-
       model_8 <- .Discrete_CM(formula = formula,
                               case_id = case_id,
                               alternatives = alternatives,
@@ -340,7 +338,7 @@ discrete_cm <-
                                    reference = reference,
                                    alternative_specific = alternative_specific,
                                    data = data,
-                                   cdf = nu,
+                                   cdf = list("student", nu),
                                    intercept = intercept,
                                    normalization = normalization,
                                    control = control)
