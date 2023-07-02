@@ -118,13 +118,13 @@ glmcat <-
 
 
       # Check if lν=8 > lν=1
-      if (model_8$log_likelihood > model_1$log_likelihood) {
+      if (model_8[["LogLikelihood"]] > model_1[["LogLikelihood"]]) {
         # Estimate the log-likelihood lp of a binary model with the probit link
         model_p <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = "probit", parallel = parallel, categories_order = categories_order,
                            ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
         # Check if lp > lν=8
-        if (model_p$log_likelihood > model_8$log_likelihood) {
+        if (model_p[["LogLikelihood"]] > model_8[["LogLikelihood"]]) {
           # Use the probit link
           cdf_sel <- "probit"
         } else {
@@ -137,7 +137,7 @@ glmcat <-
           model_nu <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = list("student", nu), parallel = parallel, categories_order = categories_order,
                               ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
-          -model_nu$log_likelihood
+          -model_nu[["LogLikelihood"]]
         }
 
         opt_result <- optimize(optimize_likelihood, interval = c(0.25, 1))
