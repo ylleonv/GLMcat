@@ -239,6 +239,7 @@ discrete_cm <-
     alternative_specific = NA,
     data ,
     cdf = list(),
+    find_nu = FALSE,
     intercept = "standard",
     normalization = 1,
     control = list(),
