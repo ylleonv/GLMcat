@@ -106,56 +106,64 @@ glmcat <-
 
     cdf_sel <- cdf
 
-    if(find_nu == TRUE) {
-      # Estimate the models with Student link where ν = 1 and ν = 8
-      cdf_1 <- list("student", 1)
-      cdf_8 <- list("student", 8)
+    # if(find_nu == TRUE) {
+    #   # Estimate the models with Student link where ν = 1 and ν = 8
+    #   cdf_1 <- list("student", 1)
+    #   cdf_8 <- list("student", 8)
+    #
+    #   model_1 <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_1, parallel = parallel, categories_order = categories_order,
+    #                      ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+    #
+    #   model_8 <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_8, parallel = parallel, categories_order = categories_order,
+    #                      ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+    #
+    #
+    #   # Check if lν=8 > lν=1
+    #   if (model_8[["LogLikelihood"]] > model_1[["LogLikelihood"]]) {
+    #     # Estimate the log-likelihood lp of a binary model with the probit link
+    #     model_p <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = "normal", parallel = parallel, categories_order = categories_order,
+    #                        ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+    #
+    #     # Check if lp > lν=8
+    #     if (model_p[["LogLikelihood"]] > model_8[["LogLikelihood"]]) {
+    #       # Use the probit link
+    #       cdf_sel <- "normal"
+    #     } else {
+    #       # Use the logit link
+    #       cdf_sel <- "logistic"
+    #     }
+    #   } else {
+    #     # Use optimize() to find the best ν ∈ (0.25, 1) of the Student CDF
+    #     optimize_likelihood <- function(nu) {
+    #       model_nu <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = list("student", nu), parallel = parallel, categories_order = categories_order,
+    #                           ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+    #
+    #       model_nu[["LogLikelihood"]]
+    #     }
+    #
+    #     opt_result <- optimize(optimize_likelihood, interval = c(0.25, 1), maximum = TRUE)
+    #     best_nu <- opt_result$maximum
+    #
+    #     # Use the best ν found
+    #     cdf_sel <- list("student", best_nu)
+    #   }
+    # }
 
-      model_1 <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_1, parallel = parallel, categories_order = categories_order,
-                         ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
-
-      model_8 <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_8, parallel = parallel, categories_order = categories_order,
-                         ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
-
-
-      # Check if lν=8 > lν=1
-      if (model_8[["LogLikelihood"]] > model_1[["LogLikelihood"]]) {
-        # Estimate the log-likelihood lp of a binary model with the probit link
-        model_p <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = "normal", parallel = parallel, categories_order = categories_order,
-                           ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
-
-        # Check if lp > lν=8
-        if (model_p[["LogLikelihood"]] > model_8[["LogLikelihood"]]) {
-          # Use the probit link
-          cdf_sel <- "normal"
-        } else {
-          # Use the logit link
-          cdf_sel <- "logistic"
-        }
-      } else {
-        # Use optimize() to find the best ν ∈ (0.25, 1) of the Student CDF
-        optimize_likelihood <- function(nu) {
-          model_nu <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = list("student", nu), parallel = parallel, categories_order = categories_order,
-                              ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
-
-          model_nu[["LogLikelihood"]]
-        }
-
-        opt_result <- optimize(optimize_likelihood, interval = c(0.25, 1), maximum = TRUE)
-        best_nu <- opt_result$maximum
-
-        # Use the best ν found
-        cdf_sel <- list("student", best_nu)
-      }
-      # print(cdf_sel)
+    if(find_nu == TRUE){
+      opt_result <- optimize(optimize_likelihood, interval = c(0.25, 8), maximum = TRUE)
+      best_nu <- opt_result$maximum
+      # Use the best ν found
+      cdf_sel <- list("student", best_nu)
     }
+
+    cdf <- cdf_sel
 
     # cdf_sel <- cdf_sel1
     # Call the GLMcat C++ function
     fit_old <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = cdf_sel, parallel = parallel, categories_order = categories_order,
                        ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
 
-    cdf <- cdf_sel
+
 
     # Store the model frame and data in the fit_old object
     fit_old[["model"]] <- model.frame(formula = formula, data)
@@ -283,76 +291,83 @@ discrete_cm <-
 
     cdf_sel <- cdf
 
-    if(find_nu == TRUE) {
-      # Estimate the models with Student link where ν = 1 and ν = 8
-      cdf_1 <- list("student", 1)
-      cdf_8 <- list("student", 8)
-      model_1 <- .Discrete_CM(formula = formula,
-                              case_id = case_id,
-                              alternatives = alternatives,
-                              reference = reference,
-                              alternative_specific = alternative_specific,
-                              data = data,
-                              cdf = cdf_1,
-                              intercept = intercept,
-                              normalization = normalization,
-                              control = control)
-      model_8 <- .Discrete_CM(formula = formula,
-                              case_id = case_id,
-                              alternatives = alternatives,
-                              reference = reference,
-                              alternative_specific = alternative_specific,
-                              data = data,
-                              cdf = cdf_8,
-                              intercept = intercept,
-                              normalization = normalization,
-                              control = control)
+    # if(find_nu == TRUE) {
+    #   # Estimate the models with Student link where ν = 1 and ν = 8
+    #   cdf_1 <- list("student", 1)
+    #   cdf_8 <- list("student", 8)
+    #   model_1 <- .Discrete_CM(formula = formula,
+    #                           case_id = case_id,
+    #                           alternatives = alternatives,
+    #                           reference = reference,
+    #                           alternative_specific = alternative_specific,
+    #                           data = data,
+    #                           cdf = cdf_1,
+    #                           intercept = intercept,
+    #                           normalization = normalization,
+    #                           control = control)
+    #   model_8 <- .Discrete_CM(formula = formula,
+    #                           case_id = case_id,
+    #                           alternatives = alternatives,
+    #                           reference = reference,
+    #                           alternative_specific = alternative_specific,
+    #                           data = data,
+    #                           cdf = cdf_8,
+    #                           intercept = intercept,
+    #                           normalization = normalization,
+    #                           control = control)
+    #
+    #   # Check if lν=8 > lν=1
+    #   if (model_8[["LogLikelihood"]] > model_1[["LogLikelihood"]]) {
+    #     # Estimate the log-likelihood lp of a binary model with the probit link
+    #     model_p <- .Discrete_CM(formula = formula,
+    #                             case_id = case_id,
+    #                             alternatives = alternatives,
+    #                             reference = reference,
+    #                             alternative_specific = alternative_specific,
+    #                             data = data,
+    #                             cdf = "normal",
+    #                             intercept = intercept,
+    #                             normalization = normalization,
+    #                             control = control)
+    #     # Check if lp > lν=8
+    #     if (model_p[["LogLikelihood"]] > model_8[["LogLikelihood"]]) {
+    #       # Use the probit link
+    #       cdf_sel <- "normal"
+    #     } else {
+    #       # Use the logit link
+    #       cdf_sel <- "logistic"
+    #     }
+    #   } else {
+    #     # Use optimize() to find the best ν ∈ (0.25, 1) of the Student CDF
+    #     optimize_likelihood <- function(nu) {
+    #       model_nu <- .Discrete_CM(formula = formula,
+    #                                case_id = case_id,
+    #                                alternatives = alternatives,
+    #                                reference = reference,
+    #                                alternative_specific = alternative_specific,
+    #                                data = data,
+    #                                cdf = list("student", nu),
+    #                                intercept = intercept,
+    #                                normalization = normalization,
+    #                                control = control)
+    #
+    #       model_nu[["LogLikelihood"]]
+    #     }
+    #
+    #     opt_result <- optimize(optimize_likelihood, interval = c(0.25, 8), maximum = TRUE)
+    #     best_nu <- opt_result$maximum
+    #
+    #     # Use the best ν found
+    #     cdf_sel <- list("student", best_nu)
+    #   }
+    #   # print(cdf_sel)
+    # }
 
-      # Check if lν=8 > lν=1
-      if (model_8[["LogLikelihood"]] > model_1[["LogLikelihood"]]) {
-        # Estimate the log-likelihood lp of a binary model with the probit link
-        model_p <- .Discrete_CM(formula = formula,
-                                case_id = case_id,
-                                alternatives = alternatives,
-                                reference = reference,
-                                alternative_specific = alternative_specific,
-                                data = data,
-                                cdf = "normal",
-                                intercept = intercept,
-                                normalization = normalization,
-                                control = control)
-        # Check if lp > lν=8
-        if (model_p[["LogLikelihood"]] > model_8[["LogLikelihood"]]) {
-          # Use the probit link
-          cdf_sel <- "normal"
-        } else {
-          # Use the logit link
-          cdf_sel <- "logistic"
-        }
-      } else {
-        # Use optimize() to find the best ν ∈ (0.25, 1) of the Student CDF
-        optimize_likelihood <- function(nu) {
-          model_nu <- .Discrete_CM(formula = formula,
-                                   case_id = case_id,
-                                   alternatives = alternatives,
-                                   reference = reference,
-                                   alternative_specific = alternative_specific,
-                                   data = data,
-                                   cdf = list("student", nu),
-                                   intercept = intercept,
-                                   normalization = normalization,
-                                   control = control)
-
-          model_nu[["LogLikelihood"]]
-        }
-
-        opt_result <- optimize(optimize_likelihood, interval = c(0.25, 1), maximum = TRUE)
-        best_nu <- opt_result$maximum
-
-        # Use the best ν found
-        cdf_sel <- list("student", best_nu)
-      }
-      # print(cdf_sel)
+    if(find_nu == TRUE){
+      opt_result <- optimize(optimize_likelihood, interval = c(0.25, 8), maximum = TRUE)
+      best_nu <- opt_result$maximum
+      # Use the best ν found
+      cdf_sel <- list("student", best_nu)
     }
 
     cdf <- cdf_sel
