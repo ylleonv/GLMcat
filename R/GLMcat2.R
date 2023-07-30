@@ -149,6 +149,14 @@ glmcat <-
     #   }
     # }
 
+    # Use optimize() to find the best ν ∈ (0.25, 1) of the Student CDF
+    optimize_likelihood <- function(nu) {
+      model_nu <- .GLMcat(formula = formula, data = data, ratio = ratio, cdf = list("student", nu), parallel = parallel, categories_order = categories_order,
+                          ref_category = ref_category, threshold = threshold , control = control, normalization = normalization)
+
+      model_nu[["LogLikelihood"]]
+    }
+
     if(find_nu == TRUE){
       opt_result <- optimize(optimize_likelihood, interval = c(0.25, 8), maximum = TRUE)
       best_nu <- opt_result$maximum
@@ -362,6 +370,22 @@ discrete_cm <-
     #   }
     #   # print(cdf_sel)
     # }
+
+    #     # Use optimize() to find the best ν ∈ (0.25, 1) of the Student CDF
+    optimize_likelihood <- function(nu) {
+      model_nu <- .Discrete_CM(formula = formula,
+                               case_id = case_id,
+                               alternatives = alternatives,
+                               reference = reference,
+                               alternative_specific = alternative_specific,
+                               data = data,
+                               cdf = list("student", nu),
+                               intercept = intercept,
+                               normalization = normalization,
+                               control = control)
+
+      model_nu[["LogLikelihood"]]
+    }
 
     if(find_nu == TRUE){
       opt_result <- optimize(optimize_likelihood, interval = c(0.25, 8), maximum = TRUE)
