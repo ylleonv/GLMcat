@@ -23,6 +23,7 @@
 #'   - `beta_init`: An appropriately sized vector for the initial iteration of the algorithm.
 #' @param normalization the quantile to use for the normalization of the estimated coefficients when the logistic distribution is used as the base cumulative distribution function.
 #' @param na.action an argument to handle missing data. Available options are `na.omit`, `na.fail`, and `na.exclude`. It does not include the `na.pass` option.
+#' @param find_nu a logical argument to indicate whether the user intends to utilize the Student CDF and seeks an optimization algorithm to identify an optimal degrees of freedom setting for the model.
 #' @param ... additional arguments.
 #'
 #' @details This function fits generalized linear models for categorical responses using the unified specification framework introduced by Peyhardi, Trottier, and Guédon (2015).
@@ -224,6 +225,7 @@ glmcat <-
 #' @param na.action an argument to handle missing data.
 #'   Available options are na.omit, na.fail, and na.exclude.
 #'   It comes from the stats library and does not include the na.pass option.
+#' @param find_nu a logical argument to indicate whether the user intends to utilize the Student CDF and seeks an optimization algorithm to identify an optimal degrees of freedom setting for the model.
 #' @param control a list specifying additional control parameters.
 #'   - `maxit`: the maximum number of iterations for the Fisher scoring algorithm.
 #'   - `epsilon`: a double value to fix the epsilon value.

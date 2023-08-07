@@ -15,7 +15,8 @@ discrete_cm(
   intercept = "standard",
   normalization = 1,
   control = list(),
-  na.action = "na.omit"
+  na.action = "na.omit",
+  find_nu = FALSE
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ where the logistic distribution is used as the base cumulative distribution func
 \item{na.action}{an argument to handle missing data.
 Available options are na.omit, na.fail, and na.exclude.
 It comes from the stats library and does not include the na.pass option.}
+
+\item{find_nu}{a logical argument to indicate whether the user intends to utilize the Student CDF and seeks an optimization algorithm to identify an optimal degrees of freedom setting for the model.}
 }
 \description{
 Family of models for Discrete Choice. Fits discrete choice models which require data in long form.

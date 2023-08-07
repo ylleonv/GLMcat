@@ -16,6 +16,7 @@ glmcat(
   control = list(),
   normalization = 1,
   na.action = "na.omit",
+  find_nu = FALSE,
   ...
 )
 }
@@ -46,6 +47,8 @@ glmcat(
 \item{normalization}{the quantile to use for the normalization of the estimated coefficients when the logistic distribution is used as the base cumulative distribution function.}
 
 \item{na.action}{an argument to handle missing data. Available options are `na.omit`, `na.fail`, and `na.exclude`. It does not include the `na.pass` option.}
+
+\item{find_nu}{a logical argument to indicate whether the user intends to utilize the Student CDF and seeks an optimization algorithm to identify an optimal degrees of freedom setting for the model.}
 
 \item{...}{additional arguments.}
 }

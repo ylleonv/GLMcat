@@ -1,5 +1,5 @@
 ---
-title: "A tutorial on fitting Generalized Linear Models for categorical responses with the glmcat package"
+title: "A tutorial on fitting Generalized Linear Models for categorical responses with the GLMcat package"
 
 author:
   - Lorena León^[Université de Montpellier, ylorenaleonv@gmail.com]
@@ -12,7 +12,7 @@ abstract: |
 output: rmarkdown::pdf_document
 bibliography: bibliography_vignette.bib
 vignette: >
-  %\VignetteIndexEntry{A Tutorial on fitting Generalized Linear Models with the glmcat Package}
+  %\VignetteIndexEntry{A Tutorial on fitting Generalized Linear Models with the GLMcat Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
