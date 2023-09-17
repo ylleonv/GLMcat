@@ -31,3 +31,5 @@ Suggests:
     tidyr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+URL: https://github.com/ylleonv/GLMcat
+BugReports: https://github.com/ylleonv/GLMcat/issues
