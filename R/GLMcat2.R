@@ -25,6 +25,8 @@
 #' @param na.action an argument to handle missing data. Available options are `na.omit`, `na.fail`, and `na.exclude`. It does not include the `na.pass` option.
 #' @param find_nu a logical argument to indicate whether the user intends to utilize the Student CDF and seeks an optimization algorithm to identify an optimal degrees of freedom setting for the model.
 #' @param ... additional arguments.
+#' \code{Note:} If the 'reference' ratio is used, you'll get a warning if the variable is an ordered factor.
+#' \code{Note:} If any other 'radio' is used, it will issue a warning if the response is not ordered, and the variables order will default to the alphanumeric natural order.
 #'
 #' @details This function fits generalized linear models for categorical responses using the unified specification framework introduced by Peyhardi, Trottier, and Guédon (2015).
 #'
@@ -246,6 +248,14 @@ glmcat <-
 #'             data = TravelChoice, alternative_specific = c("gc", "invt"),
 #'             cdf = "logistic")
 #'
+#'  #' A more specific design was studied by Louvierte et al. (2000, p. 157) and Greene (2003, p. 730).
+#'  #' These analyses set the effect of the variables hinc and psize exclusively for the category air
+#' discrete_cm(formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+#'             case_id = "indv",
+#'             alternatives = "mode",
+#'             reference = "car",
+#'             alternative_specific = c("gc", "ttme"),
+#'             data = TravelChoice)
 #' @note For these models, it is not allowed to exclude the intercept.
 #' @export
 discrete_cm <-

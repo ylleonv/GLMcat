@@ -91,4 +91,12 @@ discrete_cm(formula = choice ~ hinc + gc + invt,
             data = TravelChoice, alternative_specific = c("gc", "invt"),
             cdf = "logistic")
 
+ #' A more specific design was studied by Louvierte et al. (2000, p. 157) and Greene (2003, p. 730).
+ #' These analyses set the effect of the variables hinc and psize exclusively for the category air
+discrete_cm(formula = choice ~ hinc[air] + psize[air] + gc + ttme,
+            case_id = "indv",
+            alternatives = "mode",
+            reference = "car",
+            alternative_specific = c("gc", "ttme"),
+            data = TravelChoice)
 }

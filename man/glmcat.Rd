@@ -50,7 +50,9 @@ glmcat(
 
 \item{find_nu}{a logical argument to indicate whether the user intends to utilize the Student CDF and seeks an optimization algorithm to identify an optimal degrees of freedom setting for the model.}
 
-\item{...}{additional arguments.}
+\item{...}{additional arguments.
+\code{Note:} If the 'reference' ratio is used, you'll get a warning if the variable is an ordered factor.
+\code{Note:} If any other 'radio' is used, it will issue a warning if the response is not ordered, and the variables order will default to the alphanumeric natural order.}
 }
 \description{
 Estimate generalized linear models implemented under the unified
