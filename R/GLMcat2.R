@@ -41,7 +41,7 @@
 #'     cdf = "logistic", ratio = "reference")
 #' @seealso
 #' \code{\link{summary.glmcat}}
-#' @keywords generalized linear model, categorical variables
+#' @keywords generalized linear model categorical variables
 glmcat <-
   function(formula,
            data,
