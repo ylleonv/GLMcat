@@ -2,7 +2,7 @@
 % Please edit documentation in R/GLMcatMethods.R
 \name{plot.glmcat}
 \alias{plot.glmcat}
-\title{Plot method for a fitted code{glmcat} model object}
+\title{Plot method for a fitted \code{glmcat} model object}
 \usage{
 \method{plot}{glmcat}(x, ...)
 }

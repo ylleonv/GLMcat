@@ -82,5 +82,5 @@ Peyhardi J, Trottier C, Guédon Y (2015). “A new specification of generalized 
 \keyword{categorical}
 \keyword{generalized}
 \keyword{linear}
-\keyword{model,}
+\keyword{model}
 \keyword{variables}

@@ -10,3 +10,5 @@
 ^README.html
 ^LICENSE\.md$
 ^CRAN-RELEASE$
+^CRAN-SUBMISSION$
+^cleanup$

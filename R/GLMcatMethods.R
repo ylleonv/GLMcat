@@ -1,4 +1,4 @@
-#' Print method for a fitted code{glmcat} model object
+#' Print method for a fitted \code{glmcat} model object
 #' @description \code{print} method for a fitted \code{glmcat} model object.
 #' @param x an object of class \code{glmcat}.
 #' @param ... additional arguments.
@@ -20,7 +20,7 @@ print.glmcat <- function(x, ...) {
   invisible(x)
 }
 
-#' Plot method for a fitted code{glmcat} model object
+#' Plot method for a fitted \code{glmcat} model object
 #' @description \code{plot} of the log-likelihood profile for a fitted \code{glmcat} model object.
 #' @param x an object of class \code{glmcat}.
 #' @param ... additional arguments.

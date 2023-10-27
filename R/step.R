@@ -160,16 +160,18 @@ add2 <- function(object, scope, data, scale = 0, test=c("none", "Chisq"),
 #' @description Stepwise for a \code{glmcat} model object based on the AIC.
 #' @param object an fitted object of class \code{glmcat}.
 #' @param scope defines the range of models examined in the stepwise search (same as in the step function of the stats package). This should be either a single formula, or a list containing components upper and lower, both formulae.
+#' @param scale the scaling parameter (if applicable).
 #' @param direction the mode of the stepwise search.
-#' @param trace to print the process information.XLASL
+#' @param trace to print the process information.
+#' @param keep a logical value indicating whether to keep the models from all steps.
 #' @param steps the maximum number of steps.
+#' @param k additional arguments (if needed).
 #' @rdname step
 #' @method step glmcat
-#' @usage \method{step}{glmcat}(object, scope, direction, trace, steps)
 #' @exportS3Method
 step.glmcat <-
-  function (object, scope, direction = c("both", "backward", "forward"), trace = 1, steps = 1000)
-  {
+  function(object, scope, scale, direction = c("both", "backward", "forward"), trace = 1, keep = FALSE, steps = 1000, k, ...) {
+    # function body
     data <- object$data
     mydeviance <- function(x, ...) {
       dev <- deviance(x)
