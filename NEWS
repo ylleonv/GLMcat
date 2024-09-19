@@ -1,4 +1,7 @@
 This file documents updates and changes in package GLMcat since version 0.2.4
+19-09-2024
+- Add accidents data
+
 17-09-2023
 - Documentation update.
 - Add optimization algorithm to select appropiate degree of freedom for Student link.
