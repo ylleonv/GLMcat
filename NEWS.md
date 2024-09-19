@@ -1,3 +1,5 @@
+# GLMcat 0.2.7
+
 # GLMcat 0.2.6
 
 # GLMcat 0.2.5
