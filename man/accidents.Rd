@@ -22,7 +22,7 @@ A data frame with 109,577 rows and 12 variables:
 }
 }
 \source{
-Data from 2019, openly available at \url{https://www.data.gov.uk/}, accessed in September 2023.
+Data from 2019, openly available at \url{https://data.gov.uk/}, accessed in September 2023.
 }
 \usage{
 accidents

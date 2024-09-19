@@ -23,7 +23,7 @@ As case-specific variables:
 }
 \source{
 {
-Download from on-line (18/09/2020) complements to Greene, W.H. (2011) Econometric Analysis, Prentice Hall, 7th Edition Table F18-2.
+Download from on-line (18/09/2020) complements to Greene, W.H. (2011) Econometric Analysis, Prentice Hall, 7th Edition, Table F18-2.
 }
 }
 \usage{
